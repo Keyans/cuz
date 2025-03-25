@@ -1,75 +1,31 @@
-# Nuxt Minimal Starter
+# Cuz - Print-on-Demand Platform
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Cuz is a modern print-on-demand platform built with:
 
-## Setup
+- Nuxt.js (Vue.js framework)
+- Tailwind CSS
+- TypeScript
+- Netlify deployment
 
-Make sure to install dependencies:
+## Features
 
-```bash
-# npm
-npm install
+- User authentication
+- Product management
+- Dashboard interface
+- SEO optimization
+- PWA support
 
-# pnpm
-pnpm install
+## Getting Started
 
-# yarn
-yarn install
+1. Clone the repository
+2. Install dependencies: `bun install`
+3. Start development server: `bun run dev`
+4. Build for production: `bun run build`
 
-# bun
-bun install
-```
+## Deployment
 
-## Development Server
+The project is configured for deployment on Netlify. See `netlify.toml` for configuration details.
 
-Start the development server on `http://localhost:3000`:
+## License
 
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+MIT
