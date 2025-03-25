@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: 'Ambit';
+    src: url('/assets/fonts/Ambit-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Ambit';
+    src: url('/assets/fonts/Ambit-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Roboto';
+    src: url('/assets/fonts/Roboto-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Roboto';
+    src: url('/assets/fonts/Roboto-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  html {
+    font-family: 'Roboto', sans-serif;
+    background-color: theme('colors.background');
+    color: theme('colors.primary');
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Ambit', sans-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-secondary text-primary font-bold py-2 px-4 rounded;
+  }
+
+  .btn-secondary {
+    @apply bg-primary text-white font-bold py-2 px-4 rounded;
+  }
+
+  .container-app {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}

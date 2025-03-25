@@ -1,0 +1,24 @@
+[build]
+  publish = ".output/public"
+  command = "bun run build"
+
+[dev]
+  command = "bun run dev"
+  port = 3000
+  targetPort = 3000
+  framework = "nuxt"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[images]
+  # Allow access to remote images for deployment
+  remote_images = [
+    "https://ext.same-assets.com/1120023530/*",
+    "https://placehold.co/*"
+  ]

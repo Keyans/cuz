@@ -1,0 +1,2 @@
+const t=['.skeleton-loading[data-v-d4570c27]{overflow:hidden;position:relative}.skeleton-loading[data-v-d4570c27]:after{animation:shimmer-d4570c27 2s infinite;background-image:linear-gradient(90deg,#fff0,#fff3 20%,#ffffff80 60%,#fff0);bottom:0;content:"";left:0;position:absolute;right:0;top:0;transform:translate(-100%)}@keyframes shimmer-d4570c27{to{transform:translate(100%)}}'];export{t as default};
+//# sourceMappingURL=LazyLoadSection-styles.qJR1rZKW.mjs.map

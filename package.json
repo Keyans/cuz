@@ -1,0 +1,26 @@
+{
+  "name": "printify-clone",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev --host 0.0.0.0",
+    "generate": "nuxt generate && mkdir -p dist/assets && cp -r public/assets/* dist/assets/ && cp public/favicon.png dist/",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "start": "node .output/server/index.mjs"
+  },
+  "dependencies": {
+    "@pinia/nuxt": "^0.5.1",
+    "pinia": "^2.1.7",
+    "vue-composable": "^1.0.0-beta.25"
+  },
+  "devDependencies": {
+    "@nuxt/image": "^1.10.0",
+    "@nuxtjs/robots": "^5.2.8",
+    "@nuxtjs/sitemap": "^7.2.9",
+    "@nuxtjs/tailwindcss": "^6.11.0",
+    "nuxt": "^3.16.1"
+  }
+}
