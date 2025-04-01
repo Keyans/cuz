@@ -2,7 +2,6 @@
 export default defineNuxtConfig({
   // 开发工具
   devtools: { enabled: false },
-
   // 配置SSR（服务端渲染），以确保SEO友好
   ssr: true,
   // Nitro引擎配置 - 混合渲染策略
@@ -97,8 +96,10 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
+    'motion-v/nuxt',
     '@nuxt/image', // 添加图像处理模块
     './modules/seo', // 添加自定义SEO模块
+    
   ],
 
   // Pinia 配置
@@ -214,5 +215,8 @@ export default defineNuxtConfig({
     }
   },
 
-  compatibilityDate: '2025-03-24'
+  compatibilityDate: '2025-03-24',
+
+  // 确保没有禁用组件自动导入
+  components: true,
 })

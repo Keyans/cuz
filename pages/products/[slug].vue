@@ -226,8 +226,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { OptimizedImage } from '#components'
-import { LazyLoadSection } from '#components'
+import OptimizedImage from '@/components/common/OptimizedImage.vue'
+import LazyLoadSection from '@/components/common/LazyLoadSection.vue'
 
 const route = useRoute()
 const slug = route.params.slug
