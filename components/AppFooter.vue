@@ -5,7 +5,7 @@
           <!-- Logo and social links -->
           <div>
             <NuxtLink to="/" class="flex items-center justify-center sm:justify-start mb-4">
-              <img src="/assets/logo-white.svg" alt="Printify" class="h-6 md:h-8" />
+              <img src="/assets/cuzcuz-logo.png" alt="Printify" class="h-6 md:h-8 brightness-0 invert" />
             </NuxtLink>
             <div class="flex space-x-4 mt-4 justify-center sm:justify-start">
               <a href="#" class="text-white hover:text-secondary">
@@ -68,7 +68,7 @@
   
         <div class="mt-8 md:mt-12 border-t border-gray-700 pt-6 md:pt-8 text-center sm:text-left">
           <p class="text-xs md:text-sm text-gray-300">
-            &copy; {{ new Date().getFullYear() }} Printify Clone. All rights reserved.
+            &copy; {{ new Date().getFullYear() }} cuzcuz. All rights reserved.
           </p>
         </div>
       </div>
