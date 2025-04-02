@@ -1,5 +1,5 @@
 // 定义缓存名称和版本
-const CACHE_NAME = 'printify-cache-v1';
+const CACHE_NAME = 'cuzcuz-cache-v1';
 
 // 需要缓存的资源
 const urlsToCache = [

@@ -1,9 +1,9 @@
 <template>
   <div>
     <AppSeo
-      :title="`${product.name} - Printify 产品详情`"
+      :title="`${product.name} - cuzcuz 产品详情`"
       :description="`${product.name} - ${product.description.substring(0, 150)}...`"
-      :keywords="`printify, 定制${product.name}, 按需印刷, 定制产品, ${product.category}`"
+      :keywords="`cuzcuz, 定制${product.name}, 按需印刷, 定制产品, ${product.category}`"
       :ogImage="product.image"
       ogType="product"
     />
@@ -350,7 +350,7 @@ useHead({
         description: product.value.description,
         brand: {
           '@type': 'Brand',
-          name: 'Printify'
+          name: 'cuzcuz'
         },
         sku: `PRD-${product.value.id}`,
         offers: {

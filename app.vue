@@ -14,7 +14,7 @@ useHead({
   titleTemplate: '%s - cuzcuz',
   meta: [
     { name: 'description', content: 'Create and sell custom products with print-on-demand' },
-    { name: 'keywords', content: 'printify, print-on-demand, custom products, t-shirts, hoodies, mugs' }
+    { name: 'keywords', content: 'cuzcuz, print-on-demand, custom products, t-shirts, hoodies, mugs' }
   ]
 })
 </script>

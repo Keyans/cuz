@@ -221,7 +221,7 @@ const authStore = useAuthStore()
 const user = computed(() => authStore.currentUser)
 
 // Store information
-const storeName = "Your Printify Store"
+const storeName = "Your cuzcuz Store"
 
 // Format current date
 const currentDate = computed(() => {

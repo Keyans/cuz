@@ -1,5 +1,5 @@
 <template>
-      <section class="bg-printify-cream py-16">
+      <section class="bg-cuzcuz-cream py-16">
         <div class="container mx-auto px-4">
       <div class="relative">
         <button @click="scrollLeft" class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100">
@@ -14,7 +14,7 @@
               <div class="bg-white rounded-lg p-4 mb-2 shadow-sm transition-transform group-hover:shadow-md group-hover:-translate-y-1">
                 <img :src="product.image" :alt="product.name" class="h-32 mx-auto">
               </div>
-              <p class="text-printify-dark font-medium text-sm">{{ product.name }}</p>
+              <p class="text-cuzcuz-dark font-medium text-sm">{{ product.name }}</p>
             </router-link>
           </div>
         </div>

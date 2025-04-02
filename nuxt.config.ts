@@ -51,16 +51,16 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'Printify - 创建和销售自定义产品，无需库存' },
+        { name: 'description', content: 'cuzcuz - 创建和销售自定义产品，无需库存' },
         { name: 'format-detection', content: 'telephone=no' },
         { name: 'theme-color', content: '#afe468' },
         { name: 'robots', content: 'index, follow' },
-        { property: 'og:title', content: 'Printify - 按需定制产品平台' },
+        { property: 'og:title', content: 'cuzcuz - 按需定制产品平台' },
         { property: 'og:description', content: '创建和销售自定义产品，无需库存' },
         { property: 'og:type', content: 'website' },
         { property: 'og:locale', content: 'zh_CN' },
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'Printify - 按需定制产品平台' },
+        { name: 'twitter:title', content: 'cuzcuz - 按需定制产品平台' },
         { name: 'twitter:description', content: '创建和销售自定义产品，无需库存' }
       ],
       link: [
@@ -210,7 +210,7 @@ export default defineNuxtConfig({
     public: {
       siteUrl: 'https://your-domain.com',
       siteName: 'cuzcuz',
-      siteDescription: 'Printify - 按需定制产品平台',
+      siteDescription: 'cuzcuz - 按需定制产品平台',
       language: 'zh-CN',
     }
   },

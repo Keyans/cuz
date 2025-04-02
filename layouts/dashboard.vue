@@ -16,8 +16,8 @@
               </svg>
             </button>
             <NuxtLink to="/" class="flex items-center ml-3 md:ml-0">
-              <img src="/assets/logo.svg" alt="Printify" class="h-8 w-auto hidden md:block" />
-              <span class="font-bold text-primary text-lg md:hidden">Printify</span>
+              <img src="/assets/logo.svg" alt="cuzcuz" class="h-8 w-auto hidden md:block" />
+              <span class="font-bold text-primary text-lg md:hidden">cuzcuz</span>
             </NuxtLink>
           </div>
 

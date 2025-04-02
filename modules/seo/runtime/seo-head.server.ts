@@ -10,7 +10,7 @@ import { useHead, useRoute } from '#app'
 const defaultSeoConfig = {
   title: 'cuzcuz - 按需定制产品平台',
   description: '创建和销售自定义产品，无需库存。按需印刷，全球配送。',
-  keywords: 'printify, 按需印刷, 定制产品, T恤, 帽衫, 马克杯, 无库存业务',
+  keywords: 'cuzcuz, 按需印刷, 定制产品, T恤, 帽衫, 马克杯, 无库存业务',
   ogImage: '/assets/og-image.jpg',
   ogType: 'website',
   twitterCard: 'summary_large_image',
@@ -20,26 +20,26 @@ const defaultSeoConfig = {
 const routeSpecificSeo = {
   '/': {
     title: 'cuzcuz - 创建和销售自定义产品',
-    description: '使用Printify在没有库存的情况下创建和销售您自己的定制产品。按需印刷，全球配送。',
-    keywords: 'printify, 按需印刷, 定制T恤, 定制产品, 电商创业, 无库存销售',
+    description: '使用cuzcuz在没有库存的情况下创建和销售您自己的定制产品。按需印刷，全球配送。',
+    keywords: 'cuzcuz, 按需印刷, 定制T恤, 定制产品, 电商创业, 无库存销售',
     ogImage: '/assets/og-home.jpg',
   },
   '/products': {
-    title: 'Printify产品目录 - 定制T恤、帽衫、马克杯等',
+    title: 'cuzcuz产品目录 - 定制T恤、帽衫、马克杯等',
     description: '浏览我们的产品目录，包括T恤、帽衫、马克杯等。找到适合您品牌的完美产品。',
-    keywords: 'printify产品, 定制T恤, 定制帽衫, 马克杯印刷, 按需服务',
+    keywords: 'cuzcuz产品, 定制T恤, 定制帽衫, 马克杯印刷, 按需服务',
     ogImage: '/assets/og-products.jpg',
   },
   '/login': {
-    title: 'Printify - 登录到您的账户',
+    title: 'cuzcuz - 登录到您的账户',
     noIndex: true, // 不要为登录页面编入索引
   },
   '/register': {
-    title: 'Printify - 注册新账户',
+    title: 'cuzcuz - 注册新账户',
     noIndex: true, // 不要为注册页面编入索引
   },
   '/dashboard': {
-    title: 'Printify - 仪表板',
+    title: 'cuzcuz - 仪表板',
     noIndex: true, // 不要为仪表板页面编入索引
   },
 }

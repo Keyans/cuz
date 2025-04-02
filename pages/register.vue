@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
       <NuxtLink to="/" class="flex justify-center">
-        <img src="/assets/logo.svg" alt="Printify" class="h-12">
+        <img src="/assets/logo.svg" alt="cuzcuz" class="h-12">
       </NuxtLink>
       <h2 class="mt-6 text-center text-3xl font-bold text-primary">
         Create your account
