@@ -22,12 +22,9 @@ export default defineNuxtConfig({
     // 完全禁用自动预渲染，避免构建时的500错误
     prerender: {
       crawlLinks: false,
-      routes: [
-        '/login',
-        '/register',
-      ],
+      routes: [],
       ignore: [
-        '/',  // 显式忽略首页预渲染
+        '/',
       ]
     },
 
@@ -99,6 +96,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
+    'motion-v/nuxt',
     '@nuxt/image', // 添加图像处理模块
     './modules/seo', // 添加自定义SEO模块
   ],
@@ -113,8 +111,8 @@ export default defineNuxtConfig({
     // 主页使用 SSR 而不是预渲染，避免构建时的500错误
     '/': { ssr: true, swr: 600 }, // 使用SSR并缓存10分钟
     // 静态页面使用 SSG（静态站点生成）
-    '/login': { prerender: true },
-    '/register': { prerender: true },
+    '/login': { ssr: true },
+    '/register': { ssr: true },
     // 产品页面使用 SSR（服务器端渲染）带缓存
     '/products': { swr: 600 }, // 10分钟缓存
     '/products/**': { swr: 300 }, // 5分钟缓存
