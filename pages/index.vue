@@ -6,7 +6,7 @@
   <!-- 选择我们 -->
   <!-- <HomeChooseUs/> -->
   <!-- 三步开启 -->
-  <!-- <HomeProduct/> -->
+  <HomeProduct/>
   <!-- 立即购买 -->
   <HomeShelf/>
   <!-- 立即测算模块 -->
