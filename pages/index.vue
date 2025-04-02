@@ -1,12 +1,12 @@
 <template>
   <!-- 首页banner图 -->
-  <HomeBanner />
+  <!-- <HomeBanner /> -->
   <!-- 产品特色 -->
   <!-- <HomeProductTab/> -->
   <!-- 选择我们 -->
-  <HomeChooseUs/>
+  <!-- <HomeChooseUs/> -->
   <!-- 三步开启 -->
-  <HomeProduct/>
+  <!-- <HomeProduct/> -->
   <!-- 立即购买 -->
   <HomeShelf/>
   <!-- 立即测算模块 -->
@@ -16,7 +16,7 @@
   <!-- 国内外电商平台轮播图 -->
   <HomePlatform/> 
   <!-- 地图轮播图 -->
-  <HomeMap/>
+  <!-- <HomeMap/> -->
   <!-- 数据统计 -->
   <HomeStaticData/>
   <!-- 联系我们 -->
