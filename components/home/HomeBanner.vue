@@ -1,5 +1,6 @@
 <template>
       <section class="relative w-full h-screen">
+        <ClientOnly>
     <AuroraBackground class="index-bg w-full h-screen">
       <Motion
         as="div"
@@ -17,22 +18,18 @@
         class="relative w-full h-screen flex flex-col items-center pt-[150px] gap-4 px-4 z-20"
       >
       <div class="py-4 font-extralight text-7xl dark:text-neutral-200">
-        <ClientOnly>
             <BlurReveal
               :delay="0.2"
               :duration="0.75"
             >
               一件起订 货通全球
             </BlurReveal>
-        </ClientOnly>
       </div>
-      <ClientOnly>
         <div class="flex h-64 text-4xl items-center justify-center max-lg:w-full min-md:flex-1">
           <TextGenerateEffect
             words="零 库 存 风 险 ，轻 松 开 启 电 商 事 业 ！"
           />
         </div>
-      </ClientOnly>
       <div class="flex items-center">
         <ShimmerButton>
           <span>
@@ -43,6 +40,7 @@
       </div>
       </Motion>
     </AuroraBackground>
+  </ClientOnly>
   </section>
 </template>
 <script setup>

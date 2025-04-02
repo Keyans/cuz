@@ -1,6 +1,6 @@
 <template>
   <!-- 首页banner图 -->
-  <!-- <HomeBanner /> -->
+  <HomeBanner />
   <!-- 产品特色 -->
   <!-- <HomeProductTab/> -->
   <!-- 选择我们 -->
