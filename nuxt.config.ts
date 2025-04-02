@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   // Nitro引擎配置 - 混合渲染策略
   nitro: {
     // 针对需要动态内容的页面使用服务器端渲染
-    preset: process.env.NODE_ENV === 'production' ? 'netlify' : 'node-server',
+    preset: process.env.NODE_ENV === 'production' ? 'vercel' : 'node-server',
 
     // 静态资源优化
     compressPublicAssets: {
