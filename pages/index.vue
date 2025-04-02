@@ -4,7 +4,7 @@
   <!-- 产品特色 -->
   <!-- <HomeProductTab/> -->
   <!-- 选择我们 -->
-  <!-- <HomeChooseUs/> -->
+  <HomeChooseUs/>
   <!-- 三步开启 -->
   <HomeProduct/>
   <!-- 立即购买 -->
