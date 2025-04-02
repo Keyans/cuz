@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
 export default defineNuxtConfig({
   // 开发工具
   devtools: { enabled: false },
@@ -109,7 +110,7 @@ export default defineNuxtConfig({
   // 路由规则 - 配置哪些页面使用 SSG，哪些使用 SSR
   routeRules: {
     // 主页使用 SSR 而不是预渲染，避免构建时的500错误
-    '/': { ssr: true, swr: 600 }, // 使用SSR并缓存10分钟
+    '/': { ssr: true, swr: process.dev ? false : 600 }, // 使用SSR并缓存10分钟
     // 静态页面使用 SSG（静态站点生成）
     '/login': { ssr: true },
     '/register': { ssr: true },
@@ -212,6 +213,8 @@ export default defineNuxtConfig({
       siteName: 'cuzcuz',
       siteDescription: 'cuzcuz - 按需定制产品平台',
       language: 'zh-CN',
+      MICRO_POD_URL: process.env.MICRO_POD_URL,
+      GALLERY_URL: process.env.GALLERY_URL
     }
   },
 

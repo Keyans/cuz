@@ -31,7 +31,7 @@
                 </svg>
               </div>
               <NuxtLink
-                v-else
+                v-else-if="!item.isExternal"
                 :to="item.href"
                 class="flex items-center text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium"
                 :class="{ 'text-primary': isActive(item.href) }"
@@ -41,6 +41,18 @@
                 </svg>
                 {{ item.name }}
               </NuxtLink>
+              <a
+                v-else
+                :href="item.href"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium"
+              >
+                <svg class="h-5 w-5 mr-1">
+                  <use :href="`/assets/nav-icons.svg#icon-${item.icon}`" />
+                </svg>
+                {{ item.name }}
+              </a>
               
               <!-- Dropdown menu -->
               <div 
@@ -350,6 +362,8 @@
   }
   
   // Navigation items
+  const config = useRuntimeConfig()
+  console.log("🚀 ~ config:", config.public)
   const navigationItems = [
     { 
       name: '选品中心', 
@@ -363,8 +377,8 @@
         { name: '家居用品', href: '/products/home' }
       ] 
     },
-    { name: '网站设计', href: '/design', icon: 'design' },
-    { name: '创意图库', href: '/gallery', icon: 'gallery' },
+    { name: '网站设计', href: config.public.MICRO_POD_URL, icon: 'design', isExternal: true },
+    { name: '创意图库', href: config.public.GALLERY_URL, icon: 'gallery', isExternal: true },
     // { name: '个人中心', href: '/dashboard', icon: 'user' },
   ]
   

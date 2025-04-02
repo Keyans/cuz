@@ -36,7 +36,9 @@
             开始选品
           </span>
         </ShimmerButton>
-        <InteractiveHoverButton class="ml-10" text="免费设计"/>
+        <a :href="config.public.MICRO_POD_URL">
+          <InteractiveHoverButton class="ml-10" text="免费设计"/>
+        </a>
       </div>
       </Motion>
     </AuroraBackground>
@@ -50,6 +52,8 @@ import { AuroraBackground } from '~/components/ui/aurora-background';
 import { TextGenerateEffect } from '~/components/ui/text-generate-effect';
 import { InteractiveHoverButton } from '~/components/ui/interactive-hover-button';
 import { ShimmerButton } from '~/components/ui/shimmer-button';
+
+const config = useRuntimeConfig();
 
 </script>
 <style scoped>

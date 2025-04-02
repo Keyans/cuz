@@ -23,7 +23,7 @@
           <div class="p-4 md:p-6">
             <div class="flex items-center justify-between mb-6">
               <div class="flex items-center">
-                <img src="/assets/logo.svg" alt="Printify Logo" class="h-8 w-auto mr-2" />
+                <img src="/assets/cuzcuz-logo.png" alt="cuzcuz Logo" class="h-8 w-auto mr-2" />
                 <h2 class="text-lg md:text-xl font-bold text-primary">Dashboard</h2>
               </div>
               <button

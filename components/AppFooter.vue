@@ -5,7 +5,7 @@
           <!-- Logo and social links -->
           <div>
             <NuxtLink to="/" class="flex items-center justify-center sm:justify-start mb-4">
-              <img src="/assets/cuzcuz-logo.png" alt="Printify" class="h-12 md:h-16 brightness-0 invert" />
+              <img src="/assets/cuzcuz-logo.png" alt="cuzcuz" class="h-12 md:h-16 brightness-0 invert" />
             </NuxtLink>
             <div class="flex space-x-4 mt-4 justify-center sm:justify-start">
               <a href="#" class="text-white hover:text-secondary">
