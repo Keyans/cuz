@@ -1,5 +1,6 @@
 <template>
     <section class="relative w-full">
+      <ClientOnly>
         <WorldMap
         :dots="dots"
         :map-color="'#00000040'"
@@ -7,6 +8,7 @@
         :line-color="'#0EA5E9'"
         class="inset-0 w-full h-full z-10 opacity-80"
       />
+      </ClientOnly>
     </section>
 </template>
 <script setup>
