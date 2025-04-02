@@ -1,0 +1,1 @@
+{"version":3,"file":"auth.mjs","sources":["../../../../../middleware/auth.ts"],"sourcesContent":null,"names":["auth","defineNuxtRouteMiddleware","to","from"],"mappings":"2dACA,MAAAA,EAAeC,GAA0B,CAACC,EAAIC,KAExB"}

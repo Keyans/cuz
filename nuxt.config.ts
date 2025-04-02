@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   // 开发工具
   devtools: { enabled: false },
+
   // 配置SSR（服务端渲染），以确保SEO友好
   ssr: true,
   // Nitro引擎配置 - 混合渲染策略
@@ -18,13 +19,15 @@ export default defineNuxtConfig({
     // 最小化输出
     minify: true,
 
-    // 预渲染静态页面
+    // 完全禁用自动预渲染，避免构建时的500错误
     prerender: {
       crawlLinks: false,
       routes: [
-        '/',
         '/login',
         '/register',
+      ],
+      ignore: [
+        '/',  // 显式忽略首页预渲染
       ]
     },
 
@@ -96,10 +99,8 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
-    'motion-v/nuxt',
     '@nuxt/image', // 添加图像处理模块
     './modules/seo', // 添加自定义SEO模块
-    
   ],
 
   // Pinia 配置
@@ -109,8 +110,9 @@ export default defineNuxtConfig({
 
   // 路由规则 - 配置哪些页面使用 SSG，哪些使用 SSR
   routeRules: {
-    // 主页和静态页面使用 SSG（静态站点生成）
-    '/': { prerender: true, cache: { maxAge: 60 * 60 * 24 } }, // 缓存24小时
+    // 主页使用 SSR 而不是预渲染，避免构建时的500错误
+    '/': { ssr: true, swr: 600 }, // 使用SSR并缓存10分钟
+    // 静态页面使用 SSG（静态站点生成）
     '/login': { prerender: true },
     '/register': { prerender: true },
     // 产品页面使用 SSR（服务器端渲染）带缓存
@@ -215,8 +217,5 @@ export default defineNuxtConfig({
     }
   },
 
-  compatibilityDate: '2025-03-24',
-
-  // 确保没有禁用组件自动导入
-  components: true,
+  compatibilityDate: '2025-03-24'
 })

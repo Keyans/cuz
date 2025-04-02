@@ -175,7 +175,7 @@ import { ref } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 
 definePageMeta({
-  layout: 'default'
+  layout: 'default',
 })
 
 // Form state

@@ -26,18 +26,10 @@ export default defineNuxtModule({
         brotli: true
       }
 
-      // 确保预渲染配置正确
+      // 移除预渲染配置，避免与nuxt.config.ts冲突
       if (!nitroConfig.prerender) {
         nitroConfig.prerender = {
-          crawlLinks: true,
-          routes: [
-            '/',
-            '/login',
-            '/register',
-            '/products',
-            '/pricing',
-            '/help'
-          ]
+          crawlLinks: false
         }
       }
     })
