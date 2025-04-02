@@ -44,7 +44,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'Printify Clone',
+      title: 'cuzcuz',
       htmlAttrs: {
         lang: 'zh-CN'
       },
@@ -76,7 +76,7 @@ export default defineNuxtConfig({
           innerHTML: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'WebSite',
-            name: 'Printify Clone',
+            name: 'cuzcuz',
             url: 'https://your-domain.com',
             potentialAction: {
               '@type': 'SearchAction',
@@ -209,7 +209,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       siteUrl: 'https://your-domain.com',
-      siteName: 'Printify Clone',
+      siteName: 'cuzcuz',
       siteDescription: 'Printify - 按需定制产品平台',
       language: 'zh-CN',
     }

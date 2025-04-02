@@ -8,7 +8,7 @@ import { useHead, useRoute } from '#app'
 
 // 为每个页面定义的默认SEO设置
 const defaultSeoConfig = {
-  title: 'Printify Clone - 按需定制产品平台',
+  title: 'cuzcuz - 按需定制产品平台',
   description: '创建和销售自定义产品，无需库存。按需印刷，全球配送。',
   keywords: 'printify, 按需印刷, 定制产品, T恤, 帽衫, 马克杯, 无库存业务',
   ogImage: '/assets/og-image.jpg',
@@ -19,7 +19,7 @@ const defaultSeoConfig = {
 // 每个路由的特定SEO设置
 const routeSpecificSeo = {
   '/': {
-    title: 'Printify Clone - 创建和销售自定义产品',
+    title: 'cuzcuz - 创建和销售自定义产品',
     description: '使用Printify在没有库存的情况下创建和销售您自己的定制产品。按需印刷，全球配送。',
     keywords: 'printify, 按需印刷, 定制T恤, 定制产品, 电商创业, 无库存销售',
     ogImage: '/assets/og-home.jpg',
@@ -47,7 +47,7 @@ const routeSpecificSeo = {
 // 添加通用的结构化数据
 const generateStructuredData = (route: string) => {
   const baseUrl = 'https://your-domain.com'
-  const siteName = 'Printify Clone'
+  const siteName = 'cuzcuz'
 
   // 网站结构化数据
   const websiteSchema = {

@@ -5,7 +5,7 @@
           <!-- Logo -->
           <div class="flex-shrink-0">
             <NuxtLink to="/" class="flex items-center">
-              <img src="/assets/logo.svg" alt="Printify" class="h-8 w-auto">
+              <img src="/assets/cuzcuz-logo.png" alt="CuzCuz" class="h-16 w-auto">
             </NuxtLink>
           </div>
   
