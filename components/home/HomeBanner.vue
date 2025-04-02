@@ -15,14 +15,22 @@
           duration: 0.8,
           ease: 'easeInOut',
         }"
-        class="relative w-full h-screen flex flex-col items-center pt-[150px] gap-4 px-4 z-20"
+        class="relative w-full h-screen flex flex-col items-center pt-[20px] gap-4 px-4 z-20"
       >
-      <div class="py-4 font-extralight text-7xl dark:text-neutral-200">
+      <div class="font-extralight text-6xl dark:text-neutral-200 font-blod">
             <BlurReveal
               :delay="0.2"
               :duration="0.75"
+              class="mr-[300px]"
             >
-              一件起订 货通全球
+              一件起订～
+            </BlurReveal>
+            <BlurReveal
+              :delay="0.4"
+              :duration="0.75"
+              class="ml-[300px]"
+            >
+            货通全球～
             </BlurReveal>
       </div>
         <div class="flex h-64 text-4xl items-center justify-center max-lg:w-full min-md:flex-1">
@@ -40,6 +48,20 @@
           <InteractiveHoverButton class="ml-10" text="免费设计"/>
         </a>
       </div>
+      <ContainerScroll>
+        <template #title>
+
+        </template>
+        <template #card>
+          <img
+            src="/assets/web.png"
+            class="mx-auto h-full rounded-2xl object-cover object-left-top"
+            alt="hero"
+            height="720"
+            width="1400"
+          />
+        </template>
+      </ContainerScroll>
       </Motion>
     </AuroraBackground>
   </ClientOnly>
@@ -52,6 +74,7 @@ import { AuroraBackground } from '~/components/ui/aurora-background';
 import { TextGenerateEffect } from '~/components/ui/text-generate-effect';
 import { InteractiveHoverButton } from '~/components/ui/interactive-hover-button';
 import { ShimmerButton } from '~/components/ui/shimmer-button';
+import { ContainerScroll } from "@/components/ui/container-scroll";
 
 const config = useRuntimeConfig();
 
