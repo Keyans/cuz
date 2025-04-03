@@ -1,7 +1,7 @@
 <template>
   <div
     ref="containerRef"
-    class="relative flex h-[60rem] items-center justify-center p-2 md:h-[80rem]"
+    class="relative flex h-[50rem] items-center justify-center p-2 md:h-[50rem]"
   >
     <div
       class="relative w-full"

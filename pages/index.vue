@@ -3,6 +3,7 @@
   <HomeBanner />
   <!-- 产品特色 -->
   <!-- <HomeProductTab/> -->
+  <HomeContainerScroll/>
   <!-- 选择我们 -->
   <HomeChooseUs/>
   <!-- 三步开启 -->
