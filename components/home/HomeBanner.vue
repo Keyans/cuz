@@ -15,7 +15,7 @@
           duration: 0.8,
           ease: 'easeInOut',
         }"
-        class="relative w-full h-screen flex flex-col items-center pt-[150px] gap-4 px-4 z-20"
+        class="relative w-full h-screen flex flex-col items-center pt-[200px] gap-4 px-4 z-20"
       >
       <div class="font-extralight text-6xl dark:text-neutral-200 font-blod">
             <BlurReveal

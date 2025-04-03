@@ -22,9 +22,6 @@
                 class="flex items-center cursor-pointer text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium"
                 :class="{ 'text-primary': isActive(item.href) || activeDropdown === item.name }"
               >
-                <svg class="h-5 w-5 mr-1">
-                  <use :href="`/assets/nav-icons.svg#icon-${item.icon}`" />
-                </svg>
                 {{ item.name }}
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -36,9 +33,6 @@
                 class="flex items-center text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium"
                 :class="{ 'text-primary': isActive(item.href) }"
               >
-                <svg class="h-5 w-5 mr-1">
-                  <use :href="`/assets/nav-icons.svg#icon-${item.icon}`" />
-                </svg>
                 {{ item.name }}
               </NuxtLink>
               <a
@@ -48,9 +42,6 @@
                 rel="noopener noreferrer"
                 class="flex items-center text-gray-600 hover:text-primary px-3 py-2 text-sm font-medium"
               >
-                <svg class="h-5 w-5 mr-1">
-                  <use :href="`/assets/nav-icons.svg#icon-${item.icon}`" />
-                </svg>
                 {{ item.name }}
               </a>
               
