@@ -186,41 +186,41 @@
     },
     {
       name: '我的产品',
-      href: '/dashboard/library',
+      href: '/dashboard/product/library',
       icon: 'IconShoppingCart',
       isOpen: false,
       children: [
         {
           name: '产品库',
-          href: '/dashboard/library',
+          href: '/dashboard/product/library',
           icon: 'IconBox',
         },
         {
           name: '刊登任务',
-          href: '/dashboard/tasks',
+          href: '/dashboard/product/tasks',
           icon: 'IconBox',
         },
         {
           name: '刊登模版',
-          href: '/dashboard/templates',
+          href: '/dashboard/product/templates',
           icon: 'IconBox',
         },
       ],
     },
     {
       name: '我的订单',
-      href: '/dashboard/center',
+      href: '/dashboard/order/center',
       icon: 'IconShoppingCart',
       isOpen: false,
       children: [
         {
           name: '订单中心',
-          href: '/dashboard/center',
+          href: '/dashboard/order/center',
           icon: 'IconBox',
         },
         {
           name: '售后管理',
-          href: '/dashboard/afterSales',
+          href: '/dashboard/order/afterSales',
           icon: 'IconBox',
         },
       ],
@@ -233,7 +233,7 @@
     },
     {
       name: '基本信息',
-      href: '/dashboard/settings',
+      href: '/dashboard/account/settings',
       icon: 'IconSettings',
       isOpen: false
     },
