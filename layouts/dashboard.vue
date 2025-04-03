@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col bg-background">
     <!-- Header -->
-    <div class="bg-white shadow-sm sticky top-0 z-40 border-b border-gray-200">
+    <div class="bg-white shadow-sm sticky top-0 z-40 border-b border-gray-200 flex-shrink-0">
       <div class="container-app">
         <div class="flex items-center justify-between h-16">
           <!-- Mobile menu button and logo -->
@@ -70,18 +70,25 @@
     <!-- Dashboard container -->
     <div class="flex-grow flex relative">
       <!-- Sidebar -->
-      <DashboardSidebar
-        :is-mobile-open="sidebarOpen"
-        @close="sidebarOpen = false"
-      >
-        <template #toggle-button>
-          <!-- Slot kept for backward compatibility -->
-        </template>
-      </DashboardSidebar>
+      <div class="w-64 flex-shrink-0">
+        <DashboardSidebar
+          :is-mobile-open="sidebarOpen"
+          @close="sidebarOpen = false"
+        >
+          <template #logo>
+            <div class="flex items-center justify-center p-4 border-b border-gray-200">
+              <img src="/assets/cuzcuz-logo.png" alt="cuzcuz" class="h-16 w-auto" />
+            </div>
+          </template>
+          <template #toggle-button>
+            <!-- Slot kept for backward compatibility -->
+          </template>
+        </DashboardSidebar>
+      </div>
 
       <!-- Main content -->
-      <main class="flex-grow p-4 md:p-6 overflow-auto">
-        <slot />
+      <main class="flex-1 p-4 md:p-6 overflow-auto max-w-[calc(100%-16rem)] pl-64 transition-all duration-300">
+        <NuxtPage keep-alive transition="fade" />
       </main>
     </div>
 

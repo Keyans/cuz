@@ -16,15 +16,16 @@
   
       <!-- Sidebar content -->
       <aside
-        class="fixed md:static inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out md:translate-x-0 shadow-lg md:shadow-none overflow-hidden flex flex-col h-full"
+        class="fixed top-[64px] left-0 z-30 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out md:translate-x-0 shadow-lg md:shadow-none overflow-hidden flex flex-col h-[calc(100vh-64px)]"
         :class="[isMobileOpen ? 'translate-x-0' : '-translate-x-full']"
       >
         <div class="h-full flex flex-col overflow-y-auto">
+          <!-- Logo slot -->
+          <slot name="logo"></slot>
           <div class="p-4 md:p-6">
             <div class="flex items-center justify-between mb-6">
               <div class="flex items-center">
-                <img src="/assets/cuzcuz-logo.png" alt="cuzcuz Logo" class="h-8 w-auto mr-2" />
-                <h2 class="text-lg md:text-xl font-bold text-primary">Dashboard</h2>
+                <!-- Logo moved to slot -->
               </div>
               <button
                 @click="$emit('close')"
@@ -38,64 +39,80 @@
             </div>
   
             <nav class="mt-4 space-y-1">
-              <NuxtLink
-                v-for="item in sidebarItems"
-                :key="item.name"
-                :to="item.href"
-                class="flex items-center py-2 px-3 rounded-lg transition-colors text-gray-600 hover:bg-secondary hover:text-primary hover:bg-opacity-20"
-                :class="{ 'bg-secondary bg-opacity-20 text-primary font-medium': isActive(item.href) }"
-                @click="$emit('close')"
-              >
-                <span class="mr-3 flex-shrink-0">
-                  <component :is="item.icon" class="h-5 w-5" />
-                </span>
-                <span class="text-sm">{{ item.name }}</span>
-              </NuxtLink>
+              <div v-for="item in sidebarItems" :key="item.name">
+                <div
+                  class="flex items-center justify-between py-2 px-3 rounded-lg transition-colors text-gray-600 hover:bg-secondary hover:text-primary hover:bg-opacity-20 cursor-pointer"
+                  :class="{ 'bg-secondary bg-opacity-20 text-primary font-medium': isActive(item.href) || item.isOpen }"
+                  @click="toggleSubmenu(item)"
+                >
+                  <div class="flex items-center">
+                    <span class="mr-3 flex-shrink-0">
+                      <component :is="item.icon" class="h-5 w-5" />
+                    </span>
+                    <span class="text-sm">{{ item.name }}</span>
+                  </div>
+                  <span v-if="item.children" class="ml-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4 transform transition-transform duration-300"
+                      :class="{ 'rotate-180': item.isOpen }"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </span>
+                </div>
+                <transition
+                  enter-active-class="transition-all duration-300 ease-in-out"
+                  enter-from-class="opacity-0 max-h-0"
+                  enter-to-class="opacity-100 max-h-[500px]"
+                  leave-active-class="transition-all duration-300 ease-in-out"
+                  leave-from-class="opacity-100 max-h-[500px]"
+                  leave-to-class="opacity-0 max-h-0"
+                >
+                  <div v-if="item.children" v-show="item.isOpen" class="ml-4 mt-1 space-y-1 overflow-hidden">
+                    <NuxtLink
+                      v-for="child in item.children"
+                      :key="child.name"
+                      :to="child.href"
+                      class="flex items-center py-2 px-3 rounded-lg transition-colors text-gray-600 hover:bg-secondary hover:text-primary hover:bg-opacity-20"
+                      :class="{ 'bg-secondary bg-opacity-20 text-primary font-medium': isActive(child.href) }"
+                      @click="$emit('close')"
+                    >
+                      <span class="mr-3 flex-shrink-0">
+                        <component :is="child.icon" class="h-5 w-5" />
+                      </span>
+                      <span class="text-sm">{{ child.name }}</span>
+                    </NuxtLink>
+                  </div>
+                </transition>
+              </div>
             </nav>
-          </div>
-  
-          <!-- Quick actions section -->
-          <div class="px-4 md:px-6 mt-6">
-            <h3 class="text-xs uppercase tracking-wider text-gray-500 font-medium mb-3">Quick Actions</h3>
-            <div class="grid grid-cols-2 gap-2">
-              <button
-                v-for="(action, index) in quickActions"
-                :key="index"
-                class="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-lg hover:bg-secondary hover:bg-opacity-20 transition-colors"
-              >
-                <span class="text-primary mb-1">
-                  <component :is="action.icon" class="h-5 w-5" />
-                </span>
-                <span class="text-xs text-gray-700">{{ action.name }}</span>
-              </button>
-            </div>
           </div>
   
           <!-- User profile section at bottom -->
           <div class="mt-auto p-4 md:p-6 border-t border-gray-200">
             <div class="flex items-center">
               <div class="flex-shrink-0">
-                <div class="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-primary font-bold text-sm">
+                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-medium text-sm overflow-hidden">
                   {{ userInitials }}
                 </div>
               </div>
-              <div class="ml-3 min-w-0 flex-1">
-                <p class="text-sm font-medium text-gray-700 truncate">{{ userName }}</p>
-                <div class="flex items-center mt-1">
-                  <button
-                    @click="navigateTo('/dashboard/settings')"
-                    class="text-xs text-gray-500 hover:text-primary mr-3"
-                  >
-                    Settings
-                  </button>
-                  <button
-                    @click="handleLogout"
-                    class="text-xs text-primary hover:text-secondary"
-                  >
-                    Sign out
-                  </button>
-                </div>
+              <div class="ml-3 flex-1">
+                <p class="text-sm font-medium text-gray-900">{{ userName }}</p>
+                <p class="text-xs text-gray-500 truncate">Account</p>
               </div>
+              <button
+                @click="handleLogout"
+                class="ml-2 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+                title="Sign out"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
             </div>
           </div>
         </div>
@@ -142,71 +159,108 @@
   }
   
   // Dashboard sidebar items with icons
-  const sidebarItems = [
+  const sidebarItems = reactive([
     {
-      name: 'Overview',
+      name: '首页',
       href: '/dashboard',
       icon: 'IconHome',
+      isOpen: false
     },
     {
-      name: 'Workspace',
+      name: '工作台',
       href: '/dashboard/workspace',
-      icon: 'IconWorkspace',
+      icon: 'IconHome',
+      isOpen: false
     },
     {
-      name: 'Products',
-      href: '/dashboard/products',
+      name: '店铺管理',
+      href: '/dashboard/store',
+      icon: 'IconStore',
+      isOpen: false,
+    },
+    {
+      name: '选品中心',
+      href: '/dashboard/sourcing',
       icon: 'IconBox',
+      isOpen: false
     },
     {
-      name: 'Orders',
-      href: '/dashboard/orders',
+      name: '我的产品',
+      href: '/dashboard/library',
       icon: 'IconShoppingCart',
+      isOpen: false,
+      children: [
+        {
+          name: '产品库',
+          href: '/dashboard/library',
+          icon: 'IconBox',
+        },
+        {
+          name: '刊登任务',
+          href: '/dashboard/tasks',
+          icon: 'IconBox',
+        },
+        {
+          name: '刊登模版',
+          href: '/dashboard/templates',
+          icon: 'IconBox',
+        },
+      ],
     },
     {
-      name: 'Customers',
-      href: '/dashboard/customers',
-      icon: 'IconUsers',
+      name: '我的订单',
+      href: '/dashboard/center',
+      icon: 'IconShoppingCart',
+      isOpen: false,
+      children: [
+        {
+          name: '订单中心',
+          href: '/dashboard/center',
+          icon: 'IconBox',
+        },
+        {
+          name: '售后管理',
+          href: '/dashboard/afterSales',
+          icon: 'IconBox',
+        },
+      ],
     },
     {
-      name: 'Analytics',
-      href: '/dashboard/analytics',
-      icon: 'IconChart',
+      name: '我的钱包',
+      href: '/dashboard/wallet',
+      icon: 'IconSettings',
+      isOpen: false
     },
     {
-      name: 'Settings',
+      name: '基本信息',
       href: '/dashboard/settings',
       icon: 'IconSettings',
+      isOpen: false
     },
-  ]
+  ])
   
-  // Quick action buttons
-  const quickActions = [
-    {
-      name: 'New Design',
-      icon: 'IconWorkspace',
-      action: () => navigateTo('/dashboard/workspace')
-    },
-    {
-      name: 'Add Product',
-      icon: 'IconBox',
-      action: () => navigateTo('/dashboard/products/new')
-    },
-    {
-      name: 'View Shop',
-      icon: 'IconStore',
-      action: () => window.open('/', '_blank')
-    },
-    {
-      name: 'Get Help',
-      icon: 'IconHelp',
-      action: () => {} // Would open help dialog
-    }
-  ]
+
   
   // Current route to determine active link
   const route = useRoute()
   
+  // Toggle submenu open/close state
+  const toggleSubmenu = (item: any) => {
+    if (item.children) {
+      // Close other open submenus
+      sidebarItems.forEach((menuItem: any) => {
+        if (menuItem !== item && menuItem.children) {
+          menuItem.isOpen = false
+        }
+      })
+      // Toggle current submenu
+      item.isOpen = !item.isOpen
+    } else {
+      navigateTo(item.href)
+      emit('close')
+    }
+  }
+
   // Check if a link is active based on current route
   const isActive = (href: string) => {
     if (href === '/dashboard' && route.path === '/dashboard') {

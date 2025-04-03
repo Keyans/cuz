@@ -14,7 +14,7 @@
     },
     keywords: {
       type: String,
-      default: 'printify, print-on-demand, custom products, merchandise'
+      default: 'cuzcuz, print-on-demand, custom products, merchandise'
     },
     ogImage: {
       type: String,
@@ -36,8 +36,8 @@
   
   // 使用Nuxt的useSeoMeta和useServerSeoMeta来设置SEO元数据
   useSeoMeta({
-    title: props.title || 'Printify Clone',
-    ogTitle: props.title || 'Printify Clone',
+    title: props.title || 'cuzcuz',
+    ogTitle: props.title || 'cuzcuz',
     description: props.description,
     ogDescription: props.description,
     ogImage: props.ogImage,
@@ -62,7 +62,7 @@
     return {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
-      name: props.title || 'Printify Clone',
+      name: props.title || 'cuzcuz',
       description: props.description,
       url: `https://your-domain.com${props.canonicalUrl || useRoute().path}`
     }
