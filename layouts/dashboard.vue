@@ -70,14 +70,14 @@
     <!-- Dashboard container -->
     <div class="flex-grow flex relative">
       <!-- Sidebar -->
-      <div class="w-64 flex-shrink-0">
+      <div class="md:w-64 flex-shrink-0">
         <DashboardSidebar
           :is-mobile-open="sidebarOpen"
           @close="sidebarOpen = false"
         >
           <template #logo>
             <div class="flex items-center justify-center p-4 border-b border-gray-200">
-              <img src="/assets/cuzcuz-logo.png" alt="cuzcuz" class="h-16 w-auto" />
+              <img src="/assets/cuzcuz-logo.png" alt="cuzcuz" class="h-16 w-auto block" />
             </div>
           </template>
           <template #toggle-button>
@@ -87,7 +87,7 @@
       </div>
 
       <!-- Main content -->
-      <main class="flex-1 p-4 md:p-6 overflow-auto max-w-[calc(100%-16rem)] pl-64 transition-all duration-300">
+      <main class="flex-1 p-4 overflow-auto transition-all duration-300">
         <NuxtPage keep-alive transition="fade" />
       </main>
     </div>

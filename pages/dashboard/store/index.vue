@@ -1,38 +1,38 @@
 <template>
-    <div class="container mx-auto py-6">
-      <h1 class="text-2xl font-bold mb-6">我的店铺</h1>
+    <div class="w-full px-4 py-4 sm:py-6">
+      <h1 class="text-lg sm:text-xl lg:text-2xl font-bold mb-3 sm:mb-4 lg:mb-6">我的店铺</h1>
       
       <!-- 店铺概览卡片 -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow p-6">
-          <h3 class="text-lg font-semibold mb-2">店铺状态</h3>
-          <p class="text-3xl font-bold text-primary">正常运营</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-8">
+        <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
+          <h3 class="text-sm sm:text-base lg:text-lg font-semibold mb-2">店铺状态</h3>
+          <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-primary">正常运营</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-6">
-          <h3 class="text-lg font-semibold mb-2">今日订单</h3>
-          <p class="text-3xl font-bold text-primary">0</p>
+        <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
+          <h3 class="text-sm sm:text-base lg:text-lg font-semibold mb-2">今日订单</h3>
+          <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-primary">0</p>
         </div>
-        <div class="bg-white rounded-lg shadow p-6">
-          <h3 class="text-lg font-semibold mb-2">店铺评分</h3>
-          <p class="text-3xl font-bold text-primary">5.0</p>
+        <div class="bg-white rounded-lg shadow p-3 sm:p-4 lg:p-6">
+          <h3 class="text-sm sm:text-base lg:text-lg font-semibold mb-2">店铺评分</h3>
+          <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-primary">5.0</p>
         </div>
       </div>
   
       <!-- 功能模块导航 -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         <NuxtLink
           v-for="module in modules"
           :key="module.path"
           :to="module.path"
-          class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
+          class="bg-white rounded-lg shadow p-4 sm:p-6 hover:shadow-lg transition-shadow"
         >
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold">{{ module.name }}</h3>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div class="flex items-center justify-between mb-3 sm:mb-4">
+            <h3 class="text-base sm:text-lg font-semibold">{{ module.name }}</h3>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
           </div>
-          <p class="text-gray-600">{{ module.description }}</p>
+          <p class="text-sm sm:text-base text-gray-600">{{ module.description }}</p>
         </NuxtLink>
       </div>
     </div>
