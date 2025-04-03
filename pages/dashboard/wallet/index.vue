@@ -92,7 +92,8 @@
   
       <!-- 交易记录列表 -->
       <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
+        <!-- 桌面端表格 -->
+        <table class="min-w-full divide-y divide-gray-200 hidden md:table">
           <thead class="bg-gray-50">
             <tr>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -140,6 +141,29 @@
             </tr>
           </tbody>
         </table>
+
+        <!-- 移动端卡片列表 -->
+        <div class="md:hidden">
+          <div v-for="i in 5" :key="i" class="p-4 border-b border-gray-200">
+            <div class="flex justify-between items-start mb-2">
+              <div class="text-sm text-gray-900 font-medium">{{ ['订单收入', '提现', '退款'][i % 3] }}</div>
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                已完成
+              </span>
+            </div>
+            <div class="text-sm text-gray-500 mb-2">交易流水号：TR2024{{ i }}</div>
+            <div class="text-sm text-gray-500 mb-2">订单号：ORD2024{{ i }}</div>
+            <div class="flex justify-between items-center">
+              <div class="text-sm text-gray-500">2024-01-{{ i.toString().padStart(2, '0') }} 12:00:00</div>
+              <span :class="{
+                'text-green-600': i % 3 === 0,
+                'text-red-600': i % 3 !== 0
+              }" class="text-sm font-medium">
+                {{ i % 3 === 0 ? '+' : '-' }}¥{{ (299 * (i + 1)).toFixed(2) }}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
   
       <!-- 分页 -->

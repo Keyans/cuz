@@ -99,7 +99,8 @@
   
       <!-- 售后列表 -->
       <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
+        <!-- 桌面端表格 -->
+        <table class="min-w-full divide-y divide-gray-200 hidden md:table">
           <thead class="bg-gray-50">
             <tr>
               <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -157,6 +158,45 @@
             </tr>
           </tbody>
         </table>
+
+        <!-- 移动端卡片列表 -->
+        <div class="md:hidden space-y-4">
+          <div v-for="i in 5" :key="i" class="bg-white rounded-lg shadow p-4">
+            <div class="flex items-center mb-4">
+              <div class="flex-shrink-0 h-16 w-16">
+                <img class="h-16 w-16 rounded-md" src="https://via.placeholder.com/100" alt="" />
+              </div>
+              <div class="ml-4 flex-1">
+                <div class="text-sm font-medium text-gray-900">售后编号：AS2024{{ i }}</div>
+                <div class="text-sm text-gray-500">申请时间：2024-01-01 12:00:00</div>
+              </div>
+              <span class="px-2 py-1 text-xs font-semibold rounded-full" :class="{
+                'bg-yellow-100 text-yellow-800': i % 3 === 0,
+                'bg-green-100 text-green-800': i % 3 === 1,
+                'bg-red-100 text-red-800': i % 3 === 2
+              }">
+                {{ ['处理中', '已完成', '已拒绝'][i % 3] }}
+              </span>
+            </div>
+            <div class="border-t border-gray-200 pt-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <div class="text-xs text-gray-500">订单信息</div>
+                  <div class="text-sm text-gray-900 mt-1">订单号：ORD2024{{ i }}</div>
+                  <div class="text-sm text-gray-500">买家：buyer@example.com</div>
+                </div>
+                <div>
+                  <div class="text-xs text-gray-500">退款金额</div>
+                  <div class="text-sm text-gray-900 mt-1">¥299.00</div>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-end space-x-3 mt-4 pt-4 border-t border-gray-200">
+              <button class="text-primary hover:text-primary-dark text-sm">详情</button>
+              <button class="text-gray-600 hover:text-gray-900 text-sm">处理</button>
+            </div>
+          </div>
+        </div>
       </div>
   
       <!-- 分页 -->

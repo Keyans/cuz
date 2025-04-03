@@ -70,10 +70,10 @@
 
     <!-- 筛选器 -->
     <div class="bg-white rounded-lg shadow p-4 mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="space-y-4 md:space-y-0 md:grid md:grid-cols-4 md:gap-4">
         <div class="flex flex-col">
           <label class="text-sm text-gray-600 mb-1">订单状态</label>
-          <select class="form-select">
+          <select class="form-select w-full">
             <option value="">全部状态</option>
             <option value="pending">待付款</option>
             <option value="paid">待发货</option>
@@ -84,14 +84,14 @@
         </div>
         <div class="flex flex-col">
           <label class="text-sm text-gray-600 mb-1">下单时间</label>
-          <input type="date" class="form-input" />
+          <input type="date" class="form-input w-full" />
         </div>
         <div class="flex flex-col">
           <label class="text-sm text-gray-600 mb-1">订单号/买家</label>
-          <input type="text" class="form-input" placeholder="输入订单号或买家信息" />
+          <input type="text" class="form-input w-full" placeholder="输入订单号或买家信息" />
         </div>
         <div class="flex flex-col justify-end">
-          <button class="btn-secondary w-full">
+          <button class="btn-secondary w-full flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -102,7 +102,8 @@
     </div>
 
     <!-- 订单列表 -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
+    <!-- 桌面端表格视图 -->
+    <div class="hidden md:block bg-white rounded-lg shadow overflow-hidden">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
@@ -160,17 +161,53 @@
       </table>
     </div>
 
+    <!-- 移动端卡片视图 -->
+    <div class="md:hidden space-y-4">
+      <div v-for="i in 5" :key="i" class="bg-white rounded-lg shadow p-4">
+        <div class="flex items-center mb-4">
+          <div class="flex-shrink-0 h-16 w-16">
+            <img class="h-16 w-16 rounded-md" src="https://via.placeholder.com/100" alt="" />
+          </div>
+          <div class="ml-4 flex-1">
+            <div class="text-sm font-medium text-gray-900">订单号：ORD2024{{ i }}</div>
+            <div class="text-sm text-gray-500">下单时间：2024-01-01 12:00:00</div>
+          </div>
+          <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+            已付款
+          </span>
+        </div>
+        <div class="border-t border-gray-200 pt-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <div class="text-xs text-gray-500">买家信息</div>
+              <div class="text-sm text-gray-900 mt-1">买家名称</div>
+              <div class="text-sm text-gray-500">buyer@example.com</div>
+            </div>
+            <div>
+              <div class="text-xs text-gray-500">订单金额</div>
+              <div class="text-sm text-gray-900 mt-1">¥299.00</div>
+              <div class="text-xs text-gray-500">含运费：¥10.00</div>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-end space-x-3 mt-4 pt-4 border-t border-gray-200">
+          <button class="text-primary hover:text-primary-dark text-sm">详情</button>
+          <button class="text-gray-600 hover:text-gray-900 text-sm">发货</button>
+        </div>
+      </div>
+    </div>
+
     <!-- 分页 -->
-    <div class="flex justify-between items-center mt-6">
-      <div class="text-sm text-gray-700">
+    <div class="flex flex-col md:flex-row justify-between items-center mt-6 space-y-4 md:space-y-0">
+      <div class="text-sm text-gray-700 text-center md:text-left">
         显示 1 到 10 条，共 50 条
       </div>
-      <nav class="flex space-x-2">
-        <button class="px-3 py-1 rounded border hover:bg-gray-100">&lt;</button>
-        <button class="px-3 py-1 rounded border bg-primary text-white">1</button>
-        <button class="px-3 py-1 rounded border hover:bg-gray-100">2</button>
-        <button class="px-3 py-1 rounded border hover:bg-gray-100">3</button>
-        <button class="px-3 py-1 rounded border hover:bg-gray-100">&gt;</button>
+      <nav class="flex space-x-2 w-full md:w-auto justify-center">
+        <button class="px-3 py-1 rounded border hover:bg-gray-100 min-w-[40px]">&lt;</button>
+        <button class="px-3 py-1 rounded border bg-primary text-white min-w-[40px]">1</button>
+        <button class="px-3 py-1 rounded border hover:bg-gray-100 min-w-[40px]">2</button>
+        <button class="px-3 py-1 rounded border hover:bg-gray-100 min-w-[40px]">3</button>
+        <button class="px-3 py-1 rounded border hover:bg-gray-100 min-w-[40px]">&gt;</button>
       </nav>
     </div>
   </div>
