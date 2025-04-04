@@ -12,14 +12,23 @@ interface PhoneCredentials {
   phone: string;
   invitationCode: string;
   captcha: string;
+  type: "sms";
 }
 
 interface EmailCredentials {
   email: string;
   password: string;
+  type: "email";
+}
+interface RefreshTokenCredentials {
+  refreshToken: string;
+  type: "refreshToken";
 }
 
-type LoginCredentials = PhoneCredentials | EmailCredentials;
+type LoginCredentials =
+  | PhoneCredentials
+  | EmailCredentials
+  | RefreshTokenCredentials;
 
 interface RegisterCredentials {
   name: string;
@@ -31,7 +40,7 @@ export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null as User | null,
     token: null as string | null,
-    refreshToken: null,
+    refreshToken: null as string | null,
     loading: false,
     error: null as string | null,
   }),
