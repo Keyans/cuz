@@ -98,7 +98,55 @@
       </div>
     </div>
 
-    <Search></Search>
+    <!-- 交易记录筛选 -->
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-600 mb-1">交易编号</label>
+          <input type="text" class="form-input" placeholder="请输入" />
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-600 mb-1">交易类型</label>
+          <select class="form-select">
+            <option value="">全部类型</option>
+            <option value="income">收入</option>
+            <option value="withdraw">提现</option>
+            <option value="refund">退款</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-600 mb-1">时间范围</label>
+          <select class="form-select">
+            <option value="7">最近7天</option>
+            <option value="30">最近30天</option>
+            <option value="90">最近90天</option>
+            <option value="custom">自定义</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col justify-end">
+          <button class="btn-secondary w-full" @click="search">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            搜索
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- 交易记录列表 -->
     <div class="bg-white rounded-lg shadow w-full overflow-x-auto">
@@ -128,32 +176,32 @@
           </tr>
         </tbody>
       </table>
+
+      <div v-if="!data?.length" class="h-[200px] relative flex items-center">
+        <div v-if="!data?.length" class="w-full text-center absolute left-0">
+          暂无交易记录
+        </div>
+      </div>
     </div>
 
     <!-- 分页 -->
-    <div class="flex justify-between items-center mt-6">
-      <div class="text-sm text-gray-700">显示 1 到 10 条，共 50 条</div>
-      <nav class="flex space-x-2">
-        <button class="px-3 py-1 rounded border hover:bg-gray-100">&lt;</button>
-        <button class="px-3 py-1 rounded border bg-primary text-white">
-          1
-        </button>
-        <button class="px-3 py-1 rounded border hover:bg-gray-100">2</button>
-        <button class="px-3 py-1 rounded border hover:bg-gray-100">3</button>
-        <button class="px-3 py-1 rounded border hover:bg-gray-100">&gt;</button>
-      </nav>
-    </div>
+    <Pagination v-model="pageConfig"></Pagination>
   </div>
 </template>
 
 <script setup lang="ts">
-import Search from "./components/search.vue";
-
+import Pagination from "~/components/ui/pagination/Pagination.vue";
 definePageMeta({
   layout: "dashboard",
   middleware: ["auth"],
 });
 // 组件逻辑
+
+const pageConfig = ref({
+  size: 10,
+  current: 1,
+  total: 0,
+});
 
 const columns = [
   {
@@ -223,23 +271,31 @@ const columns = [
   },
 ];
 
-const data = ref([
-  {
-    id: "1",
-    transactionAmount: "123",
-    availableBalance: "123",
-    frozenAmount: "123",
-    transactionCurrency: "123",
-    transactionId: "123",
-    relatedOrder: "123",
-    businessType: "123",
-    paymentType: "123",
-    paymentMethod: "123",
-    paymentStatus: "123",
-    thirdPartySerial: "123",
-    date: "123",
-  },
-]);
+const data = ref<any[]>();
+
+const search = () => {
+  data.value = Array.from({ length: 10 }, (_, index) => ({
+    id: index,
+    transactionAmount: "￥100.00",
+    availableBalance: "￥123.22",
+    frozenAmount: "￥100.00",
+    transactionCurrency: "人名币",
+    transactionId: "23787193892389183912831038",
+    relatedOrder: "23787193892389183912831038",
+    businessType: "订单支付",
+    paymentType: "账户余额",
+    paymentMethod: "账户余额",
+    paymentStatus: "付款成功",
+    thirdPartySerial: "7889898008",
+    date: "2016-09-21  08:50:08",
+  }));
+
+  pageConfig.value.total = 30;
+};
+
+onMounted(() => {
+  search();
+});
 </script>
 
 <style scoped>
