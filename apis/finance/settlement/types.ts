@@ -1,0 +1,20 @@
+export interface ListSettlementParams {
+    size: number // 每页显示条数，默认10
+    current: number // 当前页
+    settlementNo?: string // 结算单号
+    reconciliationNo?: string // 对账单号
+    paymentNo?: string // 付款单号
+    businessType?: string // 业务类型
+    businessId?: number // 业务ID（商家ID或供应商ID）
+    businessName?: string // 业务名称
+    settlementTypes?: string // 结算类型
+    periodTypes?: string // 结算周期类型
+    minTotalAmount?: number // 最小结算金额
+    maxTotalAmount?: number // 最大结算金额
+    paymentMethods?: string // 付款方式
+    statusList?: string[] // 状态列表
+    createTimeStart?: string // 创建开始时间
+    createTimeEnd?: string // 创建结束时间
+    settleTimeStart?: string // 结算开始时间
+    settleTimeEnd?: string // 结算结束时间
+}
