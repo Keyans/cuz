@@ -115,13 +115,6 @@
                 </button>
               </Motion>
             </div>
-            <SliderCaptcha
-              v-model="captchaConfig.showSliderCaptcha"
-              :do-submit="doPostSmsCode"
-              :get-form="() => phone"
-              :scale="1"
-              @success="slideCaptchaSuccess"
-            ></SliderCaptcha>
           </div>
 
           <!-- <div class="flex items-center justify-between">
@@ -239,6 +232,18 @@
         </div> -->
       </div>
     </div>
+
+    <Dialog v-model="captchaConfig.showSliderCaptcha">
+      <template #header></template>
+      <SliderCaptcha
+        v-model="captchaConfig.showSliderCaptcha"
+        :do-submit="doPostSmsCode"
+        :get-form="() => phone"
+        :scale="1"
+        @success="slideCaptchaSuccess"
+      ></SliderCaptcha>
+      <template #footer></template>
+    </Dialog>
   </div>
 </template>
 
@@ -248,6 +253,7 @@ import { useAuthStore } from "~/stores/auth";
 import { Motion } from "motion-v";
 import { doPostSmsCode } from "~/apis/sign";
 import SliderCaptcha from "~/components/ui/slide-captcha/SliderCaptcha.vue";
+import { Dialog } from "~/components/ui/dialog";
 
 definePageMeta({
   layout: "default",
