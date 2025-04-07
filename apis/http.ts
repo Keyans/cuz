@@ -1,14 +1,11 @@
-/**
- * api请求接口封装
- */
 import {
-  HttpGet,
-  HttpPost,
-  HttpPut,
   HttpDelete,
+  HttpGet,
   HttpHead,
   HttpOptions,
   HttpPatch,
+  HttpPost,
+  HttpPut,
 } from "./http-handle";
 import type { RequestData } from "./http.type";
 

@@ -1,15 +1,13 @@
-import request from "./axiosConfig";
-import type { RequestData, R } from "./http.type";
-import type { AxiosRequestConfig, AxiosResponse } from "axios";
-import { TOKEN_OVERDUE } from "./http.type";
+import type { AxiosRequestConfig } from "axios";
 import { debounce } from "lodash";
+import { TOKEN_OVERDUE, type R, type RequestData } from "~/apis/http.type";
 
 abstract class AbstractHttp {
   protected abstract doRequest(
     url: string,
     config: AxiosRequestConfig,
     data?: any
-  ): Promise<AxiosResponse<R>>;
+  ): Promise<R>;
 
   /**
    * @param url 请求url
@@ -21,7 +19,6 @@ abstract class AbstractHttp {
     url,
     params = {},
     data = {},
-    showLoading = true,
   }: RequestData): Promise<R> {
     // FullScreenLoadingHelper.openLoading(showLoading)
     return new Promise<R>((resolve, reject) => {
@@ -34,15 +31,13 @@ abstract class AbstractHttp {
         data
       )
         .then((res) => {
-          // FullScreenLoadingHelper.closeLoading(showLoading)
-          if (res?.data) {
-            resolve(res.data);
+          if (res) {
+            resolve(res);
           } else {
             reject(res);
           }
         })
         .catch((err) => {
-          // FullScreenLoadingHelper.closeLoading(showLoading)
           this.errHandler(err);
           reject(err);
         });
@@ -51,10 +46,11 @@ abstract class AbstractHttp {
 
   private static notify(msg: string): void {
     // @ts-ignore
-    ElNotification.error({
-      title: "错误",
-      message: msg,
-    });
+    // ElNotification.error({
+    //   title: "错误",
+    //   message: msg,
+    // });
+    console.error(msg);
   }
   // @ts-ignore
   private static debounceNotify = debounce(AbstractHttp.notify, 500);
@@ -86,71 +82,64 @@ abstract class AbstractHttp {
 }
 
 export class HttpGet extends AbstractHttp {
-  doRequest(
-    url: string,
-    config: AxiosRequestConfig,
-    data?: any
-  ): Promise<AxiosResponse<R>> {
-    return request.get<R>(url, config);
+  doRequest(url: string, config: AxiosRequestConfig, data?: any): Promise<R> {
+    return useNuxtApp().$apiFetch(url, {
+      method: "GET",
+      params: data || config, // params 是用于 GET 请求的查询参数
+    });
   }
 }
 
 export class HttpPost extends AbstractHttp {
-  doRequest(
-    url: string,
-    config: AxiosRequestConfig,
-    data?: any
-  ): Promise<AxiosResponse<R>> {
-    return request.post<R>(url, data, config);
+  doRequest(url: string, config: AxiosRequestConfig, data?: any): Promise<R> {
+    return useNuxtApp().$apiFetch(url, {
+      method: "POST",
+      body: data || config, // body 是 POST 请求的请求体数据
+    });
   }
 }
 
 export class HttpPut extends AbstractHttp {
-  doRequest(
-    url: string,
-    config: AxiosRequestConfig,
-    data?: any
-  ): Promise<AxiosResponse<R>> {
-    return request.put<R>(url, data, config);
+  doRequest(url: string, config: AxiosRequestConfig, data?: any): Promise<R> {
+    return useNuxtApp().$apiFetch(url, {
+      method: "PUT",
+      body: data || config, // body 是 PUT 请求的请求体数据
+    });
   }
 }
 
 export class HttpDelete extends AbstractHttp {
-  doRequest(
-    url: string,
-    config: AxiosRequestConfig,
-    data?: any
-  ): Promise<AxiosResponse<R>> {
-    return request.delete<R>(url, { ...config, data: data });
+  doRequest(url: string, config: AxiosRequestConfig, data?: any): Promise<R> {
+    return useNuxtApp().$apiFetch(url, {
+      method: "DELETE",
+      body: data || config, // body 是 DELETE 请求的请求体数据
+    });
   }
 }
 
 export class HttpPatch extends AbstractHttp {
-  doRequest(
-    url: string,
-    config: AxiosRequestConfig,
-    data?: any
-  ): Promise<AxiosResponse<R>> {
-    return request.patch<R>(url, data, config);
+  doRequest(url: string, config: AxiosRequestConfig, data?: any): Promise<R> {
+    return useNuxtApp().$apiFetch(url, {
+      method: "PATCH",
+      body: data || config, // body 是 PATCH 请求的请求体数据
+    });
   }
 }
 
 export class HttpHead extends AbstractHttp {
-  doRequest(
-    url: string,
-    config: AxiosRequestConfig,
-    data?: any
-  ): Promise<AxiosResponse<R>> {
-    return request.head<R>(url, config);
+  doRequest(url: string, config: AxiosRequestConfig, data?: any): Promise<R> {
+    return useNuxtApp().$apiFetch(url, {
+      method: "HEAD",
+      body: data || config, // HEAD 请求没有请求体，但我们仍然支持传递参数
+    });
   }
 }
 
 export class HttpOptions extends AbstractHttp {
-  doRequest(
-    url: string,
-    config: AxiosRequestConfig,
-    data?: any
-  ): Promise<AxiosResponse<R>> {
-    return request.options<R>(url, config);
+  doRequest(url: string, config: AxiosRequestConfig, data?: any): Promise<R> {
+    return useNuxtApp().$apiFetch(url, {
+      method: "OPTIONS",
+      body: data || config, // OPTIONS 请求没有请求体，但我们仍然支持传递参数
+    });
   }
 }
