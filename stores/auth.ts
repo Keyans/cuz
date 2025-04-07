@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import type { R } from "~/apis/http.type";
 import { signByUser } from "~/apis/sign";
 
 interface User {
@@ -45,7 +44,6 @@ interface RegisterCredentials {
   email: string;
   password: string;
 }
-
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null as User | null,
@@ -103,14 +101,20 @@ export const useAuthStore = defineStore("auth", {
           );
           this.user = response.user;
           this.token = response.token;
-
-          // Store in localStorage
-          localStorage.setItem("token", response.token);
-          localStorage.setItem("user", JSON.stringify(response.user));
         } else {
           const { data } = await signByUser(credentials);
           console.log(data);
+          this.user = {
+            id: data.additionalInformation?.userId,
+            email: "",
+            name: "",
+          };
+          this.token = data.value;
+          this.refreshToken = data.refreshToken.value;
         }
+        localStorage.setItem("token", this.token);
+        localStorage.setItem("user", JSON.stringify(this.user));
+        navigateTo("/dashboard");
       } catch (err: any) {
         this.error = err.message || "Failed to login";
         throw err;

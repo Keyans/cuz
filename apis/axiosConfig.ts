@@ -5,7 +5,7 @@ import { CRUD_ERROR_CODE, type R } from "./http.type";
 import { useAuthStore } from "~/stores/auth";
 
 const axiosCancel = new AxiosCanceler();
-let isCance = true;
+let isCancel = true;
 // const LastModified = ref('')
 // const $useLastModified = useLastModified()
 const TOKEN_TYPE = "Bearer ";
@@ -14,13 +14,12 @@ axios.defaults.headers.put["Content-Type"] = "application/json";
 
 const platformId = getPlatformIdFromUrl();
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
-  timeout: Number(import.meta.env.VITE_REQUEST_TIME_OUT),
+  baseURL: import.meta.dev ? "/dev" : "/",
+  timeout: 10000,
   withCredentials: false,
   headers: {
     "Client-Hardware-Id": 1,
-    // 'Client-Type': 'PLATFORM_CONSOLE',
-    "Client-Type": import.meta.env.VITE_CLIENT_TYPE,
+    "Client-Type": "SHOP_CONSOLE",
     "Platform-Ids": platformId ? platformId : 0,
     // 'Shop-Ids': '0',
     Timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -29,9 +28,7 @@ const instance = axios.create({
 });
 
 //是否是单体应用
-const isAone =
-  import.meta.env.VITE_IS_AONE &&
-  import.meta.env.VITE_IS_AONE.toLowerCase() === "true";
+const isAone = false;
 //单体应用矫正正则
 const aoneUrlCorrectRegex = /\/?.*?\//;
 //url矫正函数
@@ -70,7 +67,7 @@ instance.interceptors.request.use(
     }
     config.url = urlCorrect(config.url);
     axiosCancel.addPending(config);
-    isCance = true;
+    isCancel = true;
     return config;
   },
   (error) => {
@@ -124,8 +121,8 @@ instance.interceptors.response.use(
   (error) => {
     if (error.response) {
       return Promise.reject(error);
-    } else if (error.response === undefined && isCance) {
-      isCance = false;
+    } else if (error.response === undefined && isCancel) {
+      isCancel = false;
       return Promise.reject(error);
     }
   }
@@ -150,7 +147,7 @@ const refreshingFn = async () => {
     isRefreshing = true;
     await useAuthStore().login({
       refreshToken,
-      type: "refreshToken",
+      grant_type: "refreshToken",
     });
     requests.forEach((cd: (t: string) => any) => cd(useAuthStore().token!));
     requests = [];
@@ -167,6 +164,7 @@ export function getPlatformIdFromUrl() {
   //定义platformId变量，并设置默认值为0
   let platformId = "0";
 
+  if (!import.meta.client) return;
   //1.优先取值【地址路径法(不会被刷掉)：只在平台端使用，其他端废弃，因为改动影响太多】其中，用户请求的URL格式如下：http://www.aixcc.com:8078/platform/1788139342520967168/generalSet，正则表达式会匹配到 1788139342520967168 并将其作为 platformId
   const url = window.location.href;
   const matches = url.match(/\/platform\/(\d+)\//);
