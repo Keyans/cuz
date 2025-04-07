@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import type { R } from "~/apis/http.type";
+import { signByUser } from "~/apis/sign";
 
 interface User {
   id: string;
@@ -7,28 +9,36 @@ interface User {
   role?: string;
   avatar?: string;
 }
-
+// 验证码+邀请码
 interface PhoneCredentials {
-  phone: string;
-  invitationCode: string;
-  captcha: string;
-  type: "sms";
+  mobile: string;
+  code: string;
+  invitationCode?: string;
+  grant_type: "sms_code";
 }
-
+// 邮件（暂无）
 interface EmailCredentials {
   email: string;
   password: string;
-  type: "email";
+  grant_type: "email";
 }
+// 账号密码;
+interface UsernameCredentials {
+  username: string;
+  password: string;
+  grant_type: "password";
+}
+// 刷新
 interface RefreshTokenCredentials {
   refreshToken: string;
-  type: "refreshToken";
+  grant_type: "refreshToken";
 }
 
 type LoginCredentials =
   | PhoneCredentials
   | EmailCredentials
-  | RefreshTokenCredentials;
+  | RefreshTokenCredentials
+  | UsernameCredentials;
 
 interface RegisterCredentials {
   name: string;
@@ -74,50 +84,33 @@ export const useAuthStore = defineStore("auth", {
           credentials.email === "demo@example.com" &&
           credentials.password === "password123";
 
-        // In a real app, this would be an API call
-        // For demo purposes, we'll simulate a successful login
-        const response = await new Promise<{ user: User; token: string }>(
-          (resolve) => {
-            setTimeout(() => {
-              if (isDemoAccount) {
-                // Demo user with specific role
-                resolve({
-                  user: {
-                    id: "demo-user",
-                    email: credentials.email,
-                    name: "体验账号用户",
-                    role: "demo",
-                    avatar: "/assets/demo-avatar.png",
-                  },
-                  token: "demo-jwt-token",
-                });
-              } else {
-                // Regular user
-                resolve({
-                  user: {
-                    id: "1",
-                    email:
-                      "email" in credentials
-                        ? credentials.email
-                        : credentials.phone,
-                    name: "Regular User",
-                    role: "user",
-                  },
-                  token: "fake-jwt-token",
-                });
-              }
-            }, 1000);
-          }
-        );
+        let response: { user: User; token: string };
 
-        this.user = response.user;
-        this.token = response.token;
+        if (isDemoAccount) {
+          response = await new Promise<{ user: User; token: string }>(
+            (resolve) => {
+              resolve({
+                user: {
+                  id: "demo-user",
+                  email: credentials.email,
+                  name: "体验账号用户",
+                  role: "demo",
+                  avatar: "/assets/demo-avatar.png",
+                },
+                token: "demo-jwt-token",
+              });
+            }
+          );
+          this.user = response.user;
+          this.token = response.token;
 
-        // Store in localStorage
-        localStorage.setItem("token", response.token);
-        localStorage.setItem("user", JSON.stringify(response.user));
-
-        return response;
+          // Store in localStorage
+          localStorage.setItem("token", response.token);
+          localStorage.setItem("user", JSON.stringify(response.user));
+        } else {
+          const { data } = await signByUser(credentials);
+          console.log(data);
+        }
       } catch (err: any) {
         this.error = err.message || "Failed to login";
         throw err;

@@ -206,7 +206,7 @@ const pageConfig = ref({
 const columns = [
   {
     prop: "index",
-    width: 200,
+    width: 80,
     label: "序号",
   },
   {

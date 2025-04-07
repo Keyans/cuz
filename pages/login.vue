@@ -107,6 +107,7 @@
               />
               <Motion :while-hover="{ opacity: 0.6 }">
                 <button
+                  type="button"
                   class="bg-[#ecf5ff] px-4 rounded-sm text-[#4a90e2] border-[#a1c8f0] border h-full shadow-sm"
                   @click="getCaptcha"
                 >
@@ -114,6 +115,13 @@
                 </button>
               </Motion>
             </div>
+            <SliderCaptcha
+              v-model="captchaConfig.showSliderCaptcha"
+              :do-submit="doPostSmsCode"
+              :get-form="() => phone"
+              :scale="1"
+              @success="slideCaptchaSuccess"
+            ></SliderCaptcha>
           </div>
 
           <!-- <div class="flex items-center justify-between">
@@ -238,6 +246,8 @@
 import { ref } from "vue";
 import { useAuthStore } from "~/stores/auth";
 import { Motion } from "motion-v";
+import { doPostSmsCode } from "~/apis/sign";
+import SliderCaptcha from "~/components/ui/slide-captcha/SliderCaptcha.vue";
 
 definePageMeta({
   layout: "default",
@@ -247,18 +257,51 @@ const leftImg = `https://seo-panel.printify.com/uploads/25_14_Embroidery_Log_in_
 // Form state
 const phone = ref("");
 const invitation = ref("");
+
 const captcha = ref("");
+
+const intervalTime = 120;
+const captchaConfig = reactive({
+  showSliderCaptcha: false,
+  shop: null,
+  visible: false,
+  shops: [],
+  account: null,
+  password: null as null | string,
+  disabled: false,
+  time: intervalTime,
+  interval: null as any,
+});
 
 const rememberMe = ref(false);
 const showPassword = ref(false);
 const loading = ref(false);
 const error = ref<string | null>(null);
 
+const slideCaptchaSuccess = (response: { code: number; data: string }) => {
+  captcha.value = response.data;
+
+  captchaConfig.time -= 1;
+  captchaConfig.showSliderCaptcha = false;
+  captchaConfig.interval = setInterval(() => {
+    captchaConfig.time -= 1;
+    if (captchaConfig.time <= 0) {
+      captchaConfig.time = intervalTime;
+      if (captchaConfig.interval) {
+        clearInterval(captchaConfig.interval);
+        captchaConfig.interval = null;
+      }
+      return;
+    }
+  }, 999);
+};
+
 const getCaptcha = () => {
   if (!phone.value) {
     return;
   }
-  captcha.value = "captcha";
+
+  captchaConfig.showSliderCaptcha = true;
 };
 
 // Toggle password visibility
@@ -279,6 +322,7 @@ const loginWithDemoAccount = async () => {
     await authStore.login({
       email: "demo@example.com",
       password: "password123",
+      grant_type: "email",
     });
 
     // Redirect to dashboard
@@ -298,9 +342,10 @@ const login = async () => {
 
   try {
     await authStore.login({
-      phone: phone.value,
-      invitationCode: invitation.value,
-      captcha: captcha.value,
+      mobile: phone.value,
+      // invitationCode: invitation.value,
+      code: captcha.value,
+      grant_type: "sms_code",
     });
 
     // Redirect to dashboard on successful login
