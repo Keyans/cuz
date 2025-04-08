@@ -10,7 +10,7 @@
         "axios": "^1.8.4",
         "dayjs": "^1.11.13",
         "dotted-map": "^2.2.3",
-        "lodash-es": "^4.17.21",
+        "lodash": "^4.17.21",
         "motion-v": "0.12.0",
         "pinia": "^2.1.7",
         "swiper": "^11.2.6",
@@ -943,8 +943,6 @@
     "local-pkg": ["local-pkg@1.1.1", "https://registry.npmmirror.com/local-pkg/-/local-pkg-1.1.1.tgz", { "dependencies": { "mlly": "^1.7.4", "pkg-types": "^2.0.1", "quansync": "^0.2.8" } }, "sha512-WunYko2W1NcdfAFpuLUoucsgULmgDBRkdxHxWQ7mK0cQqwPiy8E1enjuRBrhLtZkB5iScJ1XIPdhVEFK8aOLSg=="],
 
     "lodash": ["lodash@4.17.21", "https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz", {}, "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="],
-
-    "lodash-es": ["lodash-es@4.17.21", "https://registry.npmmirror.com/lodash-es/-/lodash-es-4.17.21.tgz", {}, "sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw=="],
 
     "lodash.defaults": ["lodash.defaults@4.2.0", "https://registry.npmmirror.com/lodash.defaults/-/lodash.defaults-4.2.0.tgz", {}, "sha512-qjxPLHd3r5DnsdGacqOMU6pb/avJzdh9tFX2ymgoZE27BmjXrNy/y4LoaiTeAb+O3gL8AfpJGtqfX/ae2leYYQ=="],
 
