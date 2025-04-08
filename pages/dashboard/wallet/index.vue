@@ -105,16 +105,23 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="flex flex-col">
           <label class="text-sm text-gray-600 mb-1">交易编号</label>
-          <input type="text" class="form-input" placeholder="请输入" />
+          <input
+            v-model="searchParams.tradeNo"
+            type="text"
+            class="form-input"
+            placeholder="请输入"
+          />
         </div>
 
         <div class="flex flex-col">
           <label class="text-sm text-gray-600 mb-1">交易类型</label>
-          <select class="form-select">
+          <select class="form-select" v-model="searchParams.bizTypes">
             <option value="">全部类型</option>
-            <option value="income">收入</option>
-            <option value="withdraw">提现</option>
-            <option value="refund">退款</option>
+            <option value="RECHARGE">预付</option>
+            <option value="ORDER_PAY">订单支付</option>
+            <option value="REFUND">退款</option>
+            <option value="COMPENSATION">赔付</option>
+            <option value="WITHDRAW">提现</option>
           </select>
         </div>
 
@@ -167,20 +174,30 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="(item, index) in data" :key="item.id">
+          <tr v-for="(item, index) in tableData" :key="item.id">
             <td
               v-for="iitem in columns"
               class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
             >
               <span v-if="iitem.prop === 'index'">{{ +index + 1 }}</span>
-              {{ item[iitem.prop] }}
+              {{
+                iitem.formatter
+                  ? iitem.formatter({ row: item, cell: item[iitem.prop] })
+                  : item[iitem.prop]
+              }}
             </td>
           </tr>
         </tbody>
       </table>
 
-      <div v-if="!data?.length" class="h-[200px] relative flex items-center">
-        <div v-if="!data?.length" class="w-full text-center absolute left-0">
+      <div
+        v-if="!tableData?.length"
+        class="h-[200px] relative flex items-center"
+      >
+        <div
+          v-if="!tableData?.length"
+          class="w-full text-center absolute left-0"
+        >
           暂无交易记录
         </div>
       </div>
@@ -193,7 +210,14 @@
 
 <script setup lang="ts">
 import { doGetShopBalance } from "~/apis/finance/overview";
+import { doListShopTransaction } from "~/apis/finance/transaction";
 import Pagination from "~/components/ui/pagination/Pagination.vue";
+interface TableColumn {
+  prop: string;
+  width: number;
+  label: string;
+  formatter?: ({ row, cell }: { row: any; cell: string }) => string;
+}
 definePageMeta({
   layout: "dashboard",
   middleware: ["auth"],
@@ -206,6 +230,7 @@ const amountInfo = ref({
 });
 
 onMounted(async () => {
+  
   try {
     const { data } = await doGetShopBalance();
     if (data) {
@@ -224,94 +249,157 @@ const pageConfig = ref({
   total: 0,
 });
 
-const columns = [
+const columns: TableColumn[] = [
   {
     prop: "index",
     width: 80,
     label: "序号",
   },
   {
-    prop: "transactionAmount",
+    prop: "transAmount",
     width: 200,
     label: "交易金额",
+    formatter: ({ row, cell }) => "￥" + cell,
   },
   {
-    prop: "availableBalance",
+    prop: "currentBalance",
     width: 200,
     label: "可用余额",
+    formatter: ({ row, cell }) => (row.payType === "BALANCE" ? cell : ""),
   },
   {
-    prop: "frozenAmount",
+    prop: "currentFreeze",
     width: 200,
     label: "冻结金额",
+    formatter: ({ row, cell }) => (row.payType === "BALANCE" ? cell : ""),
   },
   {
-    prop: "transactionCurrency",
+    prop: "currency",
     width: 200,
     label: "交易币种",
   },
   {
-    prop: "transactionId",
+    prop: "tradeNo",
     width: 200,
     label: "交易编号",
   },
   {
-    prop: "relatedOrder",
+    prop: "bizNo",
     width: 200,
     label: "关联订单",
   },
   {
-    prop: "businessType",
+    prop: "payBizType",
     width: 200,
     label: "业务类型",
+    formatter: ({ row, cell }) =>
+      ({
+        RECHARGE: "预付",
+        ORDER_PAY: "订单支付",
+        REFUND: "平台退款",
+        COMPENSATION: "平台罚款",
+        WITHDRAW: "提现",
+      }[cell] ?? "未知类型"),
   },
   {
-    prop: "paymentType",
+    prop: "payType",
     width: 200,
     label: "支付类型",
+    formatter: ({ row, cell }) => {
+      if (row.payBizType === "REFUND") return "";
+      return cell
+        ? { BALANCE: "余额支付", CMBPAY: "聚合支付" }[cell] ?? "未知类型"
+        : "";
+    },
   },
   {
-    prop: "paymentMethod",
+    prop: "payDetailType",
     width: 200,
     label: "支付方式",
+    formatter: ({ row, cell }) => {
+      if (row.payBizType === "REFUND") return "";
+      return cell
+        ? {
+            ALIPAY: "支付宝",
+            WECHAT: "微信支付",
+            UNIONPAY: "银联",
+            DCEP: "数字人民币",
+            BALANCE: "余额",
+          }[cell] ?? "未知方式"
+        : "";
+    },
   },
   {
-    prop: "paymentStatus",
+    prop: "tradeStatus",
     width: 200,
-    label: "付款状态",
+    label: "交易状态",
+    formatter: ({ row, cell }) => {
+      if (row.payBizType === "REFUND") return "";
+      return cell
+        ? {
+            PENDING_TRADE: "待支付",
+            OVERTIME_CLOSE: "交易关闭",
+            SUCCESS_APPLY_TRADE: "交易中",
+            FAIL_APPLY_TRADE: "交易失败",
+            SUCCESS_TRADE: "交易成功",
+            FAIL_TRADE: "交易失败",
+          }[cell] ?? "未知状态"
+        : "";
+    },
   },
   {
-    prop: "thirdPartySerial",
+    prop: "payChannelNo",
     width: 200,
     label: "第三方支付流水号",
+    formatter: ({ row, cell }) => {
+      if (row.payBizType === "REFUND") return "";
+      return cell;
+    },
   },
   {
-    prop: "date",
+    prop: "tradeTime",
     width: 200,
     label: "日期",
   },
 ];
 
-const data = ref<any[]>();
+const tableData = ref<any[]>();
 
-const search = () => {
-  data.value = Array.from({ length: 10 }, (_, index) => ({
-    id: index,
-    transactionAmount: "￥100.00",
-    availableBalance: "￥123.22",
-    frozenAmount: "￥100.00",
-    transactionCurrency: "人民币",
-    transactionId: "23787193892389183912831038",
-    relatedOrder: "23787193892389183912831038",
-    businessType: "订单支付",
-    paymentType: "账户余额",
-    paymentMethod: "账户余额",
-    paymentStatus: "付款成功",
-    thirdPartySerial: "7889898008",
-    date: "2016-09-21  08:50:08",
-  }));
+const searchParams = reactive({
+  tradeNo: "",
+  bizTypes: "",
+  time: "",
+});
 
-  pageConfig.value.total = 30;
+const search = async () => {
+  console.log(searchParams.tradeNo, searchParams.bizTypes);
+
+  const { data } = await doListShopTransaction({
+    size: pageConfig.value.size,
+    current: pageConfig.value.current,
+    tradeNo: searchParams.tradeNo,
+    bizTypes: searchParams.bizTypes,
+  });
+  console.log(data);
+  tableData.value = data.records;
+  pageConfig.value.total = data.total;
+
+  // tableData.value = Array.from({ length: 10 }, (_, index) => ({
+  //   transAmount: "￥100.00",
+  //   currentBalance: "￥123.22",
+  //   currentFreeze: "￥100.00",
+  //   currency: "人民币",
+  //   tradeNo: "23787193892389183912831038",
+  //   bizNo: "23787193892389183912831038",
+  //   payBizType: "订单支付",
+  //   payType: "账户余额",
+  //   payDetailType: "账户余额",
+  //   tradeStatus: "付款成功",
+  //   payChannelNo: "7889898008",
+  //   tradeTime: "2016-09-21  08:50:08",
+  // }));
+
+  // pageConfig.value.total = 30;
 };
 
 onMounted(() => {
