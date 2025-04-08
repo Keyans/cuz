@@ -3,6 +3,7 @@ import { signByUser } from "~/apis/sign";
 
 interface User {
   id: string;
+  shopId: string;
   email: string;
   name: string;
   role?: string;
@@ -90,6 +91,7 @@ export const useAuthStore = defineStore("auth", {
               resolve({
                 user: {
                   id: "demo-user",
+                  shopId: "demo-shop",
                   email: credentials.email,
                   name: "体验账号用户",
                   role: "demo",
@@ -106,13 +108,15 @@ export const useAuthStore = defineStore("auth", {
           console.log(data);
           this.user = {
             id: data.additionalInformation?.userId,
+            shopId: data.additionalInformation?.shopId?.[0],
             email: "",
             name: "",
           };
           this.token = data.value;
           this.refreshToken = data.refreshToken.value;
         }
-        localStorage.setItem("token", this.token);
+        localStorage.setItem("token", this.token!);
+        localStorage.setItem("refreshToken", this.refreshToken!);
         localStorage.setItem("user", JSON.stringify(this.user));
         navigateTo("/dashboard");
       } catch (err: any) {
@@ -131,26 +135,31 @@ export const useAuthStore = defineStore("auth", {
       try {
         // In a real app, this would be an API call
         // For demo purposes, we'll simulate a successful registration
-        const response = await new Promise<{ user: User; token: string }>(
-          (resolve) => {
-            setTimeout(() => {
-              resolve({
-                user: {
-                  id: "1",
-                  email: credentials.email,
-                  name: credentials.name,
-                  role: "user",
-                },
-                token: "fake-jwt-token",
-              });
-            }, 1000);
-          }
-        );
+        const response = await new Promise<{
+          user: User;
+          token: string;
+          refreshToken: string;
+        }>((resolve) => {
+          setTimeout(() => {
+            resolve({
+              user: {
+                id: "1",
+                shopId: "demo",
+                email: credentials.email,
+                name: credentials.name,
+                role: "user",
+              },
+              token: "fake-jwt-token",
+              refreshToken: "fake-jwt-token",
+            });
+          }, 1000);
+        });
 
         this.user = response.user;
         this.token = response.token;
 
         // Store in localStorage
+        localStorage.setItem("refreshToken", response.refreshToken);
         localStorage.setItem("token", response.token);
         localStorage.setItem("user", JSON.stringify(response.user));
 
@@ -170,6 +179,7 @@ export const useAuthStore = defineStore("auth", {
 
       // Remove from localStorage
       localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
     },
   },

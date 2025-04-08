@@ -62,8 +62,8 @@ instance.interceptors.request.use(
     if (platformId) {
       config.headers["Platform-Ids"] = platformId;
     }
-    if (user?.id) {
-      config.headers["Shop-Ids"] = user.id;
+    if (user?.shopId) {
+      config.headers["Shop-Ids"] = user.shopId;
     }
     config.url = urlCorrect(config.url);
     axiosCancel.addPending(config);

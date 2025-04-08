@@ -45,7 +45,7 @@
             </svg>
           </div>
         </div>
-        <p class="text-3xl font-bold text-primary">¥10,000.00</p>
+        <p class="text-3xl font-bold text-primary">¥{{ amountInfo.undrawn }}</p>
         <p class="text-sm text-gray-500 mt-2">可提现金额</p>
       </div>
 
@@ -69,7 +69,9 @@
             </svg>
           </div>
         </div>
-        <p class="text-3xl font-bold text-yellow-600">¥5,000.00</p>
+        <p class="text-3xl font-bold text-yellow-600">
+          ¥{{ amountInfo.uncompleted }}
+        </p>
         <p class="text-sm text-gray-500 mt-2">预计7天后可提现</p>
       </div>
 
@@ -93,7 +95,7 @@
             </svg>
           </div>
         </div>
-        <p class="text-3xl font-bold text-green-600">¥50,000.00</p>
+        <p class="text-3xl font-bold text-green-600">¥{{ amountInfo.total }}</p>
         <p class="text-sm text-gray-500 mt-2">近30天收入</p>
       </div>
     </div>
@@ -190,12 +192,31 @@
 </template>
 
 <script setup lang="ts">
+import { doGetShopBalance } from "~/apis/finance/overview";
 import Pagination from "~/components/ui/pagination/Pagination.vue";
 definePageMeta({
   layout: "dashboard",
   middleware: ["auth"],
 });
-// 组件逻辑
+
+const amountInfo = ref({
+  undrawn: "0",
+  total: "0",
+  uncompleted: "0",
+});
+
+onMounted(async () => {
+  try {
+    const { data } = await doGetShopBalance();
+    if (data) {
+      amountInfo.value.total = data.total;
+      amountInfo.value.uncompleted = data.uncompleted;
+      amountInfo.value.undrawn = data.undrawn;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 const pageConfig = ref({
   size: 10,
@@ -279,7 +300,7 @@ const search = () => {
     transactionAmount: "￥100.00",
     availableBalance: "￥123.22",
     frozenAmount: "￥100.00",
-    transactionCurrency: "人名币",
+    transactionCurrency: "人民币",
     transactionId: "23787193892389183912831038",
     relatedOrder: "23787193892389183912831038",
     businessType: "订单支付",

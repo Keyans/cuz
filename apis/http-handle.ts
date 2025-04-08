@@ -23,7 +23,6 @@ abstract class AbstractHttp {
     data = {},
     showLoading = true,
   }: RequestData): Promise<R> {
-    // FullScreenLoadingHelper.openLoading(showLoading)
     return new Promise<R>((resolve, reject) => {
       this.doRequest(
         url,
@@ -34,7 +33,6 @@ abstract class AbstractHttp {
         data
       )
         .then((res) => {
-          // FullScreenLoadingHelper.closeLoading(showLoading)
           if (res?.data) {
             resolve(res.data);
           } else {
@@ -42,7 +40,6 @@ abstract class AbstractHttp {
           }
         })
         .catch((err) => {
-          // FullScreenLoadingHelper.closeLoading(showLoading)
           this.errHandler(err);
           reject(err);
         });
@@ -51,10 +48,11 @@ abstract class AbstractHttp {
 
   private static notify(msg: string): void {
     // @ts-ignore
-    ElNotification.error({
-      title: "错误",
-      message: msg,
-    });
+    // ElNotification.error({
+    //   title: "错误",
+    //   message: msg,
+    // });
+    console.error(msg);
   }
   // @ts-ignore
   private static debounceNotify = debounce(AbstractHttp.notify, 500);
