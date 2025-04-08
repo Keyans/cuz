@@ -2,7 +2,7 @@ import request from "./axiosConfig";
 import type { RequestData, R } from "./http.type";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import { TOKEN_OVERDUE } from "./http.type";
-import { debounce } from "lodash";
+import { debounce } from "lodash-es";
 
 abstract class AbstractHttp {
   protected abstract doRequest(
