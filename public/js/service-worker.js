@@ -13,7 +13,7 @@ const urlsToCache = [
   '/assets/products/bags.png',
   '/assets/products/tshirt-2.png',
   '/assets/products/hoodie-2.png',
-  '/favicon.png',
+  '/assets/favicon.png',
   '/assets/fonts/Ambit-Regular.woff2',
   '/assets/fonts/Ambit-Bold.woff2',
   '/assets/fonts/Roboto-Regular.woff2',
@@ -128,7 +128,7 @@ self.addEventListener('push', (event) => {
   self.registration.showNotification(data.title, {
     body: data.body,
     icon: data.icon || '/assets/logo.svg',
-    badge: data.badge || '/favicon.png',
+    badge: data.badge || '/assets/favicon.png',
     data: data.data || {}
   });
 });
