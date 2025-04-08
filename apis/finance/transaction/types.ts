@@ -6,6 +6,8 @@ export interface ShopTransactionQueryParams {
   current: number; // 当前页
   tradeNo?: string;
   bizTypes?: string;
+  startTime?: string;
+  endTime?: string;
 }
 
 export interface SupplierTransactionQueryParams {

@@ -127,11 +127,12 @@
 
         <div class="flex flex-col">
           <label class="text-sm text-gray-600 mb-1">时间范围</label>
-          <select class="form-select">
+          <select class="form-select" v-model="searchParams.time">
+            <option value="">所有</option>
             <option value="7">最近7天</option>
             <option value="30">最近30天</option>
             <option value="90">最近90天</option>
-            <option value="custom">自定义</option>
+            <!-- <option value="custom">自定义</option> -->
           </select>
         </div>
 
@@ -180,11 +181,32 @@
               class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
             >
               <span v-if="iitem.prop === 'index'">{{ +index + 1 }}</span>
+
               {{
-                iitem.formatter
+                iitem.slot
+                  ? ""
+                  : iitem.formatter
                   ? iitem.formatter({ row: item, cell: item[iitem.prop] })
                   : item[iitem.prop]
               }}
+
+              <!-- 自定义部分 -->
+              <span
+                v-if="iitem.prop === 'transAmount'"
+                :class="[
+                  ['REFUND', 'COMPENSATION'].includes(item.payBizType)
+                    ? 'text-red-300'
+                    : '',
+                ]"
+              >
+                {{
+                  (["REFUND", "COMPENSATION"].includes(item.payBizType)
+                    ? "+"
+                    : "-") +
+                  "￥" +
+                  item[iitem.prop]
+                }}
+              </span>
             </td>
           </tr>
         </tbody>
@@ -209,6 +231,7 @@
 </template>
 
 <script setup lang="ts">
+import dayjs from "dayjs";
 import { doGetShopBalance } from "~/apis/finance/overview";
 import { doListShopTransaction } from "~/apis/finance/transaction";
 import Pagination from "~/components/ui/pagination/Pagination.vue";
@@ -216,7 +239,8 @@ interface TableColumn {
   prop: string;
   width: number;
   label: string;
-  formatter?: ({ row, cell }: { row: any; cell: string }) => string;
+  slot?: boolean;
+  formatter?: ({ row, cell }: { row: any; cell: string }) => string | any;
 }
 definePageMeta({
   layout: "dashboard",
@@ -230,7 +254,6 @@ const amountInfo = ref({
 });
 
 onMounted(async () => {
-  
   try {
     const { data } = await doGetShopBalance();
     if (data) {
@@ -259,7 +282,7 @@ const columns: TableColumn[] = [
     prop: "transAmount",
     width: 200,
     label: "交易金额",
-    formatter: ({ row, cell }) => "￥" + cell,
+    slot: true,
   },
   {
     prop: "currentBalance",
@@ -297,7 +320,7 @@ const columns: TableColumn[] = [
         RECHARGE: "预付",
         ORDER_PAY: "订单支付",
         REFUND: "平台退款",
-        COMPENSATION: "平台罚款",
+        COMPENSATION: "平台赔付",
         WITHDRAW: "提现",
       }[cell] ?? "未知类型"),
   },
@@ -306,7 +329,6 @@ const columns: TableColumn[] = [
     width: 200,
     label: "支付类型",
     formatter: ({ row, cell }) => {
-      if (row.payBizType === "REFUND") return "";
       return cell
         ? { BALANCE: "余额支付", CMBPAY: "聚合支付" }[cell] ?? "未知类型"
         : "";
@@ -317,7 +339,6 @@ const columns: TableColumn[] = [
     width: 200,
     label: "支付方式",
     formatter: ({ row, cell }) => {
-      if (row.payBizType === "REFUND") return "";
       return cell
         ? {
             ALIPAY: "支付宝",
@@ -334,7 +355,6 @@ const columns: TableColumn[] = [
     width: 200,
     label: "交易状态",
     formatter: ({ row, cell }) => {
-      if (row.payBizType === "REFUND") return "";
       return cell
         ? {
             PENDING_TRADE: "待支付",
@@ -352,7 +372,8 @@ const columns: TableColumn[] = [
     width: 200,
     label: "第三方支付流水号",
     formatter: ({ row, cell }) => {
-      if (row.payBizType === "REFUND") return "";
+      if (row.payBizType === "REFUND" || row.payBizType === "COMPENSATION")
+        return "";
       return cell;
     },
   },
@@ -372,34 +393,26 @@ const searchParams = reactive({
 });
 
 const search = async () => {
-  console.log(searchParams.tradeNo, searchParams.bizTypes);
+  let timeRange;
+  if (searchParams.time) {
+    timeRange = [
+      dayjs()
+        .add(-1 * +searchParams.time, "day")
+        .format("YYYY-MM-DD 00:00:00"),
+      dayjs().format("YYYY-MM-DD 23:59:59"),
+    ];
+  }
 
   const { data } = await doListShopTransaction({
     size: pageConfig.value.size,
     current: pageConfig.value.current,
     tradeNo: searchParams.tradeNo,
     bizTypes: searchParams.bizTypes,
+    startTime: timeRange?.[0],
+    endTime: timeRange?.[1],
   });
-  console.log(data);
   tableData.value = data.records;
   pageConfig.value.total = data.total;
-
-  // tableData.value = Array.from({ length: 10 }, (_, index) => ({
-  //   transAmount: "￥100.00",
-  //   currentBalance: "￥123.22",
-  //   currentFreeze: "￥100.00",
-  //   currency: "人民币",
-  //   tradeNo: "23787193892389183912831038",
-  //   bizNo: "23787193892389183912831038",
-  //   payBizType: "订单支付",
-  //   payType: "账户余额",
-  //   payDetailType: "账户余额",
-  //   tradeStatus: "付款成功",
-  //   payChannelNo: "7889898008",
-  //   tradeTime: "2016-09-21  08:50:08",
-  // }));
-
-  // pageConfig.value.total = 30;
 };
 
 onMounted(() => {
