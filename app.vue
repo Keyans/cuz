@@ -11,7 +11,7 @@
 // Main app setup
 // 添加SEO优化相关信息
 useHead({
-  titleTemplate: '%s - cuzcuz',
+  titleTemplate: '%s cuzcuz',
   meta: [
     { name: 'description', content: 'Create and sell custom products with print-on-demand' },
     { name: 'keywords', content: 'cuzcuz, print-on-demand, custom products, t-shirts, hoodies, mugs' }

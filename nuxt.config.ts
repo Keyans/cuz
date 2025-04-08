@@ -79,7 +79,7 @@ export default defineNuxtConfig({
         },
       ],
       link: [
-        { rel: "icon", type: "image/png", href: "/favicon.png" },
+        { rel: "icon", type: "image/png", href: "/assets/favicon.png" },
         { rel: "dns-prefetch", href: "//fonts.googleapis.com" },
         {
           rel: "preconnect",

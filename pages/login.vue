@@ -1,5 +1,25 @@
 <template>
-  <div class="min-h-screen bg-background flex w-full justify-center">
+  <div class="min-h-screen bg-background flex w-full justify-center relative">
+    <!-- Close button -->
+    <button
+      @click="$router.back()"
+      class="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6 text-gray-600"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
     <!-- <div class="sm:mx-auto sm:w-full sm:max-w-md">
       <NuxtLink to="/" class="flex justify-center">
         <img src="/assets/logo.svg" alt="cuzcuz" class="h-12">
@@ -15,11 +35,17 @@
       </p>
     </div> -->
     <div
-      class="flex-grow-0 flex-shrink-0 basis-[41%] bg-cover hidden lg:block"
+      class="flex-grow-0 flex-shrink-0 basis-[41%] bg-cover hidden lg:block relative"
       :style="{ backgroundImage: `url(${leftImg})` }"
-    ></div>
+    >
+    </div>
 
-    <div class="self-center -mt-[10%] sm:mx-auto sm:w-full sm:max-w-md">
+    <div class="self-center -mt-[10%] sm:mx-auto sm:w-full sm:max-w-md relative">
+      <div class="flex flex-col items-center mb-8">
+        <img src="/assets/cuzcuz-logo.png" alt="cuzcuz" class="h-full w-auto" />
+        <h2 class="text-xl font-medium text-gray-700 mt-2">全球POD柔性定制供应链平台</h2>
+      </div>
+
       <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
         <!-- Demo account login button -->
         <div class="mb-6">
@@ -174,7 +200,7 @@
                     ></path>
                   </svg>
                 </span>
-                Sign in
+                登 录 / 注 册
               </button>
             </Motion>
           </div>
@@ -256,9 +282,9 @@ import SliderCaptcha from "~/components/ui/slide-captcha/SliderCaptcha.vue";
 import { Dialog } from "~/components/ui/dialog";
 
 definePageMeta({
-  layout: "default",
+  layout: "auth",
 });
-const leftImg = `https://seo-panel.printify.com/uploads/25_14_Embroidery_Log_in_Banner_38a5df0a19.png`;
+const leftImg = `/assets/login_bg.png`;
 
 // Form state
 const phone = ref("");

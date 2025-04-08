@@ -20,7 +20,7 @@ if [ ! -f dist/index.html ]; then
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>cuzcuz</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
   </head>
   <body>
     <div id="app"></div>
