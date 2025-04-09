@@ -24,13 +24,14 @@
     "vue-composable": "^1.0.0-beta.25"
   },
   "devDependencies": {
-    "@types/node": "^22.14.0",
+    "@element-plus/nuxt": "^1.1.1",
     "@inspira-ui/plugins": "^0.0.1",
     "@nuxt/image": "^1.10.0",
     "@nuxtjs/robots": "^5.2.8",
     "@nuxtjs/sitemap": "^7.2.9",
     "@nuxtjs/tailwindcss": "^6.11.0",
     "@types/lodash": "^4.17.16",
+    "@types/node": "^22.14.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv-cli": "^8.0.0",

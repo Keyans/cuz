@@ -158,72 +158,130 @@
       </div>
     </div>
 
-    <!-- 交易记录列表 -->
-    <div class="bg-white rounded-lg shadow w-full overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th
-              scope="col"
-              class="wallet-table"
-              v-for="(item, index) in columns"
-              :key="index"
-              :style="{ minWidth: item.width + 'px' }"
-            >
-              {{ item.label }}
-            </th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="(item, index) in tableData" :key="item.id">
-            <td
-              v-for="iitem in columns"
-              class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-            >
-              <span v-if="iitem.prop === 'index'">{{ +index + 1 }}</span>
-
-              {{
-                iitem.slot
-                  ? ""
-                  : iitem.formatter
-                  ? iitem.formatter({ row: item, cell: item[iitem.prop] })
-                  : item[iitem.prop]
-              }}
-
-              <!-- 自定义部分 -->
-              <span
-                v-if="iitem.prop === 'transAmount'"
-                :class="[
-                  ['REFUND', 'COMPENSATION'].includes(item.payBizType)
-                    ? 'text-red-300'
-                    : '',
-                ]"
-              >
-                {{
-                  (["REFUND", "COMPENSATION"].includes(item.payBizType)
-                    ? "+"
-                    : "-") +
-                  "￥" +
-                  item[iitem.prop]
-                }}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div
-        v-if="!tableData?.length"
-        class="h-[200px] relative flex items-center"
-      >
-        <div
-          v-if="!tableData?.length"
-          class="w-full text-center absolute left-0"
-        >
-          暂无交易记录
-        </div>
-      </div>
-    </div>
+    <el-table
+      row-key="id"
+      :data="tableData"
+      style="width: 100%"
+      class="shadow rounded-lg"
+      empty-text="暂无交易记录"
+    >
+      <el-table-column type="index" width="50" label="序号" fixed />
+      <el-table-column width="200" prop="transAmount" label="交易金额">
+        <template #default="props">
+          <span
+            :class="
+              ['REFUND', 'COMPENSATION'].includes(props.row.payBizType)
+                ? 'text-red-300'
+                : ''
+            "
+          >
+            {{
+              (["REFUND", "COMPENSATION"].includes(props.row.payBizType)
+                ? "+"
+                : "-") +
+              "￥" +
+              props.row.transAmount
+            }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        width="200"
+        prop="currentBalance"
+        label="可用余额"
+        :formatter="
+          (row, _column, cell) => (row.payType === 'BALANCE' ? cell : '')
+        "
+      />
+      <el-table-column
+        width="200"
+        prop="currentFreeze"
+        label="冻结金额"
+        :formatter="
+          (row, _column, cell) => (row.payType === 'BALANCE' ? cell : '')
+        "
+      />
+      <el-table-column width="200" prop="currency" label="交易币种" />
+      <el-table-column width="200" prop="tradeNo" label="交易编号" />
+      <el-table-column width="200" prop="bizNo" label="关联订单" />
+      <el-table-column
+        width="200"
+        prop="payBizType"
+        label="业务类型"
+        :formatter="
+          (row, _column, cell) =>
+            (({
+              RECHARGE: '预付',
+              ORDER_PAY: '订单支付',
+              REFUND: '平台退款',
+              COMPENSATION: '平台赔付',
+              WITHDRAW: '提现',
+            } as Record<string,string>)[cell] ?? '未知类型')
+        "
+      />
+      <el-table-column
+        width="200"
+        prop="payType"
+        label="支付类型"
+        :formatter="
+          (row, _column, cell) =>
+            cell
+              ? ({ BALANCE: '余额支付', CMBPAY: '聚合支付' } as Record<string,string>)[cell] ?? '未知类型'
+              : ''
+        "
+      />
+      <el-table-column
+        width="200"
+        prop="payDetailType"
+        label="支付方式"
+        :formatter="
+          (row, _column, cell) =>
+            cell
+              ? ({
+                  ALIPAY: '支付宝',
+                  WECHAT: '微信支付',
+                  UNIONPAY: '银联',
+                  DCEP: '数字人民币',
+                  BALANCE: '余额',
+              } as Record<string,string>)[cell] ?? '未知方式'
+              : ''
+        "
+      />
+      <el-table-column
+        width="200"
+        prop="tradeStatus"
+        label="交易状态"
+        :formatter="
+          (row, _column, cell) =>
+            cell
+              ? ({
+                  PENDING_TRADE: '待支付',
+                  OVERTIME_CLOSE: '交易关闭',
+                  SUCCESS_APPLY_TRADE: '交易中',
+                  FAIL_APPLY_TRADE: '交易失败',
+                  SUCCESS_TRADE: '交易成功',
+                  FAIL_TRADE: '交易失败',
+                }as Record<string,string>)[cell] ?? '未知状态'
+              : ''
+        "
+      />
+      <el-table-column
+        width="200"
+        prop="payChannelNo"
+        label="第三方支付流水号"
+        :formatter="
+          (row, _column, cell) => {
+            if (
+              row.payBizType === 'REFUND' ||
+              row.payBizType === 'COMPENSATION'
+            )
+              return '';
+            return cell;
+          }
+        "
+      />
+      <el-table-column width="200" prop="tradeTime" label="日期" />
+    </el-table>
 
     <!-- 分页 -->
     <Pagination v-model="pageConfig"></Pagination>
@@ -235,12 +293,20 @@ import dayjs from "dayjs";
 import { doGetShopBalance } from "~/apis/finance/overview";
 import { doListShopTransaction } from "~/apis/finance/transaction";
 import Pagination from "~/components/ui/pagination/Pagination.vue";
-interface TableColumn {
-  prop: string;
-  width: number;
-  label: string;
-  slot?: boolean;
-  formatter?: ({ row, cell }: { row: any; cell: string }) => string | any;
+
+interface TableDataProp {
+  transAmount: string;
+  currentBalance: string;
+  currentFreeze: string;
+  currency: string;
+  tradeNo: string;
+  bizNo: string;
+  payBizType: string;
+  payType: string;
+  payDetailType: string;
+  tradeStatus: string;
+  payChannelNo: string;
+  tradeTime: string;
 }
 definePageMeta({
   layout: "dashboard",
@@ -272,119 +338,7 @@ const pageConfig = ref({
   total: 0,
 });
 
-const columns: TableColumn[] = [
-  {
-    prop: "index",
-    width: 80,
-    label: "序号",
-  },
-  {
-    prop: "transAmount",
-    width: 200,
-    label: "交易金额",
-    slot: true,
-  },
-  {
-    prop: "currentBalance",
-    width: 200,
-    label: "可用余额",
-    formatter: ({ row, cell }) => (row.payType === "BALANCE" ? cell : ""),
-  },
-  {
-    prop: "currentFreeze",
-    width: 200,
-    label: "冻结金额",
-    formatter: ({ row, cell }) => (row.payType === "BALANCE" ? cell : ""),
-  },
-  {
-    prop: "currency",
-    width: 200,
-    label: "交易币种",
-  },
-  {
-    prop: "tradeNo",
-    width: 200,
-    label: "交易编号",
-  },
-  {
-    prop: "bizNo",
-    width: 200,
-    label: "关联订单",
-  },
-  {
-    prop: "payBizType",
-    width: 200,
-    label: "业务类型",
-    formatter: ({ row, cell }) =>
-      ({
-        RECHARGE: "预付",
-        ORDER_PAY: "订单支付",
-        REFUND: "平台退款",
-        COMPENSATION: "平台赔付",
-        WITHDRAW: "提现",
-      }[cell] ?? "未知类型"),
-  },
-  {
-    prop: "payType",
-    width: 200,
-    label: "支付类型",
-    formatter: ({ row, cell }) => {
-      return cell
-        ? { BALANCE: "余额支付", CMBPAY: "聚合支付" }[cell] ?? "未知类型"
-        : "";
-    },
-  },
-  {
-    prop: "payDetailType",
-    width: 200,
-    label: "支付方式",
-    formatter: ({ row, cell }) => {
-      return cell
-        ? {
-            ALIPAY: "支付宝",
-            WECHAT: "微信支付",
-            UNIONPAY: "银联",
-            DCEP: "数字人民币",
-            BALANCE: "余额",
-          }[cell] ?? "未知方式"
-        : "";
-    },
-  },
-  {
-    prop: "tradeStatus",
-    width: 200,
-    label: "交易状态",
-    formatter: ({ row, cell }) => {
-      return cell
-        ? {
-            PENDING_TRADE: "待支付",
-            OVERTIME_CLOSE: "交易关闭",
-            SUCCESS_APPLY_TRADE: "交易中",
-            FAIL_APPLY_TRADE: "交易失败",
-            SUCCESS_TRADE: "交易成功",
-            FAIL_TRADE: "交易失败",
-          }[cell] ?? "未知状态"
-        : "";
-    },
-  },
-  {
-    prop: "payChannelNo",
-    width: 200,
-    label: "第三方支付流水号",
-    formatter: ({ row, cell }) => {
-      if (row.payBizType === "REFUND" || row.payBizType === "COMPENSATION")
-        return "";
-      return cell;
-    },
-  },
-  {
-    prop: "tradeTime",
-    width: 200,
-    label: "日期",
-  },
-];
-
-const tableData = ref<any[]>();
+const tableData = ref<TableDataProp[]>();
 
 const searchParams = reactive({
   tradeNo: "",
@@ -424,8 +378,5 @@ onMounted(() => {
 th {
   white-space: nowrap;
   min-width: 200px;
-}
-.wallet-table {
-  @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
 }
 </style>
