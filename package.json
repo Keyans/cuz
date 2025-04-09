@@ -37,6 +37,7 @@
     "dotenv-cli": "^8.0.0",
     "nuxt": "^3.16.1",
     "tailwind-merge": "^3.0.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "vue-tsc": "^2.2.8"
   }
 }
