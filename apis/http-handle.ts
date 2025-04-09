@@ -2,6 +2,7 @@ import request from "./axiosConfig";
 import type { RequestData, R } from "./http.type";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import { TOKEN_OVERDUE } from "./http.type";
+import debounce from "lodash/debounce";
 
 abstract class AbstractHttp {
   protected abstract doRequest(
@@ -54,7 +55,7 @@ abstract class AbstractHttp {
     console.error(msg);
   }
   // @ts-ignore
-  private static debounceNotify = AbstractHttp.notify
+  private static debounceNotify = debounce(AbstractHttp.notify, 500);
   //错误处理
   private errHandler(error: any): void {
     if (TOKEN_OVERDUE.includes(error.code)) return;
