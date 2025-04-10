@@ -226,7 +226,7 @@
       ],
     },
     {
-      name: '我的钱包',
+      name: '费用中心',
       href: '/dashboard/wallet',
       icon: 'IconSettings',
       isOpen: false

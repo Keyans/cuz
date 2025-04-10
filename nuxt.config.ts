@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   typescript: {
     strict: false,
     typeCheck: false,
-    shim: false
+    shim: false,
   },
 
   // 开发工具
@@ -263,11 +263,11 @@ export default defineNuxtConfig({
 
 function proxy() {
   let targetTest = "https://seller.riin.com";
-  let targetTest2 = "http://aimall-test-seller.riin.com"
-  
+  let devTarget = "http://192.168.1.151:30984"; //dev 环境
+
   let uaaTargetLocal = "http://10.233.90.164:9999";
   let targetLocal = "http://10.120.22.174:9999"; //hzh本地
-  let targetLocal2 = "http://10.120.22.255:9210"; //lxl本地
+  let targetLocal2 = "http://10.120.23.102:9210"; //lxl本地
 
   return {
     "/dev/saas-aimall-finance": {
@@ -293,7 +293,7 @@ function proxy() {
     //   rewrite: (path: string) => path.replace(/^\/dev/, ""),
     // },
     "/dev": {
-      target: targetTest,
+      target: devTarget,
       ws: false,
       changeOrigin: true,
       secure: false, //证书免校验

@@ -1,12 +1,9 @@
 <template>
-  <div class="px-4 py-4 sm:py-6 flex flex-col h-full absolute">
+  <div class="px-4 py-4 sm:py-6 flex flex-col h-full absolute left-0 right-0">
     <div class="flex justify-between items-center mb-3 sm:mb-4 lg:mb-6">
       <h1 class="text-lg sm:text-xl lg:text-2xl font-bold">我的店铺</h1>
 
-      <button
-        class="btn-primary w-fit flex items-center"
-        @click="showDialog = true"
-      >
+      <button class="btn-primary w-fit flex items-center" @click="showAddShop">
         新增店铺
       </button>
     </div>
@@ -39,60 +36,169 @@
     </div>
 
     <!-- 筛选器 -->
-    <div
-      class="bg-white/85 rounded-lg shadow p-4 mb-6 sticky top-0 z-30 backdrop-blur-lg"
-    >
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-white rounded-lg shadow p-4 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
         <div class="flex flex-col">
-          <label class="text-sm text-gray-600 mb-1">商品分类</label>
-          <select class="form-select">
-            <option value="">全部分类</option>
-            <option value="clothing">服装</option>
-            <option value="accessories">配饰</option>
-            <option value="home">家居</option>
-          </select>
-        </div>
-        <div class="flex flex-col">
-          <label class="text-sm text-gray-600 mb-1">价格区间</label>
-          <div class="flex space-x-2">
-            <input
-              type="number"
-              class="form-input w-1/2"
-              placeholder="最低价"
-            />
-            <input
-              type="number"
-              class="form-input w-1/2"
-              placeholder="最高价"
-            />
+          <label class="text-sm text-gray-600 mb-1">电商平台：</label>
+          <div class="relative">
+            <select
+              v-model="searchParams.platform"
+              class="form-select w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
+            >
+              <option value="">请选择</option>
+              <option
+                v-for="platform in selections.platforms"
+                :key="platform.id"
+                :value="platform.id"
+              >
+                {{ platform.name }}
+              </option>
+            </select>
+            <div
+              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+            >
+              <svg
+                class="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                />
+              </svg>
+            </div>
           </div>
         </div>
+
         <div class="flex flex-col">
-          <label class="text-sm text-gray-600 mb-1">排序方式</label>
-          <select class="form-select">
-            <option value="popular">综合排序</option>
-            <option value="newest">最新上架</option>
-            <option value="price-asc">价格从低到高</option>
-            <option value="price-desc">价格从高到低</option>
-          </select>
+          <label class="text-sm text-gray-600 mb-1">店铺名称：</label>
+          <input
+            v-model="searchParams.name"
+            type="text"
+            placeholder="请输入店铺名称"
+            class="form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
         </div>
-        <div class="flex flex-col justify-end">
-          <button class="btn-secondary w-full">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 mr-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-600 mb-1">店铺账号：</label>
+          <input
+            v-model="searchParams.name"
+            type="text"
+            placeholder="请输入店铺名称"
+            class="form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-600 mb-1">接口类型：</label>
+          <div class="relative">
+            <select
+              v-model="searchParams.type"
+              class="form-select w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+              <option value="">请选择</option>
+              <option
+                v-for="type in selections.types"
+                :key="type.id"
+                :value="type.id"
+              >
+                {{ type.name }}
+              </option>
+            </select>
+            <div
+              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+            >
+              <svg
+                class="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-600 mb-1">订购状态：</label>
+          <div class="relative">
+            <select
+              v-model="searchParams.orderStatus"
+              class="form-select w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
+            >
+              <option value="">请选择</option>
+              <option
+                v-for="status in selections.orderStatuses"
+                :key="status.id"
+                :value="status.id"
+              >
+                {{ status.name }}
+              </option>
+            </select>
+            <div
+              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+            >
+              <svg
+                class="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-600 mb-1">授权状态：</label>
+          <div class="relative">
+            <select
+              v-model="searchParams.authStatus"
+              class="form-select w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
+            >
+              <option value="">请选择</option>
+              <option
+                v-for="status in selections.authStatuses"
+                :key="status.id"
+                :value="status.id"
+              >
+                {{ status.name }}
+              </option>
+            </select>
+            <div
+              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+            >
+              <svg
+                class="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div></div>
+        <div class="flex items-end space-x-4">
+          <button
+            @click="searchOrders"
+            class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors flex-1 flex justify-center items-center"
+          >
             搜索
+          </button>
+          <button
+            @click="resetSearch"
+            class="border border-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-50 transition-colors flex-1 flex justify-center items-center"
+          >
+            重置
           </button>
         </div>
       </div>
@@ -101,128 +207,105 @@
     <div class="flex-grow space-y-4">
       <div
         v-for="item in data"
-        :key="item"
+        :key="item.id"
         class="h-[124px] shadow border relative border-[#DCDFE6] rounded-md p-6 flex items-center"
       >
-        <img src="" width="32px" height="32px" class="mr-[7px]" />
+        <img
+          :src="item.icon"
+          width="32px"
+          height="32px"
+          class="mr-5 rounded-lg"
+        />
 
         <div class="flex flex-col space-y-1 mr-[90px]">
-          <div class="font-semibold">壳多多</div>
-          <div class="text-[14px] text-[#909399]">店铺账号：IJFI59194</div>
-        </div>
-
-        <div class="flex flex-col space-y-2 mr-[90px]">
-          <div class="text-[14px]">商品上架</div>
-          <div class="text-[12px] text-[#606266]">
-            订购到期时间 2025-12-12 19:32:23
-            <div class="tag border-green-400 text-green-400">正常</div>
-          </div>
-
-          <div class="text-[12px] text-[#606266]">
-            授权到期时间 2025-12-12 19:32:23
-            <div class="tag border-green-400 text-green-400">正常</div>
+          <div class="font-semibold">{{ item.name }}</div>
+          <div class="text-[14px] text-[#909399]">
+            店铺账号：{{ item.account }}
           </div>
         </div>
-
-        <div class="flex flex-col space-y-2 mr-[90px]">
-          <div class="text-[14px]">订单履约</div>
-          <div class="text-[12px] text-[#606266]">
-            订购到期时间 2025-12-12 19:32:23
-            <div class="tag border-red-400 text-red-400">异常</div>
-          </div>
-
-          <div class="text-[12px] text-[#606266]">
-            授权到期时间 2025-12-12 19:32:23
-            <div class="tag border-red-400 text-red-400">异常</div>
-          </div>
-        </div>
-        <div class="absolute right-6 flex space-x-4">
-          <div>续订</div>
-          <div class="text-red-400">删除</div>
-        </div>
-      </div>
-
-      <div>加载中</div>
-    </div>
-    <!--     <!~~ 功能模块导航 ~~>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-        <NuxtLink
-          v-for="module in modules"
-          :key="module.path"
-          :to="module.path"
-          class="bg-white rounded-lg shadow p-4 sm:p-6 hover:shadow-lg transition-shadow"
-        >
-          <div class="flex items-center justify-between mb-3 sm:mb-4">
-            <h3 class="text-base sm:text-lg font-semibold">{{ module.name }}</h3>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-          <p class="text-sm sm:text-base text-gray-600">{{ module.description }}</p>
-        </NuxtLink>
-      </div>-->
-
-    <Dialog v-model="showDialog" title="新增店铺">
-      <div class="bg-white rounded-lg shadow w-fit overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th
-                scope="col"
-                class="store-table"
-                v-for="(item, index) in columns"
-                :key="index"
-                :style="{ minWidth: item.width + 'px' }"
-              >
-                {{ item.label }}
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr v-for="(item, index) in tableData" :key="item.id">
-              <td
-                v-for="iitem in columns"
-                class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-              >
-                <span v-if="iitem.prop === 'index'">{{ +index + 1 }}</span>
-
-                {{
-                  iitem.slot
-                    ? ""
-                    : iitem.formatter
-                    ? iitem.formatter({ row: item, cell: item[iitem.prop] })
-                    : item[iitem.prop]
-                }}
-
-                <!-- 自定义部分 -->
-                <div v-if="iitem.prop === 'action'" class="space-x-1 flex">
-                  <button class="btn-primary">订购</button>
-                  <button class="btn-primary">授权</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
 
         <div
-          v-if="!tableData?.length"
-          class="h-[200px] relative flex items-center"
+          class="flex flex-col space-y-2 mr-[90px]"
+          v-for="iitem in [
+            {
+              name: '商品上架',
+              orderProp: 'shelveOrder',
+              authProp: 'shelveAuth',
+            },
+            {
+              name: '订单履约',
+              orderProp: 'shelveOrder',
+              authProp: 'shelveAuth',
+            },
+          ]"
         >
+          <div class="text-[14px]">{{ iitem.name }}</div>
           <div
-            v-if="!tableData?.length"
-            class="w-full text-center absolute left-0"
+            class="text-[12px] text-[#606266]"
+            v-for="blockText in ['订购到期时间', '授权到期时间']"
           >
-            暂无可用店铺
+            {{ blockText + " " + (item as any)[iitem.orderProp] }}
+            <div
+              :class="['tag', calExpired((item as any)[iitem.orderProp])?'border-red-400 text-red-400': 'border-green-400 text-green-400']"
+            >
+              {{ calExpired((item as any)[iitem.orderProp]) ? "异常" : "正常" }}
+            </div>
           </div>
         </div>
+
+        <div class="absolute right-6 flex space-x-4">
+          <button class="btn-plain">续订</button>
+          <button class="btn-plain text-red-400" @click="delShop(item.id)">
+            删除
+          </button>
+        </div>
       </div>
-      <template #footer></template>
-    </Dialog>
+
+      <div class="w-full flex justify-center" v-if="!noMore">
+        <Loading class="scale-50" height="50px" width="50px"></Loading>
+      </div>
+    </div>
+
+    <el-dialog v-model="showDialog" title="新增店铺" width="500">
+      <div class="flex flex-col">
+        <el-form>
+          <el-form-item label="电商平台" label-width="80">
+            <el-select v-model="newShop.platform"></el-select>
+          </el-form-item>
+
+          <el-form-item label="接口类型" label-width="80">
+            <el-select v-model="newShop.type"></el-select>
+          </el-form-item>
+
+          <el-form-item label="授权码" v-if="newShop.showCode" label-width="80">
+            <el-input v-model="newShop.code"></el-input>
+          </el-form-item>
+        </el-form>
+
+        <div class="w-full flex justify-end space-x-4">
+          <button class="" @click="showDialog = false">取消</button>
+          <button class="btn-secondary" @click="addShop">确认</button>
+        </div>
+      </div>
+    </el-dialog>
+
+    <el-dialog v-model="showDelShop" title="删除" width="400">
+      <div>
+        删除后无法恢复，请谨慎操作。
+        <div class="w-full flex justify-end space-x-4">
+          <button class="" @click="showDialog = false">取消</button>
+          <button class="btn-secondary bg-red-400" @click="addShop">
+            删除
+          </button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import Dialog from "~/components/ui/dialog/Dialog.vue";
+import dayjs from "dayjs";
+import { Loading } from "~/components/ui/loading";
 import { ScrollCallBackSymbol } from "~/constant";
 
 interface TableColumn {
@@ -234,6 +317,7 @@ interface TableColumn {
 }
 interface StoreData {
   id: string;
+  icon: string;
   name: string;
   account: string;
   shelveOrder: string;
@@ -251,6 +335,26 @@ const registerScrollCallback =
   inject<(id: string, fn: () => void) => void>(ScrollCallBackSymbol);
 
 const showDialog = ref(false);
+const showDelShop = ref(false);
+const calExpired = (date: string) => {
+  if (dayjs(date).isAfter(dayjs())) return false;
+  else return true;
+};
+
+const searchParams = ref({
+  platform: "",
+  name: "",
+  account: "",
+  type: "",
+  orderStatus: "",
+  authStatus: "",
+});
+const selections = ref({
+  platforms: [{ id: "1", name: "淘宝" }],
+  types: [{ id: "1", name: "类型" }],
+  orderStatuses: [{ id: "12", name: "状态" }],
+  authStatuses: [{ id: "12", name: "状态" }],
+});
 
 const data = ref<StoreData[]>([]);
 
@@ -261,6 +365,7 @@ const getData = async () => {
       const newData: StoreData[] = Array.from({ length: 20 }, (_, index) => ({
         id: String(index),
         name: "壳多多",
+        icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpvT3wFzfnw3ZLGM6OFq7IfiK7XZElLdZV8Q&s",
         account: "IJFI59194",
         shelveOrder: "2025-12-12 19:32:23",
         shelveAuth: "2025-12-12 19:32:23",
@@ -274,8 +379,33 @@ const getData = async () => {
   data.value.push(...newData);
 };
 
+const searchOrders = () => {
+  data.value = [];
+  noMore.value = false;
+  getData();
+};
+
 const noMore = ref(false);
 
+const newShop = ref({
+  platform: "",
+  type: "",
+  code: "",
+  showCode: true,
+});
+const showAddShop = () => {
+  newShop.value.platform = "";
+  newShop.value.type = "";
+  newShop.value.code = "";
+  newShop.value.showCode = true;
+  showDialog.value = true;
+};
+const addShop = () => {
+  showDialog.value = false;
+};
+const delShop = (id: string) => {
+  showDelShop.value = true;
+};
 import.meta.client && getData();
 
 onMounted(() => {
@@ -353,7 +483,7 @@ const tableData = ref<any[]>([
 //     description: "处理退换货和客户服务请求",
 //   },
 //   {
-//     name: "我的钱包",
+//     name: "费用中心",
 //     path: "/dashboard/store/wallet",
 //     description: "管理店铺资金和收支明细",
 //   },

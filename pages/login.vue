@@ -267,7 +267,7 @@
       </div>
     </div>
 
-    <Dialog v-model="captchaConfig.showSliderCaptcha">
+    <el-dialog v-model="captchaConfig.showSliderCaptcha" width="fit-content">
       <template #header></template>
       <SliderCaptcha
         v-model="captchaConfig.showSliderCaptcha"
@@ -277,7 +277,7 @@
         @success="slideCaptchaSuccess"
       ></SliderCaptcha>
       <template #footer></template>
-    </Dialog>
+    </el-dialog>
   </div>
 </template>
 
@@ -287,7 +287,6 @@ import { useAuthStore } from "~/stores/auth";
 import { Motion } from "motion-v";
 import { doPostSmsCode } from "~/apis/sign";
 import SliderCaptcha from "~/components/ui/slide-captcha/SliderCaptcha.vue";
-import { Dialog } from "~/components/ui/dialog";
 
 definePageMeta({
   layout: "auth",

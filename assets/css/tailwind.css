@@ -97,6 +97,12 @@
 }
 
 @layer components {
+  .btn-plain {
+    @apply text-blue-600 hover:text-blue-800 text-sm;
+  }
+  .btn-plain-border {
+    @apply border border-blue-500 px-2 py-1 rounded hover:bg-blue-50
+  }
   .btn-primary {
     @apply bg-secondary text-primary font-bold py-2 px-4 rounded;
   }
