@@ -53,4 +53,7 @@ body {
 .nuxt-loading-indicator {
   background-color: var(--color-secondary);
 }
+.el-table th {
+  @apply text-xs font-medium !text-gray-500 !bg-gray-50  uppercase tracking-wider;
+}
 </style>

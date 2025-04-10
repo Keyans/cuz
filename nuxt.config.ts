@@ -125,6 +125,7 @@ export default defineNuxtConfig({
     "motion-v/nuxt",
     "@nuxt/image", // 添加图像处理模块
     "./modules/seo", // 添加自定义SEO模块
+    "@element-plus/nuxt",
   ],
 
   // 路由规则 - 配置哪些页面使用 SSG，哪些使用 SSR
@@ -255,18 +256,20 @@ export default defineNuxtConfig({
 
 function proxy() {
   let targetTest = "https://seller.riin.com";
+  let targetTest2 = "http://aimall-test-seller.riin.com"
+  
   let uaaTargetLocal = "http://10.233.90.164:9999";
   let targetLocal = "http://10.120.22.174:9999"; //hzh本地
   let targetLocal2 = "http://10.120.22.255:9210"; //lxl本地
 
   return {
-    // "/dev/saas-aimall-finance": {
-    //   target: targetLocal,
-    //   ws: false,
-    //   changeOrigin: true,
-    //   secure: false, //证书免校验
-    //   rewrite: (path: string) => path.replace(/^\/dev/, ""),
-    // },
+    "/dev/saas-aimall-finance": {
+      target: targetLocal,
+      ws: false,
+      changeOrigin: true,
+      secure: false, //证书免校验
+      rewrite: (path: string) => path.replace(/^\/dev/, ""),
+    },
     // "/dev/saas-aimall-payment": {
     //   target: targetLocal2,
     //   ws: false,

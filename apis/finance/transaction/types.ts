@@ -1,3 +1,7 @@
+interface PageParam {
+  size: number;
+  current: number;
+}
 /**
  * 查询参数类型
  */
@@ -45,3 +49,13 @@ export const payBizTypeMap = {
   // WITHDRAW: '提现',
   // SAMPLING: '采样',
 };
+
+export interface ReconciliationPageParam extends PageParam {
+  startTime?: string;
+  endTime?: string;
+}
+
+export interface ConfirmReconciliationParam {
+  reconciliationNos: string[];
+  shopId: number;
+}
