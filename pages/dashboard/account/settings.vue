@@ -61,46 +61,70 @@
       <div class="p-4 border-b border-gray-200 flex justify-between items-center">
         <h2 class="text-lg font-semibold">收货地址</h2>
       </div>
+      
+      <!-- 地址列表 -->
       <div class="divide-y divide-gray-200">
-        <div class="p-6 relative">
+        <div v-for="address in addressList" 
+             :key="address.id" 
+             class="p-6 relative hover:bg-gray-50"
+             :class="{ 'opacity-50': isSubmitting }"
+        >
           <div class="flex justify-between">
-            <div>
+            <div class="flex-1">
               <div class="flex items-center mb-2">
-                <span class="font-medium mr-4">张三</span>
-                <span>12345678901</span>
-                <span class="ml-2 px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded">默认</span>
+                <span class="font-medium mr-4">{{ address.name }}</span>
+                <span class="text-gray-600">{{ address.phone }}</span>
+                <span v-if="address.isDefault" 
+                      class="ml-2 px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded"
+                >
+                  默认
+                </span>
               </div>
-              <div class="text-gray-600">广东省 深圳市 宝安区 西乡街道 青青草原</div>
+              <div class="text-gray-600">{{ address.address }}</div>
             </div>
-            <div class="space-x-2">
-              <button class="text-blue-500 hover:text-blue-700">编辑</button>
-              <button class="text-red-500 hover:text-red-700">删除</button>
+            <div class="flex items-center space-x-4 ml-4">
+              <button 
+                v-if="!address.isDefault"
+                @click="setDefaultAddress(address)"
+                class="text-blue-500 hover:text-blue-700 whitespace-nowrap disabled:opacity-50"
+                :disabled="isSubmitting"
+              >
+                设为默认
+              </button>
+              <button 
+                class="text-blue-500 hover:text-blue-700 whitespace-nowrap disabled:opacity-50"
+                :disabled="isSubmitting"
+                @click="openEditAddressDialog(address)"
+              >
+                编辑
+              </button>
+              <button 
+                @click="openDeleteConfirmDialog(address)"
+                class="text-red-500 hover:text-red-700 whitespace-nowrap disabled:opacity-50"
+                :disabled="isSubmitting"
+              >
+                删除
+              </button>
             </div>
           </div>
         </div>
-        <div class="p-6 relative">
-          <div class="flex justify-between">
-            <div>
-              <div class="flex items-center mb-2">
-                <span class="font-medium mr-4">张三</span>
-                <span>12345678901</span>
-              </div>
-              <div class="text-gray-600">广东省 深圳市 宝安区 西乡街道 青青草原</div>
-            </div>
-            <div class="flex items-center space-x-4">
-              <button class="text-blue-500 hover:text-blue-700">设为默认</button>
-              <button class="text-blue-500 hover:text-blue-700">编辑</button>
-              <button class="text-red-500 hover:text-red-700">删除</button>
-            </div>
-          </div>
-        </div>
-        <div class="p-4">
-          <button @click="showAddressDialog = true" class="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 transition-colors flex items-center justify-center">
+
+        <!-- 添加新地址按钮 -->
+        <div v-if="addressList.length < 5" class="p-4">
+          <button 
+            @click="openAddAddressDialog"
+            class="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 transition-colors flex items-center justify-center text-gray-600 hover:text-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            :disabled="isSubmitting"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
             添加新地址
           </button>
+        </div>
+        <!-- 达到上限提示 -->
+        <div v-else class="p-4 text-center text-gray-500 text-sm">
+          最多只能添加5个收货地址
         </div>
       </div>
     </div>
@@ -148,6 +172,7 @@
     <!-- 地址弹窗 -->
     <AddressDialog 
       :show="showAddressDialog" 
+      :editing-address="editingAddress"
       @update:show="showAddressDialog = $event" 
       @save="handleSaveAddress"
     />
@@ -159,16 +184,47 @@
       @update:show="showInvoiceDialog = $event"
       @save="handleSaveInvoice"
     />
+
+    <!-- 删除确认弹窗 -->
+    <DeleteConfirmDialog
+      v-model:show="showDeleteConfirmDialog"
+      @confirm="handleDeleteConfirm"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
+import { useToast } from '../../../composables/useToast'
 import AddressDialog from '../../../components/common/AddressDialog.vue'
 import InvoiceDialog from '../../../components/common/InvoiceDialog.vue'
+import DeleteConfirmDialog from '../../../components/common/DeleteConfirmDialog.vue'
+import { useUserStore } from '@/stores/user'
+
+const toast = useToast()
+const userStore = useUserStore()
+const loading = ref(false)
+
+interface Address {
+  id: number
+  name: string
+  phone: string
+  address: string
+  isDefault: boolean
+}
+
+interface InvoiceInfo {
+  companyName: string
+  taxNumber: string
+  address: string
+  phone: string
+  bankName: string
+  bankAccount: string
+}
 
 // 控制地址弹窗显示
 const showAddressDialog = ref(false)
+const editingAddress = ref<Address | null>(null)
 
 // 控制开票资料弹窗显示
 const showInvoiceDialog = ref(false)
@@ -183,6 +239,78 @@ const userInfo = reactive({
   email: '',
   avatar: 'https://via.placeholder.com/200'
 })
+
+// 初始地址数据
+const initialAddresses = [
+  {
+    id: 1,
+    name: '张三',
+    phone: '13800138000',
+    address: '广东省深圳市南山区科技园南区 1号楼 A座 1001室',
+    isDefault: true
+  },
+  {
+    id: 2,
+    name: '李四',
+    phone: '13900139000',
+    address: '广东省深圳市福田区车公庙 2号街 B栋 2002室',
+    isDefault: false
+  },
+  {
+    id: 3,
+    name: '王五',
+    phone: '13700137000',
+    address: '广东省深圳市宝安区西乡街道 海滨广场 C座 3003室',
+    isDefault: false
+  },
+  {
+    id: 4,
+    name: '赵六',
+    phone: '13600136000',
+    address: '广东省深圳市龙岗区横岗街道 龙园大厦 D座 4004室',
+    isDefault: false
+  },
+  {
+    id: 5,
+    name: '陈七',
+    phone: '13500135000',
+    address: '广东省深圳市罗湖区笋岗街道 城市广场 E座 5005室',
+    isDefault: false
+  }
+]
+
+// 地址列表数据
+const addressList = ref<Address[]>(initialAddresses)
+const isSubmitting = ref(false)
+
+// 从本地存储加载地址列表
+const loadAddressList = () => {
+  try {
+    const savedAddresses = localStorage.getItem('addressList')
+    if (savedAddresses) {
+      addressList.value = JSON.parse(savedAddresses)
+    } else {
+      addressList.value = initialAddresses
+      localStorage.setItem('addressList', JSON.stringify(initialAddresses))
+    }
+  } catch (error) {
+    toast.error('加载地址列表失败')
+  }
+}
+
+// 保存地址列表到本地存储
+const saveAddressList = () => {
+  try {
+    localStorage.setItem('addressList', JSON.stringify(addressList.value))
+  } catch (error) {
+    toast.error('保存地址失败')
+    throw error
+  }
+}
+
+// 控制删除确认弹窗显示
+const showDeleteConfirmDialog = ref(false)
+const addressToDelete = ref<Address | null>(null)
 
 // 开始编辑用户信息
 const startEditUserInfo = () => {
@@ -207,17 +335,117 @@ const invoiceInfo = reactive({
 })
 
 // 处理保存地址
-const handleSaveAddress = (address) => {
-  console.log('保存地址:', address)
-  // 这里可以添加保存地址的逻辑
+const handleSaveAddress = async (address: Address) => {
+  try {
+    if (address.id) {
+      // 更新现有地址
+      // TODO: 替换为实际的 API 调用
+      await fetch(`/api/addresses/${address.id}`, {
+        method: 'PUT',
+        body: JSON.stringify(address)
+      })
+      
+      // 更新列表中的地址
+      addressList.value = addressList.value.map(addr => 
+        addr.id === address.id ? address : addr
+      )
+    } else {
+      // 新增地址
+      // TODO: 替换为实际的 API 调用
+      const response = await fetch('/api/addresses', {
+        method: 'POST',
+        body: JSON.stringify(address)
+      })
+      const newAddress = await response.json()
+      
+      // 添加到地址列表
+      addressList.value.push(newAddress)
+    }
+    
+    showAddressDialog.value = false
+    toast.success(address.id ? '地址更新成功' : '地址添加成功')
+  } catch (error) {
+    console.error('保存地址失败:', error)
+    toast.error('保存地址失败')
+  }
 }
 
 // 处理保存开票资料
-const handleSaveInvoice = (info) => {
+const handleSaveInvoice = (info: InvoiceInfo) => {
   console.log('保存开票资料:', info)
   // 更新开票资料
   Object.assign(invoiceInfo, info)
 }
+
+// 打开删除确认弹窗
+const openDeleteConfirmDialog = (address: Address) => {
+  addressToDelete.value = address
+  showDeleteConfirmDialog.value = true
+}
+
+// 处理地址删除确认
+const handleDeleteConfirm = async () => {
+  if (!addressToDelete.value) return
+  
+  try {
+    isSubmitting.value = true
+    
+    // 从列表中移除被删除的地址
+    addressList.value = addressList.value.filter(
+      addr => addr.id !== addressToDelete.value?.id
+    )
+    
+    // 保存更新后的列表
+    saveAddressList()
+    
+    toast.success('地址删除成功')
+    showDeleteConfirmDialog.value = false
+  } catch (error) {
+    toast.error('删除地址失败')
+  } finally {
+    isSubmitting.value = false
+    addressToDelete.value = null
+  }
+}
+
+// 设置默认地址
+const setDefaultAddress = async (address: Address) => {
+  try {
+    isSubmitting.value = true
+    
+    // 更新地址列表中的默认状态
+    addressList.value = addressList.value.map(addr => ({
+      ...addr,
+      isDefault: addr.id === address.id
+    }))
+    
+    // 保存更新后的列表
+    saveAddressList()
+    
+    toast.success('默认地址设置成功')
+  } catch (error) {
+    toast.error('设置默认地址失败')
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+// 打开编辑地址弹窗
+const openEditAddressDialog = (address: Address) => {
+  editingAddress.value = { ...address } // 创建地址对象的副本
+  showAddressDialog.value = true
+}
+
+// 打开新增地址弹窗
+const openAddAddressDialog = () => {
+  editingAddress.value = null
+  showAddressDialog.value = true
+}
+
+// 在组件挂载时加载数据
+onMounted(() => {
+  loadAddressList()
+})
 
 definePageMeta({
   layout: 'dashboard',
@@ -238,5 +466,26 @@ input, textarea, select {
 /* 聚焦时的输入框样式 */
 input:focus, textarea:focus, select:focus {
   @apply outline-none ring-2 ring-blue-500 border-blue-500;
+}
+
+/* 确保按钮文字不换行 */
+button {
+  white-space: nowrap;
+}
+
+/* 地址项样式优化 */
+.divide-y > div {
+  @apply transition-colors duration-200;
+}
+
+/* 加载动画 */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 </style>
