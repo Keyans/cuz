@@ -4,18 +4,23 @@
       <NuxtLoadingIndicator color="#afe468" :height="3" />
       <NuxtPage />
     </NuxtLayout>
+    <ClientOnly>
+      <Toast />
+    </ClientOnly>
   </div>
 </template>
 
-<script setup lang="ts">
-// Main app setup
-// 添加SEO优化相关信息
-useHead({
-  titleTemplate: '%s cuzcuz',
-  meta: [
-    { name: 'description', content: 'Create and sell custom products with print-on-demand' },
-    { name: 'keywords', content: 'cuzcuz, print-on-demand, custom products, t-shirts, hoodies, mugs' }
-  ]
+<script>
+import { defineComponent } from 'vue'
+import Toast from '~/components/Toast.vue'
+
+export default defineComponent({
+  components: {
+    Toast
+  },
+  setup() {
+    // SEO优化相关信息已在nuxt.config.ts中配置
+  }
 })
 </script>
 
@@ -47,5 +52,8 @@ body {
 /* 为SPA添加视觉反馈 */
 .nuxt-loading-indicator {
   background-color: var(--color-secondary);
+}
+.el-table th {
+  @apply text-xs font-medium !text-gray-500 !bg-gray-50  uppercase tracking-wider;
 }
 </style>

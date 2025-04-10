@@ -42,7 +42,7 @@
 
     <div class="self-center -mt-[10%] sm:mx-auto sm:w-full sm:max-w-md relative">
       <div class="flex flex-col items-center mb-8">
-        <img src="/assets/cuzcuz-logo.png" alt="cuzcuz" class="h-full w-auto" />
+        <img src="/assets/cuzcuz-logo.png" alt="cuzcuz" class="h-40 w-auto" />
         <h2 class="text-xl font-medium text-gray-700 mt-2">全球POD柔性定制供应链平台</h2>
       </div>
 
@@ -134,7 +134,7 @@
               <Motion :while-hover="{ opacity: 0.6 }">
                 <button
                   type="button"
-                  class="bg-[#ecf5ff] px-4 rounded-sm text-[#4a90e2] border-[#a1c8f0] border h-full shadow-sm"
+                  class="bg-white px-4 rounded-sm text-gray-600 border-gray-300 border h-full shadow-sm hover:bg-gray-50 transition-colors"
                   @click="getCaptcha"
                 >
                   获取验证码
@@ -175,7 +175,7 @@
               <button
                 type="submit"
                 :disabled="loading"
-                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary bg-secondary"
+                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary bg-secondary hover:opacity-90 transition-opacity"
                 :class="{ 'opacity-75 cursor-not-allowed': loading }"
               >
                 <span v-if="loading" class="mr-2">
@@ -202,9 +202,17 @@
                 </span>
                 登 录 / 注 册
               </button>
-            </Motion>
-          </div>
-        </form>
+              </Motion>
+              </div>
+              
+              <div class="mt-4 text-center text-xs text-gray-500">
+                登录/注册即代表您同意
+                <NuxtLink to="/agreement" class="text-primary hover:opacity-80 transition-opacity">《用户服务协议》</NuxtLink>、
+                <NuxtLink to="/privacy" class="text-primary hover:opacity-80 transition-opacity">《隐私权政策》</NuxtLink>、
+                <NuxtLink to="/ip-policy" class="text-primary hover:opacity-80 transition-opacity">《知识产权政策》</NuxtLink>
+              </div>
+              
+              </form>
 
         <!-- <div class="mt-6">
           <div class="relative">

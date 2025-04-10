@@ -1,6 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 export default defineNuxtConfig({
+  // TypeScript配置
+  typescript: {
+    strict: false,
+    typeCheck: false,
+    shim: false
+  },
+
   // 开发工具
   devtools: { enabled: false },
 
@@ -46,6 +53,13 @@ export default defineNuxtConfig({
     server: {
       proxy: proxy(),
     },
+    assetsInclude: ['**/*.json'],
+    optimizeDeps: {
+      include: ['world-countries']
+    },
+    json: {
+      stringify: true
+    }
   },
 
   app: {
@@ -118,6 +132,7 @@ export default defineNuxtConfig({
     "motion-v/nuxt",
     "@nuxt/image", // 添加图像处理模块
     "./modules/seo", // 添加自定义SEO模块
+    "@element-plus/nuxt",
   ],
 
   // 路由规则 - 配置哪些页面使用 SSG，哪些使用 SSR
@@ -152,8 +167,6 @@ export default defineNuxtConfig({
   // 资源压缩
   build: {
     transpile: ["vue", "estree-walker", "entities"],
-    extractCSS: true,
-    optimizeCSS: true,
   },
 
   // 图像优化
@@ -190,34 +203,43 @@ export default defineNuxtConfig({
   },
 
   // SEO设置
-  robots: {
-    UserAgent: "*",
-    Allow: "/",
-    Disallow: ["/dashboard", "/api", "/login", "/register"],
-    Sitemap: "https://your-domain.com/sitemap.xml",
-  },
+  // robots配置已移动到模块中
+  //robots: {
+  //  UserAgent: "*",
+  //  Allow: "/",
+  //  Disallow: ["/dashboard", "/api", "/login", "/register"],
+  //  Sitemap: "https://your-domain.com/sitemap.xml",
+  //},
 
   // Sitemap设置
-  sitemap: {
-    hostname: "https://your-domain.com",
-    gzip: true,
-    exclude: ["/dashboard/**", "/login", "/register"],
-    defaults: {
-      changefreq: "daily",
-      priority: 0.8,
-      lastmod: new Date(),
-    },
-  },
+  // sitemap配置已移动到模块中
+  //sitemap: {
+  //  hostname: "https://your-domain.com",
+  //  gzip: true,
+  //  exclude: ["/dashboard/**"],
+  //  routes: [
+  //    "/",
+  //    "/products",
+  //    "/about",
+  //    "/contact",
+  //  ],
+  //},
 
   // 为了确保SEO抓取，我们需要使用正确的HTTP头
-  render: {
-    http2: {
-      push: true,
-    },
-    static: {
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7天缓存静态资源
-    },
-  },
+  // 这部分配置已移动到nitro配置中
+  //render: {
+  //  csp: {
+  //    hashAlgorithm: "sha256",
+  //    policies: {
+  //      "default-src": ["'self'"],
+  //      "script-src": ["'self'", "'unsafe-inline'", "*.google-analytics.com"],
+  //      "style-src": ["'self'", "'unsafe-inline'"],
+  //      "img-src": ["'self'", "data:", "*.googleapis.com", "*.gstatic.com"],
+  //      "font-src": ["'self'", "https:", "data:"],
+  //      "frame-src": ["'self'", "*.google.com", "*.youtube.com"],
+  //    },
+  //  },
+  //},
 
   // 公共运行时配置，可用于SEO设置等
   runtimeConfig: {
@@ -241,18 +263,20 @@ export default defineNuxtConfig({
 
 function proxy() {
   let targetTest = "https://seller.riin.com";
+  let targetTest2 = "http://aimall-test-seller.riin.com"
+  
   let uaaTargetLocal = "http://10.233.90.164:9999";
   let targetLocal = "http://10.120.22.174:9999"; //hzh本地
   let targetLocal2 = "http://10.120.22.255:9210"; //lxl本地
 
   return {
-    // "/dev/saas-aimall-finance": {
-    //   target: targetLocal,
-    //   ws: false,
-    //   changeOrigin: true,
-    //   secure: false, //证书免校验
-    //   rewrite: (path: string) => path.replace(/^\/dev/, ""),
-    // },
+    "/dev/saas-aimall-finance": {
+      target: targetLocal,
+      ws: false,
+      changeOrigin: true,
+      secure: false, //证书免校验
+      rewrite: (path: string) => path.replace(/^\/dev/, ""),
+    },
     // "/dev/saas-aimall-payment": {
     //   target: targetLocal2,
     //   ws: false,
