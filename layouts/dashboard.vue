@@ -164,11 +164,18 @@
         <button
           @click="goTop"
           :class="[
-            'transition-all rounded-full bg-black/5 fixed h-[40px] w-[40px]',
-            showClickToTop ? 'right-4 bottom-4' : '-right-[40px] bottom-10',
+            'transition-all rounded-full bg-black/5 fixed h-[32px] w-[32px] flex justify-center items-center',
+            showClickToTop ? 'right-4 bottom-4' : '-right-[32px] bottom-10',
           ]"
         >
-          top
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="26"
+            height="26"
+            viewBox="0 0 1024 1024"
+          >
+            <path fill="currentColor" d="M512 320 192 704h639.936z"></path>
+          </svg>
         </button>
       </main>
     </div>
@@ -199,7 +206,6 @@
 </template>
 
 <script setup lang="ts">
-import { debounce } from "lodash";
 import { ref, computed } from "vue";
 import { ScrollCallBackSymbol } from "~/constant";
 import { useAuthStore } from "~/stores/auth";
