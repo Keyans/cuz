@@ -142,17 +142,11 @@
           :is-mobile-open="sidebarOpen"
           @close="sidebarOpen = false"
         >
-          <template #logo>
-            <div
-              class="flex items-center justify-center p-4 border-b border-gray-200"
-            >
-              <img
-                src="/assets/cuzcuz-logo.png"
-                alt="cuzcuz"
-                class="h-16 w-auto block"
-              />
+          <!-- <template #logo>
+            <div class="flex items-center justify-center p-4 border-b border-gray-200">
+              <img src="/assets/cuzcuz-logo.png" alt="cuzcuz" class="h-16 w-auto block" />
             </div>
-          </template>
+          </template> -->
           <template #toggle-button>
             <!-- Slot kept for backward compatibility -->
           </template>

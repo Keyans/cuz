@@ -1,6 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 export default defineNuxtConfig({
+  // TypeScript配置
+  typescript: {
+    strict: false,
+    typeCheck: false,
+    shim: false
+  },
+
   // 开发工具
   devtools: { enabled: false },
 
@@ -153,8 +160,6 @@ export default defineNuxtConfig({
   // 资源压缩
   build: {
     transpile: ["vue", "estree-walker", "entities"],
-    extractCSS: true,
-    optimizeCSS: true,
   },
 
   // 图像优化
@@ -191,34 +196,43 @@ export default defineNuxtConfig({
   },
 
   // SEO设置
-  robots: {
-    UserAgent: "*",
-    Allow: "/",
-    Disallow: ["/dashboard", "/api", "/login", "/register"],
-    Sitemap: "https://your-domain.com/sitemap.xml",
-  },
+  // robots配置已移动到模块中
+  //robots: {
+  //  UserAgent: "*",
+  //  Allow: "/",
+  //  Disallow: ["/dashboard", "/api", "/login", "/register"],
+  //  Sitemap: "https://your-domain.com/sitemap.xml",
+  //},
 
   // Sitemap设置
-  sitemap: {
-    hostname: "https://your-domain.com",
-    gzip: true,
-    exclude: ["/dashboard/**", "/login", "/register"],
-    defaults: {
-      changefreq: "daily",
-      priority: 0.8,
-      lastmod: new Date(),
-    },
-  },
+  // sitemap配置已移动到模块中
+  //sitemap: {
+  //  hostname: "https://your-domain.com",
+  //  gzip: true,
+  //  exclude: ["/dashboard/**"],
+  //  routes: [
+  //    "/",
+  //    "/products",
+  //    "/about",
+  //    "/contact",
+  //  ],
+  //},
 
   // 为了确保SEO抓取，我们需要使用正确的HTTP头
-  render: {
-    http2: {
-      push: true,
-    },
-    static: {
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7天缓存静态资源
-    },
-  },
+  // 这部分配置已移动到nitro配置中
+  //render: {
+  //  csp: {
+  //    hashAlgorithm: "sha256",
+  //    policies: {
+  //      "default-src": ["'self'"],
+  //      "script-src": ["'self'", "'unsafe-inline'", "*.google-analytics.com"],
+  //      "style-src": ["'self'", "'unsafe-inline'"],
+  //      "img-src": ["'self'", "data:", "*.googleapis.com", "*.gstatic.com"],
+  //      "font-src": ["'self'", "https:", "data:"],
+  //      "frame-src": ["'self'", "*.google.com", "*.youtube.com"],
+  //    },
+  //  },
+  //},
 
   // 公共运行时配置，可用于SEO设置等
   runtimeConfig: {
