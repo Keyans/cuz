@@ -32,7 +32,7 @@ export class AxiosCanceler {
         })
         pendingMap.clear()
     }
-    // 充值Map
+    // 预付Map
     reset(): void {
         pendingMap = new Map<string, Canceler>()
     }

@@ -1,33 +1,14 @@
 <template>
   <div class="container mx-auto py-6">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold">我的钱包</h1>
-      <div class="flex space-x-4">
-        <button class="btn-primary">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 mr-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
-          申请提现
-        </button>
-      </div>
+      <h1 class="text-2xl font-bold">费用中心</h1>
     </div>
 
     <!-- 账户概览 -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold">账户余额</h3>
+          <h3 class="text-lg font-semibold">可用预付余额</h3>
           <div class="p-2 bg-primary-light rounded-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -45,13 +26,41 @@
             </svg>
           </div>
         </div>
-        <p class="text-3xl font-bold text-primary">¥{{ amountInfo.undrawn }}</p>
-        <p class="text-sm text-gray-500 mt-2">可提现金额</p>
+        <p class="text-3xl font-bold text-primary">
+          ¥{{ amountInfo?.undrawn }}
+        </p>
+        <div class="flex w-full justify-between mt-4 items-center">
+          <p class="text-sm text-gray-500">
+            总预付余额：￥{{ amountInfo?.total }} - 冻结金额：￥{{
+              amountInfo?.freeze
+            }}
+          </p>
+          <button
+            @click="showRecharge = true"
+            class="btn-plain btn-plain-border flex items-center px-2 py-1 text-[14px]"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+            立即预付
+          </button>
+        </div>
       </div>
 
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold">待结算</h3>
+          <h3 class="text-lg font-semibold">未出账单</h3>
           <div class="p-2 bg-yellow-100 rounded-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -70,12 +79,31 @@
           </div>
         </div>
         <p class="text-3xl font-bold text-yellow-600">
-          ¥{{ amountInfo.uncompleted }}
+          ¥{{ amountInfo?.uncompleted }}
         </p>
-        <p class="text-sm text-gray-500 mt-2">预计7天后可提现</p>
+        <div class="flex w-full justify-between mt-4 items-center">
+          <p class="text-sm text-gray-500">
+            <text class="text-red-400">1</text> 笔账单未确认
+          </p>
+          <NuxtLink href="/dashboard/wallet/reconciliations" target="_blank">
+            <button class="btn-plain flex items-center px-2 py-1 text-[14px]">
+              查看更多
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-3 w-3"
+                viewBox="0 0 1024 1024"
+              >
+                <path
+                  fill="currentColor"
+                  d="M452.864 149.312a29.12 29.12 0 0 1 41.728.064L826.24 489.664a32 32 0 0 1 0 44.672L494.592 874.624a29.12 29.12 0 0 1-41.728 0 30.592 30.592 0 0 1 0-42.752L764.736 512 452.864 192a30.592 30.592 0 0 1 0-42.688m-256 0a29.12 29.12 0 0 1 41.728.064L570.24 489.664a32 32 0 0 1 0 44.672L238.592 874.624a29.12 29.12 0 0 1-41.728 0 30.592 30.592 0 0 1 0-42.752L508.736 512 196.864 192a30.592 30.592 0 0 1 0-42.688z"
+                ></path>
+              </svg>
+            </button>
+          </NuxtLink>
+        </div>
       </div>
 
-      <div class="bg-white rounded-lg shadow p-6">
+      <!-- <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-semibold">累计收入</h3>
           <div class="p-2 bg-green-100 rounded-full">
@@ -95,196 +123,131 @@
             </svg>
           </div>
         </div>
-        <p class="text-3xl font-bold text-green-600">¥{{ amountInfo.total }}</p>
+        <p class="text-3xl font-bold text-green-600">
+          ¥{{ amountInfo?.total }}
+        </p>
         <p class="text-sm text-gray-500 mt-2">近30天收入</p>
-      </div>
+      </div> -->
     </div>
 
     <!-- 交易记录筛选 -->
     <div class="bg-white rounded-lg shadow p-4 mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
         <div class="flex flex-col">
-          <label class="text-sm text-gray-600 mb-1">交易编号</label>
+          <label class="text-sm text-gray-600 mb-1">交易编号：</label>
           <input
             v-model="searchParams.tradeNo"
             type="text"
-            class="form-input"
-            placeholder="请输入"
+            placeholder="请输入交易编号"
+            class="form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 
         <div class="flex flex-col">
-          <label class="text-sm text-gray-600 mb-1">交易类型</label>
-          <select class="form-select" v-model="searchParams.bizTypes">
-            <option value="">全部类型</option>
-            <option value="RECHARGE">预付</option>
-            <option value="ORDER_PAY">订单支付</option>
-            <option value="REFUND">退款</option>
-            <option value="COMPENSATION">赔付</option>
-            <option value="WITHDRAW">提现</option>
-          </select>
-        </div>
-
-        <div class="flex flex-col">
-          <label class="text-sm text-gray-600 mb-1">时间范围</label>
-          <select class="form-select" v-model="searchParams.time">
-            <option value="">所有</option>
-            <option value="7">最近7天</option>
-            <option value="30">最近30天</option>
-            <option value="90">最近90天</option>
-            <!-- <option value="custom">自定义</option> -->
-          </select>
-        </div>
-
-        <div class="flex flex-col justify-end">
-          <button class="btn-secondary w-full" @click="search">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 mr-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <label class="text-sm text-gray-600 mb-1">业务类型：</label>
+          <div class="relative">
+            <select
+              v-model="searchParams.bizTypes"
+              class="form-select w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              <option value="">请选择</option>
+              <option
+                v-for="(item, index) in payBizTypeMap"
+                :key="index"
+                :value="index"
+              >
+                {{ item }}
+              </option>
+            </select>
+            <div
+              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+            >
+              <svg
+                class="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:col-span-2">
+          <label class="text-sm text-gray-600 mb-1">时间：</label>
+          <div class="flex items-center space-x-2">
+            <div class="flex-1 relative">
+              <input
+                v-model="searchParams.startTime"
+                type="date"
+                class="form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
-            </svg>
+            </div>
+            <span class="text-gray-500">至</span>
+            <div class="flex-1 relative">
+              <input
+                v-model="searchParams.endTime"
+                type="date"
+                class="form-input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-end space-x-4">
+          <button
+            @click="search"
+            class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors flex-1 flex justify-center items-center"
+          >
             搜索
           </button>
         </div>
       </div>
     </div>
 
-    <el-table
-      row-key="id"
-      :data="tableData"
-      style="width: 100%"
-      class="shadow rounded-lg"
-      empty-text="暂无交易记录"
-    >
-      <el-table-column type="index" width="50" label="序号" fixed />
-      <el-table-column width="200" prop="transAmount" label="交易金额">
-        <template #default="props">
-          <span
-            :class="
-              ['REFUND', 'COMPENSATION'].includes(props.row.payBizType)
-                ? 'text-red-300'
-                : ''
-            "
-          >
-            {{
-              (["REFUND", "COMPENSATION"].includes(props.row.payBizType)
-                ? "+"
-                : "-") +
-              "￥" +
-              props.row.transAmount
-            }}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        width="200"
-        prop="currentBalance"
-        label="可用余额"
-        :formatter="
-          (row, _column, cell) => (row.payType === 'BALANCE' ? cell : '')
-        "
-      />
-      <el-table-column
-        width="200"
-        prop="currentFreeze"
-        label="冻结金额"
-        :formatter="
-          (row, _column, cell) => (row.payType === 'BALANCE' ? cell : '')
-        "
-      />
-      <el-table-column width="200" prop="currency" label="交易币种" />
-      <el-table-column width="200" prop="tradeNo" label="交易编号" />
-      <el-table-column width="200" prop="bizNo" label="关联订单" />
-      <el-table-column
-        width="200"
-        prop="payBizType"
-        label="业务类型"
-        :formatter="
-          (row, _column, cell) =>
-            (({
-              RECHARGE: '预付',
-              ORDER_PAY: '订单支付',
-              REFUND: '平台退款',
-              COMPENSATION: '平台赔付',
-              WITHDRAW: '提现',
-            } as Record<string,string>)[cell] ?? '未知类型')
-        "
-      />
-      <el-table-column
-        width="200"
-        prop="payType"
-        label="支付类型"
-        :formatter="
-          (row, _column, cell) =>
-            cell
-              ? ({ BALANCE: '余额支付', CMBPAY: '聚合支付' } as Record<string,string>)[cell] ?? '未知类型'
-              : ''
-        "
-      />
-      <el-table-column
-        width="200"
-        prop="payDetailType"
-        label="支付方式"
-        :formatter="
-          (row, _column, cell) =>
-            cell
-              ? ({
-                  ALIPAY: '支付宝',
-                  WECHAT: '微信支付',
-                  UNIONPAY: '银联',
-                  DCEP: '数字人民币',
-                  BALANCE: '余额',
-              } as Record<string,string>)[cell] ?? '未知方式'
-              : ''
-        "
-      />
-      <el-table-column
-        width="200"
-        prop="tradeStatus"
-        label="交易状态"
-        :formatter="
-          (row, _column, cell) =>
-            cell
-              ? ({
-                  PENDING_TRADE: '待支付',
-                  OVERTIME_CLOSE: '交易关闭',
-                  SUCCESS_APPLY_TRADE: '交易中',
-                  FAIL_APPLY_TRADE: '交易失败',
-                  SUCCESS_TRADE: '交易成功',
-                  FAIL_TRADE: '交易失败',
-                }as Record<string,string>)[cell] ?? '未知状态'
-              : ''
-        "
-      />
-      <el-table-column
-        width="200"
-        prop="payChannelNo"
-        label="第三方支付流水号"
-        :formatter="
-          (row, _column, cell) => {
-            if (
-              row.payBizType === 'REFUND' ||
-              row.payBizType === 'COMPENSATION'
-            )
-              return '';
-            return cell;
-          }
-        "
-      />
-      <el-table-column width="200" prop="tradeTime" label="日期" />
-    </el-table>
-
+    <TransactionTable v-model:table-data="tableData"></TransactionTable>
     <!-- 分页 -->
     <Pagination v-model="pageConfig"></Pagination>
+
+    <el-dialog
+      v-model="showRecharge"
+      :close-on-click-modal="false"
+      width="500"
+      v-loading=""
+    >
+      <div class="flex flex-col space-y-4">
+        <div class="flex flex-col space-y-4">
+          <div class="text-[22px] font-semibold shrink-0">充值金额</div>
+
+          <div
+            class="flex items-center text-[18px] space-x-2 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <div>￥</div>
+            <input
+              v-model="rechargeAmount"
+              placeholder="请输入预付到账金额"
+              class="w-full outline-none"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <button
+            v-for="item in [100, 500, 1000, 2000, 3000, 5000, 10000, 20000]"
+            :key="item"
+            class="bg-[#f2f2f2] rounded-lg text-center px-2 py-2 shadow"
+            @click="rechargeAmount = item"
+          >
+            <text class="text-[14px] font-semibold"> {{ item }}元 </text>
+            <div class="text-[12px]">售价：￥{{ item }}</div>
+          </button>
+        </div>
+
+        <button class="btn-secondary w-full">确认支付</button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -292,45 +255,29 @@
 import dayjs from "dayjs";
 import { doGetShopBalance } from "~/apis/finance/overview";
 import { doListShopTransaction } from "~/apis/finance/transaction";
+import type { TableDataProp } from "./components/transactionTable.vue";
+import TransactionTable from "./components/transactionTable.vue";
 import Pagination from "~/components/ui/pagination/Pagination.vue";
-
-interface TableDataProp {
-  transAmount: string;
-  currentBalance: string;
-  currentFreeze: string;
-  currency: string;
-  tradeNo: string;
-  bizNo: string;
-  payBizType: string;
-  payType: string;
-  payDetailType: string;
-  tradeStatus: string;
-  payChannelNo: string;
-  tradeTime: string;
-}
+import { payBizTypeMap } from "~/apis/finance/transaction/types";
 definePageMeta({
   layout: "dashboard",
   middleware: ["auth"],
 });
 
-const amountInfo = ref({
-  undrawn: "0",
-  total: "0",
-  uncompleted: "0",
-});
-
+const amountInfo = ref<Record<string, string> | undefined>();
+const showRecharge = ref(false);
 onMounted(async () => {
   try {
     const { data } = await doGetShopBalance();
     if (data) {
-      amountInfo.value.total = data.total;
-      amountInfo.value.uncompleted = data.uncompleted;
-      amountInfo.value.undrawn = data.undrawn;
+      amountInfo.value = data;
     }
   } catch (error) {
     console.error(error);
   }
 });
+const rechargeAmount = ref();
+const rechargeLoading = ref(false);
 
 const pageConfig = ref({
   size: 10,
@@ -338,22 +285,34 @@ const pageConfig = ref({
   total: 0,
 });
 
-const tableData = ref<TableDataProp[]>();
+watch(
+  pageConfig,
+  () => {
+    tableData.value = [];
+    search();
+  },
+  { deep: true }
+);
+
+const tableData = ref<TableDataProp[]>([]);
 
 const searchParams = reactive({
   tradeNo: "",
   bizTypes: "",
-  time: "",
+  startTime: "",
+  endTime: "",
 });
 
 const search = async () => {
   let timeRange;
-  if (searchParams.time) {
+  if (searchParams.startTime) {
     timeRange = [
-      dayjs()
-        .add(-1 * +searchParams.time, "day")
-        .format("YYYY-MM-DD 00:00:00"),
-      dayjs().format("YYYY-MM-DD 23:59:59"),
+      searchParams.startTime
+        ? dayjs(searchParams.startTime).format("YYYY-MM-DD 00:00:00")
+        : undefined,
+      searchParams.endTime
+        ? dayjs(searchParams.endTime).format("YYYY-MM-DD 23:59:59")
+        : undefined,
     ];
   }
 
@@ -368,7 +327,6 @@ const search = async () => {
   tableData.value = data.records;
   pageConfig.value.total = data.total;
 };
-
 onMounted(() => {
   search();
 });

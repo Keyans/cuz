@@ -22,13 +22,14 @@
       :data="tableData"
       style="width: 100%"
       class="shadow rounded-lg"
+      empty-text="当前周期内暂无账单"
       @selection-change="selectRow"
     >
-      <el-table-column
+      <!-- <el-table-column
         type="selection"
         :selectable="(row) => row.status == '10'"
         width="55"
-      />
+      /> -->
       <el-table-column
         prop="reconciliationStartDate"
         label="时间"
@@ -70,48 +71,54 @@
                 请于收到本对账单之日起15个自然日内核对并点击确认。逾期未确认的，平台将视为您已认可账单内容并自动完成确认。
               </template>
             </el-tooltip>
-            <button
-              :class="[
-                'py-1 ml-6',
-                chosenRow.length
-                  ? 'btn-secondary'
-                  : 'btn-primary cursor-not-allowed',
-              ]"
-              :disabled="!chosenRow.length"
+            <!-- <el-tooltip
+              placement="bottom"
+              effect="dark"
+              :content="'左侧选择记录后批量确认'"
+              :disabled="chosenRow.length"
             >
-              批量确认
-            </button>
+              <button
+                :class="[
+                  'py-1 ml-6',
+                  chosenRow.length
+                    ? 'btn-secondary'
+                    : 'btn-primary cursor-not-allowed',
+                ]"
+                :disabled="!chosenRow.length"
+                @click="confirm()"
+              >
+                批量确认
+              </button>
+            </el-tooltip> -->
           </div>
         </template>
 
         <template #default="props">
           <div class="flex space-x-10 text-primary">
-            <div
-              class="cursor-pointer"
-              @click="getDetail(props.row.reconciliationNo)"
+            <button
+              class="text-primary hover:text-primary-dark"
+              @click="getDetail(props.row)"
             >
               查看详情
-            </div>
-            <div
+            </button>
+            <button
               v-if="props.row.status == '10'"
-              class="cursor-pointer"
+              class="text-primary hover:text-primary-dark"
               @click="confirm(props.row.reconciliationNo)"
             >
               确认
-            </div>
+            </button>
           </div>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-pagination
-      background
-      layout="total, prev, pager, next"
-      :total="pageConfig.total"
-      @change="pageChange"
-    />
+    <Pagination v-model="pageConfig"></Pagination>
 
-    <el-dialog v-model="detailDialog"> </el-dialog>
+    <el-dialog v-model="detailDialog" width="80%" :title="detailTitle">
+      <TransactionTable v-model:table-data="detailTableData"></TransactionTable>
+      <Pagination v-model="detailPageConfig"></Pagination>
+    </el-dialog>
   </div>
 </template>
 
@@ -120,8 +127,13 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
 import {
   doConfirmReconciliation,
   doListReconciliation,
+  doListShopTransaction,
 } from "~/apis/finance/transaction";
 import dayjs from "dayjs";
+import TransactionTable, {
+  type TableDataProp as TranTableProp,
+} from "../components/transactionTable.vue";
+import Pagination from "~/components/ui/pagination/Pagination.vue";
 
 definePageMeta({
   layout: "dashboard",
@@ -137,6 +149,9 @@ interface TableDataProp {
   updateBy: string;
   updateTime: string;
 }
+
+const format = "YYYY-MM-DD HH:mm:ss";
+
 const statusMap: Record<string, string> = {
   10: "未确认",
   20: "已确认",
@@ -151,16 +166,17 @@ const pageConfig = ref({
   size: 20,
   total: 0,
 });
-const pageChange = (current: number, size: number) => {
-  pageConfig.value.current = current;
-  pageConfig.value.size = size;
-  tableData.value = [];
-  getData();
-};
+
+watch(
+  pageConfig,
+  () => {
+    tableData.value = [];
+    getData();
+  },
+  { deep: true }
+);
 
 const getData = async () => {
-  const format = "YYYY-MM-DD hh:mm:ss";
-
   const { data } = await doListReconciliation({
     size: pageConfig.value.size,
     current: pageConfig.value.current,
@@ -185,7 +201,31 @@ const selectRow = (row?: TableDataProp[], ignore?: boolean) => {
   else chosenRow.value = row;
 };
 
-const getDetail = (reconciliationNo: string) => {};
+const detailTableData = ref<TranTableProp[]>([]);
+const detailPageConfig = ref({
+  size: 10,
+  current: 1,
+  total: 0,
+});
+const detailTitle = ref("");
+const getDetail = async (row: TableDataProp) => {
+  detailTitle.value = row.reconciliationStartDate + "明细";
+  try {
+    detailTableData.value = [];
+    const { data } = await doListShopTransaction({
+      size: 20,
+      current: 1,
+      startTime: dayjs(row.reconciliationStartDate)
+        .startOf("month")
+        .format(format),
+      endTime: dayjs(row.reconciliationStartDate).endOf("month").format(format),
+    });
+
+    detailTableData.value = data.records;
+    detailDialog.value = true;
+    detailPageConfig.value.total = data.total;
+  } catch (error) {}
+};
 
 const confirm = async (reconciliationNo?: string) => {
   console.log(reconciliationNo);

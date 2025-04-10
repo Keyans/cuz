@@ -40,14 +40,34 @@ export interface TransactionRecordQueryParams {
   statusList?: string[]; // 状态列表
 }
 
-export const payBizTypeMap = {
-  // RECHARGE: '预付',
+export const payBizTypeMap: Record<string, string> = {
+  RECHARGE: "预付",
   ORDER_PAY: "订单支付",
   REFUND: "平台退款",
   COMPENSATION: "平台赔付",
-  // TRANSFER: '转账',
-  // WITHDRAW: '提现',
-  // SAMPLING: '采样',
+  WITHDRAW: "提现",
+  TRANSFER: "转账",
+  SAMPLING: "采样",
+};
+
+export const tradeStatusMap: Record<string, string> = {
+  PENDING_TRADE: "待支付",
+  OVERTIME_CLOSE: "交易关闭",
+  SUCCESS_APPLY_TRADE: "交易中",
+  FAIL_APPLY_TRADE: "交易失败",
+  SUCCESS_TRADE: "交易成功",
+  FAIL_TRADE: "交易失败",
+};
+export const payTypeMap: Record<string, string> = {
+  BALANCE: "预付余额支付",
+  CMBPAY: "聚合支付",
+};
+export const payDetailTypeMap: Record<string, string> = {
+  ALIPAY: "支付宝",
+  WECHAT: "微信支付",
+  UNIONPAY: "银联",
+  DCEP: "数字人民币",
+  BALANCE: "预付余额",
 };
 
 export interface ReconciliationPageParam extends PageParam {

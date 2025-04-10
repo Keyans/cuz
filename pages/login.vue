@@ -37,13 +37,16 @@
     <div
       class="flex-grow-0 flex-shrink-0 basis-[41%] bg-cover hidden lg:block relative"
       :style="{ backgroundImage: `url(${leftImg})` }"
-    >
-    </div>
+    ></div>
 
-    <div class="self-center -mt-[10%] sm:mx-auto sm:w-full sm:max-w-md relative">
+    <div
+      class="self-center -mt-[10%] sm:mx-auto sm:w-full sm:max-w-md relative"
+    >
       <div class="flex flex-col items-center mb-8">
         <img src="/assets/cuzcuz-logo.png" alt="cuzcuz" class="h-40 w-auto" />
-        <h2 class="text-xl font-medium text-gray-700 mt-2">全球POD柔性定制供应链平台</h2>
+        <h2 class="text-xl font-medium text-gray-700 mt-2">
+          全球POD柔性定制供应链平台
+        </h2>
       </div>
 
       <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
@@ -85,6 +88,7 @@
             </label>
             <div class="mt-1">
               <input
+                @blur="checkPhone"
                 id="phone"
                 v-model="phone"
                 name="phone"
@@ -202,17 +206,28 @@
                 </span>
                 登 录 / 注 册
               </button>
-              </Motion>
-              </div>
-              
-              <div class="mt-4 text-center text-xs text-gray-500">
-                登录/注册即代表您同意
-                <NuxtLink to="/agreement" class="text-primary hover:opacity-80 transition-opacity">《用户服务协议》</NuxtLink>、
-                <NuxtLink to="/privacy" class="text-primary hover:opacity-80 transition-opacity">《隐私权政策》</NuxtLink>、
-                <NuxtLink to="/ip-policy" class="text-primary hover:opacity-80 transition-opacity">《知识产权政策》</NuxtLink>
-              </div>
-              
-              </form>
+            </Motion>
+          </div>
+
+          <div class="mt-4 text-center text-xs text-gray-500">
+            登录/注册即代表您同意
+            <NuxtLink
+              to="/agreement"
+              class="text-primary hover:opacity-80 transition-opacity"
+              >《用户服务协议》</NuxtLink
+            >、
+            <NuxtLink
+              to="/privacy"
+              class="text-primary hover:opacity-80 transition-opacity"
+              >《隐私权政策》</NuxtLink
+            >、
+            <NuxtLink
+              to="/ip-policy"
+              class="text-primary hover:opacity-80 transition-opacity"
+              >《知识产权政策》</NuxtLink
+            >
+          </div>
+        </form>
 
         <!-- <div class="mt-6">
           <div class="relative">
@@ -267,7 +282,7 @@
       </div>
     </div>
 
-    <Dialog v-model="captchaConfig.showSliderCaptcha">
+    <el-dialog v-model="captchaConfig.showSliderCaptcha" width="fit-content">
       <template #header></template>
       <SliderCaptcha
         v-model="captchaConfig.showSliderCaptcha"
@@ -277,7 +292,7 @@
         @success="slideCaptchaSuccess"
       ></SliderCaptcha>
       <template #footer></template>
-    </Dialog>
+    </el-dialog>
   </div>
 </template>
 
@@ -287,7 +302,6 @@ import { useAuthStore } from "~/stores/auth";
 import { Motion } from "motion-v";
 import { doPostSmsCode } from "~/apis/sign";
 import SliderCaptcha from "~/components/ui/slide-captcha/SliderCaptcha.vue";
-import { Dialog } from "~/components/ui/dialog";
 
 definePageMeta({
   layout: "auth",
@@ -296,6 +310,15 @@ const leftImg = `/assets/login_bg.png`;
 
 // Form state
 const phone = ref("");
+const checkPhone = () => {
+  if (
+    !/^1(3[0-9]|4[01456879]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/.test(
+      phone.value
+    )
+  )
+    error.value = "请填写正确的手机号码";
+  else error.value = null;
+};
 const invitation = ref("");
 
 const captcha = ref("");
