@@ -59,8 +59,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { onClickOutside } from '@vueuse/core'
-import chinaAreaData from 'china-area-data'
-import worldCountries from 'world-countries'
+import { useChineseRegions } from '~/composables/useChineseRegions'
+import customWorldCountries from '~/data/world-countries'
 
 interface Region {
   code: string
@@ -70,7 +70,7 @@ interface Region {
 
 // 格式化世界国家数据
 const formatWorldData = (): Region[] => {
-  return worldCountries.map(country => ({
+  return customWorldCountries.map(country => ({
     code: country.cca3,
     name: country.name.common,
     children: country.capital ? [{
@@ -111,6 +111,9 @@ const isOpen = ref(false)
 const selectedProvince = ref<Region | null>(null)
 const selectedCity = ref<Region | null>(null)
 const selectedDistrict = ref<Region | null>(null)
+
+// 使用自定义中国区域数据
+const { chinaAreaData } = useChineseRegions()
 
 // 转换中国地区数据格式
 const formatChinaData = (data: any): Region[] => {

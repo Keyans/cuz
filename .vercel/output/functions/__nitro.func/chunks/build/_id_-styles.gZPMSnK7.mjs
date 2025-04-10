@@ -1,0 +1,2 @@
+const a=[".hide-scrollbar[data-v-cd7882fd]{-ms-overflow-style:none;scrollbar-width:none}.hide-scrollbar[data-v-cd7882fd]::-webkit-scrollbar{display:none}.fade-enter-active[data-v-cd7882fd],.fade-leave-active[data-v-cd7882fd]{transition:opacity .3s ease}.fade-enter-from[data-v-cd7882fd],.fade-leave-to[data-v-cd7882fd]{opacity:0}.border-primary[data-v-cd7882fd]{border-color:var(--color-primary,#3490dc)}"];export{a as default};
+//# sourceMappingURL=_id_-styles.gZPMSnK7.mjs.map

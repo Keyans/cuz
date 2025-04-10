@@ -54,11 +54,15 @@ export default defineNuxtConfig({
       proxy: proxy(),
     },
     assetsInclude: ['**/*.json'],
-    optimizeDeps: {
-      include: ['world-countries']
-    },
     json: {
-      stringify: true
+      stringify: true,
+      namedExports: true
+    },
+    build: {
+      chunkSizeWarningLimit: 2000,
+      rollupOptions: {
+        maxParallelFileOps: 3
+      }
     }
   },
 

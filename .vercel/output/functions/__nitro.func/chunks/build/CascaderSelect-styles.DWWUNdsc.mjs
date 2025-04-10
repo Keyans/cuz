@@ -1,0 +1,2 @@
+const a=[".overflow-y-auto[data-v-40c82f65]{scrollbar-color:#e5e7eb transparent;scrollbar-width:thin}.overflow-y-auto[data-v-40c82f65]::-webkit-scrollbar{width:6px}.overflow-y-auto[data-v-40c82f65]::-webkit-scrollbar-track{background:transparent}.overflow-y-auto[data-v-40c82f65]::-webkit-scrollbar-thumb{background-color:#e5e7eb;border-radius:3px}"];export{a as default};
+//# sourceMappingURL=CascaderSelect-styles.DWWUNdsc.mjs.map

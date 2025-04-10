@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>离线模式 - cuzcuz</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5ee;
+      color: #303018;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 600px;
+      padding: 2rem;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin: 2rem;
+    }
+
+    .logo {
+      width: 120px;
+      height: auto;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      font-weight: bold;
+    }
+
+    p {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+      color: #666;
+    }
+
+    .button {
+      display: inline-block;
+      background-color: #afe468;
+      color: #303018;
+      font-weight: bold;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      opacity: 0.9;
+    }
+
+    .offline-icon {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 1rem;
+      color: #afe468;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <svg class="offline-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m-3.536-3.536a5 5 0 010-7.07m-6.364.182a5 5 0 110 7.07m3.182-12.364a9 9 0 110 12.728" />
+    </svg>
+
+    <h1>您当前处于离线模式</h1>
+
+    <p>
+      看起来您的网络连接已断开。您可以继续浏览已缓存的内容，或者等待网络恢复后刷新页面。
+    </p>
+
+    <p>
+      <a class="button" href="javascript:window.location.reload()">刷新页面</a>
+    </p>
+  </div>
+
+  <script>
+    // 检测网络恢复时自动刷新页面
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>
