@@ -53,6 +53,13 @@ export default defineNuxtConfig({
     server: {
       proxy: proxy(),
     },
+    assetsInclude: ['**/*.json'],
+    optimizeDeps: {
+      include: ['world-countries']
+    },
+    json: {
+      stringify: true
+    }
   },
 
   app: {

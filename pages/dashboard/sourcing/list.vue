@@ -149,89 +149,134 @@ const currentPage = ref(1)
 const pageSize = 15
 const totalPages = 5
 
-// 模拟热门商品数据
-const hotProducts = [
-  {
-    id: 1,
-    name: '时尚棒球帽',
-    price: 89.00,
-    image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500&h=500&fit=crop',
-    shipping: '1-3',
-    shippingDisplay: '1~3天发货',
-    stock: 'in-stock'
-  },
-  {
-    id: 2,
-    name: '运动休闲T恤',
-    price: 129.00,
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop',
-    shipping: '1-3',
-    shippingDisplay: '1~3天发货',
-    stock: 'in-stock'
-  },
-  // 模拟更多热门商品...
-].concat(Array.from({ length: 13 }, (_, i) => ({
-  id: i + 3,
-  name: `热门商品 ${i + 3}`,
-  price: 99.00,
-  image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop',
-  shipping: '3-5',
-  shippingDisplay: '3~5天发货',
-  stock: 'in-stock'
-})))
+// 模拟不同类目的商品数据
+const allProducts = {
+  clothing: [
+    {
+      id: 1,
+      name: '成人仿棉圆领短袖',
+      price: 27.80,
+      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop',
+      shipping: '1-3',
+      shippingDisplay: '1~3天发货',
+      stock: 'in-stock'
+    },
+    {
+      id: 2,
+      name: '运动休闲T恤',
+      price: 129.00,
+      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop',
+      shipping: '1-3',
+      shippingDisplay: '1~3天发货',
+      stock: 'in-stock'
+    },
+    // 更多服装类商品...
+  ],
+  accessories: [
+    {
+      id: 1,
+      name: '时尚棒球帽',
+      price: 89.00,
+      image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500&h=500&fit=crop',
+      shipping: '1-3',
+      shippingDisplay: '1~3天发货',
+      stock: 'in-stock'
+    },
+    {
+      id: 2,
+      name: '复古鸭舌帽',
+      price: 79.00,
+      image: 'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab?w=500&h=500&fit=crop',
+      shipping: '1-3',
+      shippingDisplay: '1~3天发货',
+      stock: 'in-stock'
+    },
+    // 更多配饰类商品...
+  ],
+  home: [
+    {
+      id: 1,
+      name: '北欧风抱枕',
+      price: 59.00,
+      image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&h=500&fit=crop',
+      shipping: '3-5',
+      shippingDisplay: '3~5天发货',
+      stock: 'in-stock'
+    },
+    {
+      id: 2,
+      name: '简约装饰画',
+      price: 199.00,
+      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop',
+      shipping: '3-5',
+      shippingDisplay: '3~5天发货',
+      stock: 'in-stock'
+    },
+    // 更多家居类商品...
+  ],
+  hot: [
+    {
+      id: 1,
+      name: '时尚棒球帽',
+      price: 89.00,
+      image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500&h=500&fit=crop',
+      shipping: '1-3',
+      shippingDisplay: '1~3天发货',
+      stock: 'in-stock'
+    },
+    {
+      id: 2,
+      name: '运动休闲T恤',
+      price: 129.00,
+      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop',
+      shipping: '1-3',
+      shippingDisplay: '1~3天发货',
+      stock: 'in-stock'
+    },
+  ],
+  new: [
+    {
+      id: 1,
+      name: '潮流连帽卫衣',
+      price: 199.00,
+      image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&h=500&fit=crop',
+      shipping: '1-3',
+      shippingDisplay: '1~3天发货',
+      stock: 'in-stock'
+    },
+    {
+      id: 2,
+      name: '复古鸭舌帽',
+      price: 79.00,
+      image: 'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab?w=500&h=500&fit=crop',
+      shipping: '1-3',
+      shippingDisplay: '1~3天发货',
+      stock: 'in-stock'
+    },
+  ]
+}
 
-// 模拟新品数据
-const newProducts = [
-  {
-    id: 1,
-    name: '潮流连帽卫衣',
-    price: 199.00,
-    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&h=500&fit=crop',
-    shipping: '1-3',
-    shippingDisplay: '1~3天发货',
-    stock: 'in-stock'
-  },
-  {
-    id: 2,
-    name: '复古鸭舌帽',
-    price: 79.00,
-    image: 'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?w=500&h=500&fit=crop',
-    shipping: '1-3',
-    shippingDisplay: '1~3天发货',
-    stock: 'in-stock'
-  },
-  // 模拟更多新品...
-].concat(Array.from({ length: 13 }, (_, i) => ({
-  id: i + 3,
-  name: `新品推荐 ${i + 3}`,
-  price: 79.00,
-  image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop',
-  shipping: '3-5',
-  shippingDisplay: '3~5天发货',
-  stock: 'in-stock'
-})))
-
-// 普通商品数据
-const regularProducts = Array.from({ length: 15 }, (_, i) => ({
-  id: i + 1,
-  name: `成人仿棉圆领短袖 ${i + 1}`,
-  price: 27.80,
-  image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop',
-  shipping: '5-7',
-  shippingDisplay: '5~7天发货',
-  stock: 'in-stock'
-}))
+// 为每个类目添加更多商品数据
+Object.keys(allProducts).forEach(category => {
+  if (category !== 'hot' && category !== 'new') {
+    allProducts[category] = allProducts[category].concat(
+      Array.from({ length: 13 }, (_, i) => ({
+        id: i + 3,
+        name: `${category}商品 ${i + 3}`,
+        price: Math.floor(Math.random() * 150) + 50,
+        image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop',
+        shipping: '3-5',
+        shippingDisplay: '3~5天发货',
+        stock: 'in-stock'
+      }))
+    )
+  }
+})
 
 // 根据类别获取商品数据
 const productList = computed(() => {
-  switch (category.value) {
-    case 'hot':
-      return hotProducts
-    case 'new':
-      return newProducts
-    default:
-      return regularProducts
-  }
+  const categoryKey = category.value || 'clothing'
+  return allProducts[categoryKey] || []
 })
 
 // 过滤后的商品列表
@@ -289,4 +334,4 @@ const navigateToDetail = (id: number) => {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-</style> 
+</style>

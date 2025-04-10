@@ -16,13 +16,15 @@
     "@splinetool/runtime": "^1.9.82",
     "@vueuse/core": "^13.0.0",
     "axios": "^1.8.4",
+    "china-area-data": "^5.0.1",
     "dayjs": "^1.11.13",
     "dotted-map": "^2.2.3",
     "lodash": "^4.17.21",
     "motion-v": "0.12.0",
     "pinia": "^2.1.7",
     "swiper": "^11.2.6",
-    "vue-composable": "^1.0.0-beta.25"
+    "vue-composable": "^1.0.0-beta.25",
+    "world-countries": "^5.1.0"
   },
   "devDependencies": {
     "@element-plus/nuxt": "^1.1.1",

@@ -360,7 +360,7 @@
       name: '选品中心', 
       href: '/products', 
       icon: 'products',
-      hasDropdown: true,
+      hasDropdown: false,
       dropdownItems: [
         { name: '热门产品', href: '/products/popular' },
         { name: '新品上架', href: '/products/new' },
@@ -369,7 +369,7 @@
       ] 
     },
     { name: '网站设计', href: config.public.MICRO_POD_URL, icon: 'design', isExternal: true },
-    { name: '创意图库', href: config.public.GALLERY_URL, icon: 'gallery', isExternal: true },
+    // { name: '创意图库', href: config.public.GALLERY_URL, icon: 'gallery', isExternal: true },
     // { name: '个人中心', href: '/dashboard', icon: 'user' },
   ]
   

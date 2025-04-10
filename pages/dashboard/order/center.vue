@@ -14,6 +14,19 @@
       @submit="handleDownloadSubmit"
     />
 
+    <!-- 引入拆分订单弹窗 -->
+    <SplitOrderDialog
+      v-model:show="showSplitOrderDialog"
+      :products="currentOrderProducts"
+      @confirm="handleSplitOrderConfirm"
+    />
+
+    <!-- 批量推送弹窗 -->
+    <BatchPushDialog
+      v-model:show="showBatchPushDialog"
+      @stop="handleStopPush"
+    />
+
     <!-- 标签页 -->
     <div class="flex border-b border-gray-200 mb-6">
       <button 
@@ -30,7 +43,7 @@
       >
         其他订单
         <span class="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">2114</span>
-      </button>
+        </button>
     </div>
 
     <!-- 搜索过滤区域 -->
@@ -58,8 +71,8 @@
             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
               <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                 <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-              </svg>
-            </div>
+            </svg>
+          </div>
           </div>
         </div>
         <div class="flex flex-col">
@@ -75,10 +88,10 @@
             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
               <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                 <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-              </svg>
-            </div>
-          </div>
+            </svg>
         </div>
+      </div>
+    </div>
 
         <div class="flex flex-col">
           <label class="text-sm text-gray-600 mb-1">物流类型：</label>
@@ -161,8 +174,8 @@
       <!-- 其他订单的按钮 -->
       <template v-if="activeTab === 'other'">
         <div class="space-x-3">
-          <button 
-            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors" 
+          <button
+            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
             :disabled="selectedOrdersCount === 0"
             :class="{'opacity-50 cursor-not-allowed': selectedOrdersCount === 0}"
             @click="handleBatchPush"
@@ -170,7 +183,7 @@
             批量推送 <span v-if="selectedOrdersCount > 0">({{ selectedOrdersCount }})</span>
           </button>
           <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
-            特殊订单
+            转外部订单
           </button>
         </div>
         <button 
@@ -212,9 +225,9 @@
     <!-- 订单列表 - 表格 -->
     <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
               <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-8">
                 <div class="flex items-center">
                   <input 
@@ -226,8 +239,8 @@
                 </div>
               </th>
               <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                订单信息
-              </th>
+              订单信息
+            </th>
               <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" @click="toggleTimeSort">
                 时间
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -236,19 +249,19 @@
               </th>
               <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 收货信息
-              </th>
+            </th>
               <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 发货信息
-              </th>
+            </th>
               <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                订单状态
-              </th>
+              订单状态
+            </th>
               <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                操作
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
+              操作
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
             <template v-if="filteredOrders.length > 0">
               <template v-for="(order, index) in filteredOrders" :key="order.id">
                 <!-- 订单行 -->
@@ -270,7 +283,7 @@
                             <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zM5.172 9l1.414-1.414a4 4 0 015.656 0L13.828 9H5.172z" clip-rule="evenodd" />
                           </svg>
                           {{ order.shopName }}
-                        </div>
+                </div>
                         <div class="text-gray-500 text-sm">{{ order.orderNumber }}</div>
                         <button 
                           @click="toggleOrderDetails(index)"
@@ -289,9 +302,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                           </svg>
                         </button>
-                      </div>
-                    </div>
-                  </td>
+                </div>
+              </div>
+            </td>
                   <td class="px-3 py-4 whitespace-nowrap">
                     <div class="text-sm text-gray-500">下单时间：{{ order.orderTime }}</div>
                     <div class="text-sm text-gray-500">支付时间：{{ order.paymentTime }}</div>
@@ -300,16 +313,16 @@
                   <td class="px-3 py-4 whitespace-nowrap">
                     <div class="text-sm text-gray-900">收货人：{{ order.receiver }}</div>
                     <div class="text-sm text-gray-500">收货地址：{{ order.address }}</div>
-                  </td>
+            </td>
                   <td class="px-3 py-4 whitespace-nowrap">
                     <div class="text-sm text-gray-900">物流类型：{{ order.logisticsType }}</div>
                     <div class="text-sm text-gray-500">物流单号：{{ order.trackingNumber }}</div>
-                  </td>
+            </td>
                   <td class="px-3 py-4 whitespace-nowrap">
                     <span class="px-2 py-1 text-sm rounded-md" :class="order.statusClass ? order.statusClass : 'text-blue-800 bg-blue-100'">
                       {{ order.status }}
-                    </span>
-                  </td>
+              </span>
+            </td>
                   <td class="px-3 py-4 whitespace-nowrap">
                     <div class="space-x-2">
                       <button 
@@ -318,12 +331,23 @@
                       >
                         申请退款
                       </button>
+                      <button 
+                        @click="openSplitOrderDialog(order)"
+                        class="text-sm text-blue-600 hover:text-blue-800"
+                      >
+                        拆分订单
+                      </button>
+                      <button 
+                        class="text-sm text-blue-600 hover:text-blue-800"
+                      >
+                        转外部订单
+                      </button>
                       <nuxt-link :to="`/dashboard/order/${order.id}`" class="text-sm text-blue-600 hover:text-blue-800">
                         查看详情
                       </nuxt-link>
-                    </div>
-                  </td>
-                </tr>
+              </div>
+            </td>
+          </tr>
                 
                 <!-- 展开的商品信息 -->
                 <tr v-if="expandedOrders[index]">
@@ -342,8 +366,8 @@
                         <div>数量/单价</div>
                         <div>金额</div>
                         <div>商品状态</div>
-                      </div>
-                      
+    </div>
+
                       <!-- 商品列表 -->
                       <div v-for="product in order.products" :key="product.id" class="grid grid-cols-6 bg-white hover:bg-gray-50 px-3 py-4 border-b border-gray-200">
                         <div class="flex">
@@ -351,14 +375,14 @@
                           <div>
                             <div class="text-sm text-gray-900">{{ product.name }}</div>
                             <div class="text-sm text-gray-500">规格：{{ product.spec }}</div>
-                          </div>
-                        </div>
+          </div>
+          </div>
                         <div class="whitespace-nowrap text-sm text-gray-500 flex items-center">
                           *{{ product.quantity }} / ¥ {{ product.price.toFixed(2) }}
-                        </div>
+        </div>
                         <div class="flex relative">
                           <img class="h-16 w-16 rounded-md object-cover mr-3" src="https://via.placeholder.com/100" alt="" />
-                          <div>
+            <div>
                             <div class="text-sm text-gray-900">{{ product.name }}</div>
                             <div class="text-sm text-gray-500">规格：{{ product.spec }}</div>
                           </div>
@@ -371,14 +395,14 @@
                         </div>
                         <div class="whitespace-nowrap text-sm text-gray-500 flex items-center">
                           ¥ {{ product.totalAmount.toFixed(2) }}
-                        </div>
+            </div>
                         <div class="whitespace-nowrap flex items-center">
                           <button class="px-2 py-1 text-xs border border-blue-500 text-blue-500 rounded hover:bg-blue-50">
                             {{ product.status }}
                           </button>
-                        </div>
-                      </div>
-                    </div>
+            </div>
+          </div>
+        </div>
                   </td>
                 </tr>
               </template>
@@ -392,7 +416,7 @@
                     </svg>
                     <p class="text-lg">暂无数据</p>
                     <p class="text-sm mt-2">当前条件下没有找到相关订单</p>
-                  </div>
+        </div>
                 </td>
               </tr>
             </template>
@@ -428,15 +452,36 @@
 import { ref, reactive, onMounted, computed } from 'vue'
 import AfterSaleDialog from '~/components/common/AfterSaleDialog.vue'
 import DownloadOrderDialog from '~/components/common/DownloadOrderDialog.vue'
+import BatchPushDialog from '@/components/common/BatchPushDialog.vue'
+import SplitOrderDialog from '@/components/common/SplitOrderDialog.vue'
 
 // 页面元数据
-definePageMeta({
-  layout: 'dashboard',
-  middleware: ['auth']
-})
+    definePageMeta({
+    layout: 'dashboard',
+    middleware: ['auth']
+    })
+
+// 弹窗显示状态
+const showSplitOrderDialog = ref(false)
+
+// 当前操作的订单号和商品
+const currentOrderNumber = ref('')
+const currentOrderProducts = ref([])
 
 // 顶部标签切换
 const activeTab = ref('purchase') // 'purchase' 或 'other'
+
+// 打开拆分订单弹窗
+const openSplitOrderDialog = (order) => {
+  currentOrderProducts.value = order.products
+  showSplitOrderDialog.value = true
+}
+
+// 处理拆分订单确认
+const handleSplitOrderConfirm = (subOrders) => {
+  // TODO: 调用API处理订单拆分
+  console.log('拆分订单：', subOrders)
+}
 
 // 平台数据
 const platforms = ref([
@@ -761,7 +806,6 @@ const changeStatus = (status) => {
 
 // 售后申请弹窗相关
 const showAfterSaleDialog = ref(false)
-const currentOrderNumber = ref('')
 
 const openAfterSaleDialog = (orderNumber) => {
   currentOrderNumber.value = orderNumber
@@ -772,6 +816,20 @@ const handleAfterSaleSubmit = (formData) => {
   console.log('售后申请提交:', formData)
   // 这里添加实际的售后申请提交逻辑
   toast.success('售后申请提交成功')
+}
+
+// 批量推送弹窗控制
+const showBatchPushDialog = ref(false)
+
+// 处理批量推送
+const handleBatchPush = () => {
+  showBatchPushDialog.value = true
+}
+
+// 处理停止推送
+const handleStopPush = () => {
+  // 处理停止推送的逻辑
+  console.log('停止推送')
 }
 </script>
 
