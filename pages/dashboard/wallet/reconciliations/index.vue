@@ -22,6 +22,7 @@
       :data="tableData"
       style="width: 100%"
       class="shadow rounded-lg"
+      empty-text="当前周期内暂无账单"
       @selection-change="selectRow"
     >
       <!-- <el-table-column

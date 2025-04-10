@@ -59,7 +59,7 @@ export const tradeStatusMap: Record<string, string> = {
   FAIL_TRADE: "交易失败",
 };
 export const payTypeMap: Record<string, string> = {
-  BALANCE: "余额支付",
+  BALANCE: "预付余额支付",
   CMBPAY: "聚合支付",
 };
 export const payDetailTypeMap: Record<string, string> = {
@@ -67,7 +67,7 @@ export const payDetailTypeMap: Record<string, string> = {
   WECHAT: "微信支付",
   UNIONPAY: "银联",
   DCEP: "数字人民币",
-  BALANCE: "余额",
+  BALANCE: "预付余额",
 };
 
 export interface ReconciliationPageParam extends PageParam {
