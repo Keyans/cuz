@@ -61,7 +61,7 @@
                     <svg class="w-5 h-5 text-red-500 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                    <span class="text-red-500">推送失败！余额不足，请充值！</span>
+                    <span class="text-red-500">推送失败！预付余额不足，请预付！</span>
                   </template>
                 </div>
               </div>

@@ -30,7 +30,7 @@
       <el-table-column
         width="100"
         prop="currentBalance"
-        label="可用余额"
+        label="可用预付余额"
         :formatter="
           (row, _column, cell) => (row.payType === 'BALANCE' ? cell : '')
         "

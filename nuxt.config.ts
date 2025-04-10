@@ -53,13 +53,13 @@ export default defineNuxtConfig({
     server: {
       proxy: proxy(),
     },
-    assetsInclude: ['**/*.json'],
+    assetsInclude: ["**/*.json"],
     optimizeDeps: {
-      include: ['world-countries']
+      include: ["world-countries"],
     },
     json: {
-      stringify: true
-    }
+      stringify: true,
+    },
   },
 
   app: {
@@ -286,7 +286,7 @@ function proxy() {
     //     path.replace(/^\/dev\/saas-aimall-payment/, ""),
     // },
     // "/dev/saas-aimall-uaa": {
-    //   target: uaaTargetLocal,
+    //   target: targetTest,
     //   ws: false,
     //   changeOrigin: true,
     //   secure: false, //证书免校验

@@ -5,10 +5,10 @@
     </div>
 
     <!-- 账户概览 -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold">可用余额</h3>
+          <h3 class="text-lg font-semibold">可用预付余额</h3>
           <div class="p-2 bg-primary-light rounded-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -26,13 +26,22 @@
             </svg>
           </div>
         </div>
-        <p class="text-3xl font-bold text-primary">¥{{ amountInfo.undrawn }}</p>
-        <div class="flex w-full justify-between">
-          <p class="text-sm text-gray-500 mt-2">可提现金额</p>
-          <button class="btn-primary flex items-center px-2 py-1 text-[14px]">
+        <p class="text-3xl font-bold text-primary">
+          ¥{{ amountInfo?.undrawn }}
+        </p>
+        <div class="flex w-full justify-between mt-4 items-center">
+          <p class="text-sm text-gray-500">
+            总预付余额：￥{{ amountInfo?.total }} - 冻结金额：￥{{
+              amountInfo?.freeze
+            }}
+          </p>
+          <button
+            @click="showRecharge = true"
+            class="btn-plain btn-plain-border flex items-center px-2 py-1 text-[14px]"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
+              class="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -44,14 +53,14 @@
                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"
               />
             </svg>
-            立即充值
+            立即预付
           </button>
         </div>
       </div>
 
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold">待结算</h3>
+          <h3 class="text-lg font-semibold">未出账单</h3>
           <div class="p-2 bg-yellow-100 rounded-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -70,12 +79,31 @@
           </div>
         </div>
         <p class="text-3xl font-bold text-yellow-600">
-          ¥{{ amountInfo.uncompleted }}
+          ¥{{ amountInfo?.uncompleted }}
         </p>
-        <p class="text-sm text-gray-500 mt-2">预计7天后可提现</p>
+        <div class="flex w-full justify-between mt-4 items-center">
+          <p class="text-sm text-gray-500">
+            <text class="text-red-400">1</text> 笔账单未确认
+          </p>
+          <NuxtLink href="/dashboard/wallet/reconciliations" target="_blank">
+            <button class="btn-plain flex items-center px-2 py-1 text-[14px]">
+              查看更多
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-3 w-3"
+                viewBox="0 0 1024 1024"
+              >
+                <path
+                  fill="currentColor"
+                  d="M452.864 149.312a29.12 29.12 0 0 1 41.728.064L826.24 489.664a32 32 0 0 1 0 44.672L494.592 874.624a29.12 29.12 0 0 1-41.728 0 30.592 30.592 0 0 1 0-42.752L764.736 512 452.864 192a30.592 30.592 0 0 1 0-42.688m-256 0a29.12 29.12 0 0 1 41.728.064L570.24 489.664a32 32 0 0 1 0 44.672L238.592 874.624a29.12 29.12 0 0 1-41.728 0 30.592 30.592 0 0 1 0-42.752L508.736 512 196.864 192a30.592 30.592 0 0 1 0-42.688z"
+                ></path>
+              </svg>
+            </button>
+          </NuxtLink>
+        </div>
       </div>
 
-      <div class="bg-white rounded-lg shadow p-6">
+      <!-- <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-semibold">累计收入</h3>
           <div class="p-2 bg-green-100 rounded-full">
@@ -95,9 +123,11 @@
             </svg>
           </div>
         </div>
-        <p class="text-3xl font-bold text-green-600">¥{{ amountInfo.total }}</p>
+        <p class="text-3xl font-bold text-green-600">
+          ¥{{ amountInfo?.total }}
+        </p>
         <p class="text-sm text-gray-500 mt-2">近30天收入</p>
-      </div>
+      </div> -->
     </div>
 
     <!-- 交易记录筛选 -->
@@ -180,6 +210,44 @@
     <TransactionTable v-model:table-data="tableData"></TransactionTable>
     <!-- 分页 -->
     <Pagination v-model="pageConfig"></Pagination>
+
+    <el-dialog
+      v-model="showRecharge"
+      :close-on-click-modal="false"
+      width="500"
+      v-loading=""
+    >
+      <div class="flex flex-col space-y-4">
+        <div class="flex flex-col space-y-4">
+          <div class="text-[22px] font-semibold shrink-0">充值金额</div>
+
+          <div
+            class="flex items-center text-[18px] space-x-2 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <div>￥</div>
+            <input
+              v-model="rechargeAmount"
+              placeholder="请输入预付到账金额"
+              class="w-full outline-none"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <button
+            v-for="item in [100, 500, 1000, 2000, 3000, 5000, 10000, 20000]"
+            :key="item"
+            class="bg-[#f2f2f2] rounded-lg text-center px-2 py-2 shadow"
+            @click="rechargeAmount = item"
+          >
+            <text class="text-[14px] font-semibold"> {{ item }}元 </text>
+            <div class="text-[12px]">售价：￥{{ item }}</div>
+          </button>
+        </div>
+
+        <button class="btn-secondary w-full">确认支付</button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -196,24 +264,20 @@ definePageMeta({
   middleware: ["auth"],
 });
 
-const amountInfo = ref({
-  undrawn: "0",
-  total: "0",
-  uncompleted: "0",
-});
-
+const amountInfo = ref<Record<string, string> | undefined>();
+const showRecharge = ref(false);
 onMounted(async () => {
   try {
     const { data } = await doGetShopBalance();
     if (data) {
-      amountInfo.value.total = data.total;
-      amountInfo.value.uncompleted = data.uncompleted;
-      amountInfo.value.undrawn = data.undrawn;
+      amountInfo.value = data;
     }
   } catch (error) {
     console.error(error);
   }
 });
+const rechargeAmount = ref();
+const rechargeLoading = ref(false);
 
 const pageConfig = ref({
   size: 10,
@@ -263,7 +327,6 @@ const search = async () => {
   tableData.value = data.records;
   pageConfig.value.total = data.total;
 };
-
 onMounted(() => {
   search();
 });
