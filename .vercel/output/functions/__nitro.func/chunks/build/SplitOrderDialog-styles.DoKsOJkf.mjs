@@ -1,2 +1,0 @@
-const a=[".max-h-\\[500px\\].overflow-y-auto[data-v-5ea2948a]{scrollbar-color:rgba(156,163,175,.5) transparent;scrollbar-width:thin}.max-h-\\[500px\\].overflow-y-auto[data-v-5ea2948a]::-webkit-scrollbar{width:6px}.max-h-\\[500px\\].overflow-y-auto[data-v-5ea2948a]::-webkit-scrollbar-track{background:transparent}.max-h-\\[500px\\].overflow-y-auto[data-v-5ea2948a]::-webkit-scrollbar-thumb{background-color:#9ca3af80;border-radius:3px}"];export{a as default};
-//# sourceMappingURL=SplitOrderDialog-styles.DoKsOJkf.mjs.map
