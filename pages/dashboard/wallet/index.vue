@@ -384,10 +384,11 @@ const createQrCode = async (url:string, outTradeNo:string) => {
   showPayQRcode.value = true
   // 每隔5秒轮询支付状态接口
   interval.value = setInterval(async () => {
-    const { data, success } = await doGetPayOrderStatus({
+    const { data } = await doGetPayOrderStatus({
       outTradeNo,
     });
-    if (success) {
+    if (data.NotifyStatus === 'ACCOMPLISH') {
+      // 充值处理完成
       handleCloseQRcode();
       await search();
       ElMessage.success('充值成功！')
