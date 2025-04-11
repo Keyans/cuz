@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto py-6">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold">费用中心</h1>
+      <h1 class="text-2xl font-bold">资金明细</h1>
     </div>
 
     <!-- 账户概览 -->
