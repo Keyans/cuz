@@ -161,24 +161,6 @@
   // Dashboard sidebar items with icons
   const sidebarItems = reactive([
     {
-      name: '首页',
-      href: '/dashboard',
-      icon: 'IconHome',
-      isOpen: false
-    },
-    {
-      name: '工作台',
-      href: '/dashboard/workspace',
-      icon: 'IconHome',
-      isOpen: false
-    },
-    {
-      name: '店铺管理',
-      href: '/dashboard/store',
-      icon: 'IconStore',
-      isOpen: false,
-    },
-    {
       name: '选品中心',
       href: '/dashboard/sourcing',
       icon: 'IconBox',
@@ -187,7 +169,7 @@
     {
       name: '我的产品',
       href: '/dashboard/product/library',
-      icon: 'IconShoppingCart',
+      icon: 'IconBox',
       isOpen: false,
       children: [
         {
@@ -196,13 +178,31 @@
           icon: 'IconBox',
         },
         {
+          name: '素材库',
+          href: '/dashboard/product/material',
+          icon: 'IconBox',
+        },
+      ],
+    },
+    {
+      name: '我的刊登',
+      href: '/dashboard/store',
+      icon: 'IconShoppingCart',
+      isOpen: false,
+      children: [
+        {
+          name: '我的店铺',
+          href: '/dashboard/store',
+          icon: 'IconBox',
+        },
+        {
           name: '刊登任务',
-          href: '/dashboard/product/tasks',
+          href: '/dashboard/publish/tasks',
           icon: 'IconBox',
         },
         {
           name: '刊登模版',
-          href: '/dashboard/product/templates',
+          href: '/dashboard/publish/templates',
           icon: 'IconBox',
         },
       ],
@@ -226,16 +226,40 @@
       ],
     },
     {
-      name: '费用中心',
+      name: '我的钱包',
       href: '/dashboard/wallet',
       icon: 'IconSettings',
-      isOpen: false
+      isOpen: false,
+      children: [
+        {
+          name: '资金明细',
+          href: '/dashboard/wallet',
+          icon: 'IconBox',
+        },
+        {
+          name: '发票管理',
+          href: '/dashboard/wallet/invoice',
+          icon: 'IconBox',
+        },
+      ],
     },
     {
-      name: '基本信息',
+      name: '账号管理',
       href: '/dashboard/account/settings',
       icon: 'IconSettings',
-      isOpen: false
+      isOpen: false,
+      children: [
+        {
+          name: '基本信息',
+          href: '/dashboard/account/settings',
+          icon: 'IconBox',
+        },
+        {
+          name: '实名认证',
+          href: '/dashboard/account/realName',
+          icon: 'IconBox',
+        },
+      ],
     },
   ])
   

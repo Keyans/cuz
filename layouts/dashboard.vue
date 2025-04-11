@@ -155,7 +155,7 @@
 
       <!-- Main content -->
       <main
-        class="flex-1 p-4 overflow-auto transition-all duration-300 relative scroll-smooth"
+        class="flex-1 p-4 pt-2 overflow-auto transition-all duration-300 relative scroll-smooth"
         id="dashboard-main"
         @scroll="handleScroll"
       >
