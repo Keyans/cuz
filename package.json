@@ -22,6 +22,7 @@
     "lodash": "^4.17.21",
     "motion-v": "0.12.0",
     "pinia": "^2.1.7",
+    "qrcode": "^1.5.4",
     "swiper": "^11.2.6",
     "vue-composable": "^1.0.0-beta.25",
     "world-countries": "^5.1.0"

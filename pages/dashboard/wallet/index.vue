@@ -245,7 +245,25 @@
           </button>
         </div>
 
-        <button class="btn-secondary w-full">确认支付</button>
+        <button class="btn-secondary w-full" @click="confirmPay">确认支付</button>
+      </div>
+    </el-dialog>
+
+    <!--二维码支付弹窗-->
+    <el-dialog
+      v-model="showPayQRcode"
+      :close-on-click-modal="false"
+      width="500"
+      v-loading=""
+      :before-close="handleCloseQRcode"
+    > 
+      <div class="qccode-box">
+        <p>向 <span class="text-[14px] font-semibold">深圳市深航科技有限公司</span></p>
+        <p class="text-[14px] font-semibold text-blue-600">扫码支付{{ rechargeAmount }}元</p>
+        <img :src="qrCodeUrl"></img>
+        <p>支付平台：</p>
+        <img src="/assets/pay-platform.png" class="h-12"></img>
+        <p>若未到账，请前往<span class="text-[14px] text-blue-400">帮助中心</span>联系客服处理。</p>
       </div>
     </el-dialog>
   </div>
@@ -253,12 +271,13 @@
 
 <script setup lang="ts">
 import dayjs from "dayjs";
-import { doGetShopBalance } from "~/apis/finance/overview";
+import { doGetShopBalance, doRecharge, doGetPayOrderStatus } from "~/apis/finance/overview";
 import { doListShopTransaction } from "~/apis/finance/transaction";
 import type { TableDataProp } from "./components/transactionTable.vue";
 import TransactionTable from "./components/transactionTable.vue";
 import Pagination from "~/components/ui/pagination/Pagination.vue";
 import { payBizTypeMap } from "~/apis/finance/transaction/types";
+import QRCode from 'qrcode'
 definePageMeta({
   layout: "dashboard",
   middleware: ["auth"],
@@ -330,11 +349,72 @@ const search = async () => {
 onMounted(() => {
   search();
 });
+
+/**
+ * 确认支付函数
+ *
+ * @returns 异步返回充值结果
+ */
+const confirmPay = async () => {
+  const rechargeValue = Number(rechargeAmount.value);
+  // 检查是否为数字且大于0
+  if (isNaN(rechargeValue) || rechargeValue <= 0) {
+    return ElMessage.warning("请输入有效的充值金额（大于0）");
+  }
+  const { success,msg,data } = await doRecharge({
+    payType:'CMBPAY',
+    rechargeAmt:rechargeValue * 10000,
+  });
+  if (!success) return ElMessage.error(`充值失败:${msg}`);
+  showRecharge.value = false;
+  await createQrCode(data.data,data.outTradeNo)
+};
+const showPayQRcode = ref(false)
+const qrCodeUrl = ref('')
+/**
+ * 创建二维码，并扫码支付
+ *
+ * @param url 要生成二维码的链接
+ * @param outTradeNo 订单号
+
+ */
+const interval = ref<NodeJS.Timeout | null>(null)
+const createQrCode = async (url:string, outTradeNo:string) => {
+  qrCodeUrl.value = await QRCode.toDataURL(url)
+  showPayQRcode.value = true
+  // 每隔5秒轮询支付状态接口
+  interval.value = setInterval(async () => {
+    const { data, success } = await doGetPayOrderStatus({
+      outTradeNo,
+    });
+    if (success) {
+      handleCloseQRcode();
+      await search();
+      ElMessage.success('充值成功！')
+    }
+  }, 5000);
+}
+/**
+ * 关闭二维码显示处理函数
+ *
+ */
+const handleCloseQRcode = () => {
+  if (interval.value) {
+    clearInterval(interval.value);
+    interval.value = null;
+  }
+  showPayQRcode.value = false;
+}
 </script>
 
 <style scoped>
 th {
   white-space: nowrap;
   min-width: 200px;
+}
+.qccode-box{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 </style>
