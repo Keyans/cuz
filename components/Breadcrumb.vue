@@ -58,7 +58,6 @@ const customPathMap: Record<string, { items: { name: string, path?: string }[] }
   },
   '/dashboard/product/libraryPage/order': {
     items: [
-      { name: '控制台', path: '/dashboard' },
       { name: '我的产品', path: '/dashboard/product' },
       { name: '产品库', path: '/dashboard/product/library' },
       { name: '立即下单' }
