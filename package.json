@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "dotenv -e .env.production -- nuxt build",
+    "build": "node fix-element-plus.js && dotenv -e .env.production -- nuxt build",
     "dev": "dotenv -e .env.development -- nuxt dev --host 0.0.0.0",
     "generate": "nuxt generate && mkdir -p dist/assets && cp -r public/assets/* dist/assets/ && cp public/assets/favicon.png dist/",
     "preview": "nuxt preview",
