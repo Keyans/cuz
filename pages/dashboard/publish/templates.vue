@@ -231,7 +231,7 @@ const tableActions = [
     icon: EditIcon,
     onClick: (record: TemplateRecord) => {
       router.push({
-        path: '/dashboard/product/templatesPage/template-edit',
+        path: '/dashboard/publish/templatesPage/template-edit',
         query: { id: record.id }
       });
     }
@@ -317,7 +317,7 @@ const fetchTemplateList = () => {
 
 // 创建模板
 function handleCreate() {
-  router.push('/dashboard/product/templatesPage/template-edit');
+  router.push('/dashboard/publish/templatesPage/template-edit');
 }
 
 // 初始化页面
