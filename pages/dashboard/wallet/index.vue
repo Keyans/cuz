@@ -27,7 +27,7 @@
           </div>
         </div>
         <p class="text-3xl font-bold text-primary">
-          ¥{{ amountInfo?.undrawn }}
+          ¥{{ +(amountInfo?.undrawn ?? 0) / 10000 }}
         </p>
         <div class="flex w-full justify-between mt-4 items-center">
           <p class="text-sm text-gray-500">
@@ -226,6 +226,7 @@
           >
             <div>￥</div>
             <input
+              @blur="checkRechargeAmount"
               v-model="rechargeAmount"
               placeholder="请输入预付到账金额"
               class="w-full outline-none"
@@ -235,7 +236,16 @@
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <button
-            v-for="item in [100, 500, 1000, 2000, 3000, 5000, 10000, 20000]"
+            v-for="item in [
+              '100',
+              '500',
+              '1000',
+              '2000',
+              '3000',
+              '5000',
+              '10000',
+              '20000',
+            ]"
             :key="item"
             class="bg-[#f2f2f2] rounded-lg text-center px-2 py-2 shadow"
             @click="rechargeAmount = item"
@@ -245,7 +255,9 @@
           </button>
         </div>
 
-        <button class="btn-secondary w-full" @click="confirmPay">确认支付</button>
+        <button class="btn-secondary w-full" @click="confirmPay">
+          确认支付
+        </button>
       </div>
     </el-dialog>
 
@@ -256,14 +268,22 @@
       width="500"
       v-loading=""
       :before-close="handleCloseQRcode"
-    > 
+    >
       <div class="qccode-box">
-        <p>向 <span class="text-[14px] font-semibold">深圳市深航科技有限公司</span></p>
-        <p class="text-[14px] font-semibold text-blue-600">扫码支付{{ rechargeAmount }}元</p>
-        <img :src="qrCodeUrl"></img>
+        <p>
+          向
+          <span class="text-[14px] font-semibold">深圳市深航科技有限公司</span>
+        </p>
+        <p class="text-[14px] font-semibold text-blue-600">
+          扫码支付{{ rechargeAmount }}元
+        </p>
+        <img :src="qrCodeUrl" />
         <p>支付平台：</p>
-        <img src="/assets/pay-platform.png" class="h-12"></img>
-        <p>若未到账，请前往<span class="text-[14px] text-blue-400">帮助中心</span>联系客服处理。</p>
+        <img src="/assets/pay-platform.png" class="h-12" />
+        <p>
+          若未到账，请前往<span class="text-[14px] text-blue-400">帮助中心</span
+          >联系客服处理。
+        </p>
       </div>
     </el-dialog>
   </div>
@@ -271,18 +291,22 @@
 
 <script setup lang="ts">
 import dayjs from "dayjs";
-import { doGetShopBalance, doRecharge, doGetPayOrderStatus } from "~/apis/finance/overview";
+import {
+  doGetShopBalance,
+  doRecharge,
+  doGetPayOrderStatus,
+} from "~/apis/finance/overview";
 import { doListShopTransaction } from "~/apis/finance/transaction";
 import type { TableDataProp } from "./components/transactionTable.vue";
 import TransactionTable from "./components/transactionTable.vue";
 import Pagination from "~/components/ui/pagination/Pagination.vue";
 import { payBizTypeMap } from "~/apis/finance/transaction/types";
-import QRCode from 'qrcode'
+import QRCode from "qrcode";
 definePageMeta({
   layout: "dashboard",
   middleware: ["auth"],
 });
-
+const toast = useToast();
 const amountInfo = ref<Record<string, string> | undefined>();
 const showRecharge = ref(false);
 onMounted(async () => {
@@ -295,7 +319,7 @@ onMounted(async () => {
     console.error(error);
   }
 });
-const rechargeAmount = ref();
+const rechargeAmount = ref<string>();
 const rechargeLoading = ref(false);
 
 const pageConfig = ref({
@@ -361,16 +385,16 @@ const confirmPay = async () => {
   if (isNaN(rechargeValue) || rechargeValue <= 0) {
     return ElMessage.warning("请输入有效的充值金额（大于0）");
   }
-  const { success,msg,data } = await doRecharge({
-    payType:'CMBPAY',
-    rechargeAmt:rechargeValue * 10000,
+  const { success, msg, data } = await doRecharge({
+    payType: "CMBPAY",
+    rechargeAmt: rechargeValue * 10000,
   });
   if (!success) return ElMessage.error(`充值失败:${msg}`);
   showRecharge.value = false;
-  await createQrCode(data.data,data.outTradeNo)
+  await createQrCode(data.data, data.outTradeNo);
 };
-const showPayQRcode = ref(false)
-const qrCodeUrl = ref('')
+const showPayQRcode = ref(false);
+const qrCodeUrl = ref("");
 /**
  * 创建二维码，并扫码支付
  *
@@ -378,23 +402,23 @@ const qrCodeUrl = ref('')
  * @param outTradeNo 订单号
 
  */
-const interval = ref<NodeJS.Timeout | null>(null)
-const createQrCode = async (url:string, outTradeNo:string) => {
-  qrCodeUrl.value = await QRCode.toDataURL(url)
-  showPayQRcode.value = true
+const interval = ref<NodeJS.Timeout | null>(null);
+const createQrCode = async (url: string, outTradeNo: string) => {
+  qrCodeUrl.value = await QRCode.toDataURL(url);
+  showPayQRcode.value = true;
   // 每隔5秒轮询支付状态接口
   interval.value = setInterval(async () => {
     const { data } = await doGetPayOrderStatus({
       outTradeNo,
     });
-    if (data.NotifyStatus === 'ACCOMPLISH') {
+    if (data.NotifyStatus === "ACCOMPLISH") {
       // 充值处理完成
       handleCloseQRcode();
       await search();
-      ElMessage.success('充值成功！')
+      ElMessage.success("充值成功！");
     }
   }, 5000);
-}
+};
 /**
  * 关闭二维码显示处理函数
  *
@@ -405,7 +429,15 @@ const handleCloseQRcode = () => {
     interval.value = null;
   }
   showPayQRcode.value = false;
-}
+};
+
+const checkRechargeAmount = (e: Event) => {
+  console.log(rechargeAmount.value, typeof rechargeAmount.value);
+  if (rechargeAmount.value && !/^[1-9]\d*$/.test(rechargeAmount.value)) {
+    toast.warning("请输入正整数");
+    rechargeAmount.value = parseInt(rechargeAmount.value) + "";
+  }
+};
 </script>
 
 <style scoped>
@@ -413,7 +445,7 @@ th {
   white-space: nowrap;
   min-width: 200px;
 }
-.qccode-box{
+.qccode-box {
   display: flex;
   flex-direction: column;
   align-items: center;

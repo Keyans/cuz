@@ -22,7 +22,7 @@
                 ? "+"
                 : "-") +
               "￥" +
-              props.row.transAmount
+              props.row.transAmount / 10000
             }}
           </span>
         </template>
@@ -75,7 +75,21 @@
         :formatter="
           (_, __, cell) => (cell ? tradeStatusMap[cell] ?? '未知状态' : '')
         "
-      />
+      >
+        <template #default="props">
+          <span
+            :class="
+              props?.row?.tradeStatus === 'FAIL_TRADE' ? 'text-red-300' : ''
+            "
+          >
+            {{
+              props?.row?.tradeStatus
+                ? tradeStatusMap[props?.row?.tradeStatus] ?? "未知状态"
+                : ""
+            }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
         width="200"
         prop="payChannelNo"
