@@ -4,7 +4,7 @@
     <div class="flex items-center mb-6 text-sm">
       <span class="text-gray-600">产品库</span>
       <span class="mx-2 text-gray-400">/</span>
-      <span class="text-gray-600 cursor-pointer" @click="$router.push('/dashboard/product/templates')">刊登模板</span>
+      <span class="text-gray-600 cursor-pointer" @click="$router.push('/dashboard/publish/templates')">刊登模板</span>
       <span class="mx-2 text-gray-400">/</span>
       <span class="text-gray-900 font-medium">{{ isEdit ? '编辑模板' : '创建模板' }}</span>
     </div>
@@ -1106,7 +1106,7 @@ async function save() {
     }
     
     // 保存成功后返回列表页
-    router.push('/dashboard/product/templates');
+    router.push('/dashboard/publish/templates');
   } catch (error) {
     console.error('保存模板失败', error);
   }
@@ -1114,7 +1114,7 @@ async function save() {
 
 // 取消
 function cancel() {
-  router.push('/dashboard/product/templates');
+  router.push('/dashboard/publish/templates');
 }
 
 // 功能特点标签方法

@@ -503,6 +503,25 @@
         <el-button type="primary" @click="showViewInvoiceDialog = false" class="!rounded-md px-8">确定</el-button>
       </div>
     </el-dialog>
+
+    <!-- 取消开票确认弹窗 -->
+    <el-dialog
+      v-model="showCancelInvoiceDialog"
+      title="取消开票"
+      width="30%"
+      destroy-on-close
+      class="cancel-invoice-dialog"
+      :append-to-body="true"
+    >
+      <div class="py-6 text-center">
+        <p class="text-base">是否取消开票？</p>
+      </div>
+      
+      <div class="flex justify-end gap-3">
+        <el-button @click="showCancelInvoiceDialog = false" class="!rounded-md px-8">取消</el-button>
+        <el-button type="primary" @click="confirmCancelInvoice" class="!rounded-md px-8">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -669,6 +688,10 @@ const viewingInvoice = reactive({
   invoiceNo: ''
 });
 
+// 取消开票相关
+const showCancelInvoiceDialog = ref(false);
+const cancellingInvoiceId = ref('');
+
 // 初始化数据
 onMounted(() => {
   // 可以从API获取初始数据
@@ -771,7 +794,8 @@ const handleView = (row: any) => {
 
 // 取消开票
 const handleCancel = (row: any) => {
-  // TODO: 实现取消开票逻辑
+  cancellingInvoiceId.value = row.id || row.billNo;
+  showCancelInvoiceDialog.value = true;
 };
 
 // 分页大小变化
@@ -893,6 +917,16 @@ const handleSaveInvoiceInfo = () => {
   ElMessage.success('发票信息保存成功');
   showEditInvoiceInfoDialog.value = false;
 };
+
+// 确认取消开票
+const confirmCancelInvoice = () => {
+  // TODO: 调用API取消开票
+  ElMessage.success('已取消开票申请');
+  showCancelInvoiceDialog.value = false;
+  
+  // 重新加载列表
+  fetchInvoiceList();
+};
 </script>
 
 <style scoped>
@@ -992,5 +1026,25 @@ const handleSaveInvoiceInfo = () => {
 
 .invoice-edit-dialog :deep(.el-input__wrapper) {
   border-radius: 2px;
+}
+
+/* 取消开票弹窗样式 */
+.cancel-invoice-dialog :deep(.el-dialog__header) {
+  padding: 16px 20px;
+  margin-right: 0;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.cancel-invoice-dialog :deep(.el-dialog__body) {
+  padding: 20px;
+}
+
+.cancel-invoice-dialog :deep(.el-dialog__headerbtn) {
+  top: 16px;
+}
+
+.cancel-invoice-dialog :deep(.el-dialog__title) {
+  font-size: 16px;
+  font-weight: 500;
 }
 </style>
