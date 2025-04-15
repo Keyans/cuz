@@ -6,10 +6,11 @@
       <span class="mx-2 text-gray-400">/</span>
       <span class="text-gray-900 font-medium">刊登模板</span>
     </div>
-
+   
     <!-- 查询区域 -->
     <div class="mb-6">
       <QueryFilter 
+        v-if="showQueryFilter"
         :fields="queryFields"
         :initial-values="queryParams"
         @search="handleSearch"
@@ -45,6 +46,7 @@ import QueryFilter from '~/components/common/QueryFilter.vue';
 import DataTable from '~/components/common/DataTable.vue';
 import ActionButton from '~/components/common/ActionButton.vue';
 import { useRouter } from 'vue-router';
+import { doGetTemplateLanguageList, doGetTemplatePage, doDelTemplate }  from "~/apis/finance/publish";
 
 // 声明router变量
 const router = useRouter();
@@ -64,16 +66,16 @@ interface TemplateRecord {
   createTime: string;
   updateTime: string;
 }
-
+const languageOptions = ref<any[]>([]) // 模板语言列表选项
 // 查询相关
 const queryFields = [
   {
-    key: 'search',
+    key: 'templateName',
     type: 'input' as const,
-    placeholder: '模板ID/模板名称/商品SKU'
+    placeholder: '模板名称'
   },
   {
-    key: 'store',
+    key: 'shopId',
     type: 'select' as const,
     options: [
       { label: '所属店铺', value: '' },
@@ -82,30 +84,63 @@ const queryFields = [
     ]
   },
   {
-    key: 'language',
+    key: 'templateLanguages',
     type: 'tag-select' as const,
-    options: [
-      { label: '模板语言', value: '' },
-      { label: '中文', value: 'zh' },
-      { label: '英语', value: 'en' }
-    ]
-  }
+    options: [], // 动态获取赋值languageOptions不生效?
+  },
 ];
 
 const queryParams = reactive({
-  search: '',
-  store: '',
-  language: [] as string[]
+  templateName: '',
+  shopId: '',
+  templateLanguages: [] as string[]
 });
 
 // 表格列定义
 const columns = [
-  { key: 'id', title: '模板 ID' },
-  { key: 'name', title: '模板名称' },
-  { key: 'store', title: '所属店铺' },
-  { key: 'category', title: '商品分类' },
-  { key: 'language', title: '模板语言' },
-  { key: 'sort', title: '排序值' },
+  { 
+    key: 'templateInfo', 
+    title: '模板信息',
+    render: defineComponent({
+      props: {
+        record: Object
+      },
+      setup(props) {
+        return () => {
+          const record = props.record as TemplateRecord;
+          return h('div', { class: 'space-y-1' }, [
+            h('div', { class: 'text-xs' }, [
+              h('span', { class: 'text-gray-500' }),
+              h('span', {}, record.templateName)
+            ]),
+            h('div', { class: 'text-xs' }, [
+              h('span', { class: 'text-gray-500' }),
+              h('span', {}, record.appShopName)
+            ])
+          ]);
+        };
+      }
+    })
+  },
+  { 
+    key: 'language',
+    title: '模板语言',
+    render: defineComponent({
+      props: {
+        record: Object
+      },
+      setup(props) {
+        return () => {
+          const record = props.record as TemplateRecord;
+          return h('div', { class: 'space-y-1' }, [
+            h('div', { class: 'text-xs' }, [
+              h('span', {}, record.language==='en'?'英文':'中文'),
+            ]),
+          ]);
+        };
+      }
+    })
+  },
   { 
     key: 'time', 
     title: '时间', 
@@ -133,18 +168,7 @@ const columns = [
 ];
 
 // 模拟数据
-const tableData = ref<TemplateRecord[]>([
-  {
-    id: '5789290',
-    name: 'T恤模板',
-    store: 'TEMU-PhoneCase',
-    category: '3C数码配件>手机配件>其他',
-    language: '中文',
-    sort: '0',
-    createTime: '2025-01-08 17:38',
-    updateTime: '2025-01-08 17:38'
-  }
-]);
+const tableData = ref<TemplateRecord[]>([]);
 
 // 图标组件
 const EditIcon = defineComponent({
@@ -232,48 +256,56 @@ const tableActions = [
     onClick: (record: TemplateRecord) => {
       router.push({
         path: '/dashboard/publish/templatesPage/template-edit',
-        query: { id: record.id }
+        query: { id: record.templateId }
       });
     }
   },
-  {
-    key: 'copy',
-    text: '复制',
-    icon: CopyIcon,
-    onClick: (record: TemplateRecord) => {
-      console.log('复制模板', record);
-    }
-  },
+  // {
+  //   key: 'copy',
+  //   text: '复制',
+  //   icon: CopyIcon,
+  //   onClick: (record: TemplateRecord) => {
+  //     console.log('复制模板', record);
+  //   }
+  // },
   {
     key: 'delete',
     text: '删除',
     type: 'danger' as const,
     icon: DeleteIcon,
     onClick: (record: TemplateRecord) => {
-      console.log('删除模板', record);
+      delTemplate(record.templateId)
     }
   }
 ];
+
+// 获取模板语言列表
+const getLanguageList = async () => {
+  const { data } = await doGetTemplateLanguageList()
+  languageOptions.value = data.languageList.map(item => ({ label: item.languageName, value: item.language }))
+  const targetField = queryFields.find(item => item.key === 'templateLanguages')
+  if (targetField) {
+    targetField.options = [...languageOptions.value]
+  }
+}
 
 // 分页
 const pagination = reactive({
   current: 1,
   pageSize: 10,
   total: 50,
-  totalPages: 5,
+  totalPages: 1,
   onChange: (page: number, pageSize: number) => {
     pagination.current = page;
-    // 在实际应用中，这里应该调用API获取数据
-    console.log(`加载第 ${page} 页数据`);
+    fetchTemplateList()
   }
 });
 
 // 查询处理函数
 function handleSearch(values: any) {
-  console.log('查询参数', values);
-  // 更新查询参数
+  // 更新查询参数，默认查询第一页
   Object.assign(queryParams, values);
-  
+  pagination.current = 1;
   // 执行查询
   fetchTemplateList();
 }
@@ -281,38 +313,26 @@ function handleSearch(values: any) {
 // 处理重置
 const handleReset = () => {
   // 重置查询参数
-  queryParams.search = '';
-  queryParams.store = '';
-  queryParams.language = [];
+  queryParams.templateName = '';
+  queryParams.shopId = '';
+  queryParams.templateLanguages = [];
   
   // 执行查询，获取所有数据
-  fetchTemplateList();
+  handleSearch();
 };
 
 // 模拟获取模板列表数据
-const fetchTemplateList = () => {
-  console.log('查询参数:', queryParams);
-  
-  // 这里应该是API调用获取数据
-  // 暂时使用模拟数据
-  
-  // 进行分页计算
-  pagination.total = 50; // 假设总共有50条数据
-  pagination.current = 1;
-  
-  // 更新表格数据
-  tableData.value = [
-    {
-      id: '5789290',
-      name: 'T恤模板',
-      store: 'TEMU-PhoneCase',
-      category: '3C数码配件>手机配件>其他',
-      language: '中文',
-      sort: '0',
-      createTime: '2025-01-08 17:38',
-      updateTime: '2025-01-08 17:38'
-    }
-  ];
+const fetchTemplateList = async() => {
+  const page = {
+    page: pagination.current,
+    size: pagination.pageSize,
+  }
+  const { data,success } = await doGetTemplatePage({...queryParams, ...page})
+  if(!success) return
+  pagination.total = data.total; 
+  pagination.current = data.current;
+  pagination.totalPages = data.pages; 
+  tableData.value = data.records||[];
 };
 
 // 创建模板
@@ -320,8 +340,31 @@ function handleCreate() {
   router.push('/dashboard/publish/templatesPage/template-edit');
 }
 
+// 删除模板
+function delTemplate(id: string) {
+  ElMessageBox.confirm(
+    '确认删除该模板?',
+    '提示',
+    {
+      confirmButtonText: '删除',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
+    .then(async() => {
+      const { success } = await doDelTemplate(id)
+      if(success){
+        ElMessage({type: 'success',message: '删除成功'})
+        handleSearch()
+      }
+    })
+    .catch(() => {})
+}
+const showQueryFilter = ref(false);
 // 初始化页面
-onMounted(() => {
+onMounted(async() => {
+  await getLanguageList();
+  showQueryFilter.value = true;
   // 获取初始数据
   fetchTemplateList();
 });

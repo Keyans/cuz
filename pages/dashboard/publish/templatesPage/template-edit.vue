@@ -695,6 +695,7 @@ import { useRoute, useRouter } from 'vue-router';
 import ActionButton from '~/components/common/ActionButton.vue';
 import type { InputInstance } from 'element-plus';
 import VariableDialog from '~/components/common/VariableDialog.vue';
+import { doGetTemplateDetail } from '~/apis/finance/publish'
 
 // 创建接口类型
 interface ImageItem {
@@ -1064,7 +1065,9 @@ async function fetchTemplateData(id: string) {
   try {
     // 这里应该是API调用获取数据
     console.log('获取模板数据', id);
-    
+    const { data1 } = await doGetTemplateDetail({id});
+    console.log(data1);
+
     // 模拟数据
     const data = {
       id: id,
