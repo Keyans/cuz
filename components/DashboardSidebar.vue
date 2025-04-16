@@ -233,7 +233,7 @@
       children: [
         {
           name: '资金明细',
-          href: '/dashboard/wallet/index',
+          href: '/dashboard/wallet',
           icon: 'IconBox',
         },
         {
