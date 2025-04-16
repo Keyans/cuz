@@ -22,7 +22,7 @@
                 ? "+"
                 : "-") +
               "￥" +
-              props.row.transAmount / 10000
+              +props.row?.transAmount / 10000
             }}
           </span>
         </template>
