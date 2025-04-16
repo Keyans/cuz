@@ -27,16 +27,15 @@
             <label class="text-sm text-gray-600 mb-1">所属店铺：</label>
             <div class="relative">
               <el-select 
-                v-model="formData.stores" 
+                v-model="formData.appShopId" 
                 multiple
                 collapse-tags
                 collapse-tags-tooltip
                 placeholder="请选择店铺"
                 class="w-full"
+                @change="storesChange"
               >
-                <el-option value="TEMU-PhoneCase" label="TEMU-PhoneCase" />
-                <el-option value="TikTok-CaseShop" label="TikTok-CaseShop" />
-                <el-option value="Amazon-Case" label="Amazon-Case" />
+                <el-option v-for="item in storeOptions" :value="item.shopId" :label="item.shopName" />
               </el-select>
             </div>
           </div>
@@ -51,10 +50,7 @@
                 placeholder="请选择语言"
                 class="w-full"
               >
-                <el-option value="zh" label="中文" />
-                <el-option value="en" label="英语" />
-                <el-option value="es" label="西班牙语" />
-                <el-option value="fr" label="法语" />
+              <el-option v-for="item in languageOptions" :value="item.language" :label="item.languageName" />
               </el-select>
             </div>
           </div>
@@ -85,7 +81,7 @@
               </el-button>
             </div>
           </div>
-          <div class="flex flex-col md:col-span-2">
+          <!-- <div class="flex flex-col md:col-span-2">
             <label class="text-sm text-gray-600 mb-1">商品描述：</label>
             <div class="relative">
               <el-input 
@@ -105,7 +101,7 @@
                 插入变量
               </el-button>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -118,11 +114,10 @@
             <label class="text-sm text-gray-600 mb-1">商品类目：</label>
             <div class="relative">
               <select 
-                v-model="formData.category" 
+                v-model="formData.categoryId" 
                 class="w-full border border-gray-300 rounded px-3 py-2 appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
-                <option value="">请选择</option>
-                <option value="3C数码配件>手机配件>其他">3C数码配件>手机配件>其他</option>
+                <option v-for="item in categoryList" :value="item.categoryId">{{ item.categoryName }}</option>
               </select>
               <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -133,7 +128,9 @@
           </div>
           
           <div class="mt-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+           <!--商品属性组件-->
+           <ProductAttrs ref="productAttrsRef" :category-id="formData.categoryId" :app-shop-id="formData.appShopId" :initial-data="formData.attributeInfo" @formatData="handleAttrFormat"/>
+           <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div class="p-4 border border-gray-200 rounded">
                 <div class="flex items-center justify-between mb-2">
                   <label class="text-sm font-medium text-gray-700">主要材质 <span class="text-red-500">*</span></label>
@@ -155,7 +152,7 @@
                 </div>
               </div>
 
-              <div class="p-4 border border-gray-200 rounded">
+               <div class="p-4 border border-gray-200 rounded">
                 <div class="flex items-center justify-between mb-2">
                   <label class="text-sm font-medium text-gray-700">功能特点</label>
                 </div>
@@ -180,9 +177,9 @@
                 <el-button v-else class="mt-1 button-new-tag" size="small" @click="showFeatureInput">
                   + 添加
                 </el-button>
-              </div>
+              </div> 
 
-              <div class="p-4 border border-gray-200 rounded">
+               <div class="p-4 border border-gray-200 rounded">
                 <div class="flex items-center justify-between mb-2">
                   <label class="text-sm font-medium text-gray-700">流行元素</label>
                 </div>
@@ -200,10 +197,10 @@
                     </svg>
                   </div>
                 </div>
-              </div>
+              </div> 
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
               <div class="p-4 border border-gray-200 rounded">
                 <div class="flex items-center justify-between mb-2">
                   <label class="text-sm font-medium text-gray-700">品牌名</label>
@@ -277,7 +274,7 @@
                   + 添加
                 </el-button>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -286,9 +283,9 @@
     <div class="bg-white rounded-lg shadow mb-6">
       <div class="p-4 lg:p-6">
         <h2 class="text-lg font-medium mb-4">商品信息</h2>
-        
+        <PublicInfo ref="PublicInfoRef" :category-id="formData.categoryId" :app-shop-id="formData.appShopId" :initial-data="formData.attributeInfo" @formatData="handlePublicInfoFormat"/>
         <!-- 主图上传 -->
-        <div class="mb-6">
+        <!-- <div class="mb-6">
           <label class="block text-sm text-gray-700 mb-2">主图：</label>
           <div class="flex items-center text-xs text-gray-500 mb-2">
             <span>取代换背景可保留尺寸，最宽比最高3:4且大于~1340px，宽>1785px，图片大小小于 2M 内，最多上传10张</span>
@@ -351,10 +348,10 @@
               />
             </div>
           </div>
-        </div>
+        </div> -->
         
         <!-- 详情图上传 -->
-        <div class="mb-6">
+        <!-- <div class="mb-6">
           <label class="block text-sm text-gray-700 mb-2">详情图：</label>
           <div class="flex items-center text-xs text-gray-500 mb-2">
             <span>取代换背景可保留尺寸，图片宽高比例1/2.5 x 2，图片大小小于 2M 内，最多上传20张</span>
@@ -417,10 +414,10 @@
               />
             </div>
           </div>
-        </div>
+        </div> -->
         
         <!-- 素材图上传 -->
-        <div class="mb-6">
+        <!-- <div class="mb-6">
           <label class="block text-sm text-gray-700 mb-2">素材图：</label>
           <div class="flex items-center text-xs text-gray-500 mb-2">
             <span>素材最宽高比例1:1且高宽大于800px，图片大小小于 2M 内，最多上传1张</span>
@@ -483,10 +480,10 @@
               />
             </div>
           </div>
-        </div>
+        </div> -->
         
         <!-- 规格信息 -->
-        <div class="mb-6">
+        <!-- <div class="mb-6">
           <label class="block text-sm text-gray-700 mb-4">规格信息：</label>
           <div class="border rounded overflow-hidden">
             <table class="min-w-full divide-y divide-gray-200">
@@ -526,7 +523,7 @@
               </tbody>
             </table>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -695,7 +692,9 @@ import { useRoute, useRouter } from 'vue-router';
 import ActionButton from '~/components/common/ActionButton.vue';
 import type { InputInstance } from 'element-plus';
 import VariableDialog from '~/components/common/VariableDialog.vue';
-import { doGetTemplateDetail } from '~/apis/finance/publish'
+import { doGetTemplateDetail, doGetTemplateLanguageList, doGetauthorizeList, doGetCategoryList } from '~/apis/finance/publish'
+import ProductAttrs from './ProductAttrs.vue'
+// import PublicInfo from './PublicInfo.vue'
 
 // 创建接口类型
 interface ImageItem {
@@ -724,6 +723,9 @@ interface FormDataType {
   title: string;
   description: string;
   category: string;
+  categoryId:string;
+  appShopId:string;
+  attributeInfo:any[],
   attributes: {
     material: string;
     features: string[];
@@ -773,6 +775,9 @@ const formData = reactive<FormDataType>({
   title: '',
   description: '',
   category: '',
+  categoryId:'',
+  appShopId:'',
+  attributeInfo:[],
   attributes: {
     material: '',
     features: ['防摔', '防震'],
@@ -1052,6 +1057,8 @@ onUnmounted(() => {
 
 // 初始化页面，判断是新建还是编辑
 onMounted(async () => {
+  getLanguageList()
+  getStoreList()
   if (route.query.id) {
     templateId.value = route.query.id as string;
     isEdit.value = true;
@@ -1063,24 +1070,21 @@ onMounted(async () => {
 // 模拟获取模板数据
 async function fetchTemplateData(id: string) {
   try {
-    // 这里应该是API调用获取数据
-    console.log('获取模板数据', id);
-    const { data1 } = await doGetTemplateDetail({id});
-    console.log(data1);
+    const { data } = await doGetTemplateDetail({id});
 
     // 模拟数据
-    const data = {
-      id: id,
-      name: 'T恤模板',
-      store: 'TEMU-PhoneCase',
-      stores: ['TEMU-PhoneCase', 'TikTok-CaseShop'],
-      language: 'zh',
-      languages: ['zh', 'en'],
-      sort: '0',
-      title: '高品质手机壳保护套',
-      description: '优质材料制作，完美贴合手机，有效保护手机不受损伤。',
-      category: '3C数码配件>手机配件>其他'
-    };
+    // const data = {
+    //   id: id,
+    //   name: 'T恤模板',
+    //   store: 'TEMU-PhoneCase',
+    //   stores: ['TEMU-PhoneCase', 'TikTok-CaseShop'],
+    //   language: 'zh',
+    //   languages: ['zh', 'en'],
+    //   sort: '0',
+    //   title: '高品质手机壳保护套',
+    //   description: '优质材料制作，完美贴合手机，有效保护手机不受损伤。',
+    //   category: '3C数码配件>手机配件>其他'
+    // };
     
     // 更新表单数据
     Object.assign(formData, data);
@@ -1208,6 +1212,41 @@ const handleVariableConfirm = (value: string) => {
     formData.description = value;
   }
 };
+
+const languageOptions = ref([])
+// 获取模板语言列表
+const getLanguageList = async () => {
+  const { data } = await doGetTemplateLanguageList()
+  languageOptions.value = data.languageList || []
+}
+const storeOptions = ref([])
+// 获取店铺列表
+const getStoreList = async () => {
+  const { data } = await doGetauthorizeList()
+  storeOptions.value = data || []
+}
+const categoryList = ref([])
+// 获取商品类目
+const getCategoryList = async (appType:number)=>{
+  const { data } = await doGetCategoryList({appType})
+  categoryList.value = data.categoryList || []
+}
+// TODO 店铺选择获取对应的appType
+const storesChange = (val:string)=>{
+  // const index = storeOptions.findIndex(item=>item.shopId===val)
+  // if(!index) return
+  // getCategoryList(storeOptions[index].appType)
+  getCategoryList(35)
+}
+// 获取商品属性参数
+const handleAttrFormat = (params:any)=>{
+  console.log('商品属性参数:')
+  console.log(params)
+}
+const handlePublicInfoFormat = (params:any)=>{
+  console.log('公共信息参数:')
+  console.log(params)
+}
 </script>
 
 <style>

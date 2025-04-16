@@ -18,6 +18,17 @@ export const doGetTemplateLanguageList = () => {
     url: "saas-plugin-third-party-adapter/thirdParty/posting/template/languageList"
   });
 };
+
+/**
+ * 查询店铺列表
+ */
+export const doGetauthorizeList = (data: any) => {
+  return post({
+    url: "saas-aimall-shop/shop/third/authorize/list",
+    data,
+  });
+};
+
 /**
  * 添加修改刊登模版
  */
@@ -45,4 +56,53 @@ export const doDelTemplate = (id: number) => {
     return del({
        url: `saas-plugin-third-party-adapter/thirdParty/posting/template/delete/${id}`
    });
+};
+
+/**
+ * 获取分类属性列表接口
+ */
+export const doGetAttributeList = (params: any) => {
+  return get({
+    url: "saas-plugin-third-party-adapter/thirdParty/goods/attribute/getList",
+    params,
+  });
+};
+
+/**
+ * 获取分类列表接口
+ */
+export const doGetCategoryList = (params: any) => {
+  return get({
+    url: "saas-plugin-third-party-adapter/thirdParty/goods/category/getList",
+    params,
+  });
+};
+
+/**
+ * 获取仓库列表
+ */
+export const doGetWarehouseList = (data: any) => {
+  return post({
+    url: "saas-plugin-third-party-adapter/thirdParty/goods/publicInformation/getWarehouseList",
+    data,
+  });
+};
+
+/**
+ * 获取公共信息列表
+ */
+export const doGetPublicInformationList = (data: any) => {
+  return post({
+    url: "saas-plugin-third-party-adapter/thirdParty/goods/publicInformation/getList",
+    data,
+  });
+};
+
+/**
+ * 获取刊登模版变量列表
+ */
+export const doGetVariableList = () => {
+  return get({
+    url: "saas-plugin-third-party-adapter/thirdParty/posting/template/variableList ",
+  });
 };

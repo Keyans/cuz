@@ -28,8 +28,7 @@
     <!-- 变量面板 -->
     <div class="mb-6">
       <div class="text-sm font-medium mb-2">变量面板</div>
-      <el-tabs>
-        <el-tab-pane label="基础信息变量">
+      <p>基础信息变量</p>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
             <button @click="insertVariable('customProductName')" class="variable-btn">
               <span class="plus-icon">+</span> 定制商品名称
@@ -44,8 +43,7 @@
               <span class="plus-icon">+</span> 店铺授权品牌
             </button>
           </div>
-        </el-tab-pane>
-        <el-tab-pane label="规格变量">
+          <p>规格变量</p>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
             <button @click="insertVariable('keyword')" class="variable-btn">
               <span class="plus-icon">+</span> 关键词
@@ -86,12 +84,10 @@
               <span class="plus-icon">+</span> 随机尺码值N
             </button>
           </div>
-        </el-tab-pane>
-      </el-tabs>
     </div>
     
     <!-- 自定义变量 -->
-    <div class="mb-6">
+    <!-- <div class="mb-6">
       <div class="flex items-center">
         <div class="text-sm font-medium flex-grow">自定义变量</div>
         <el-button type="primary" size="small" @click="addCustomVariable">
@@ -134,7 +130,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     
     <!-- 底部按钮 -->
     <template #footer>

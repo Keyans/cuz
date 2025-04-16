@@ -46,7 +46,7 @@ import QueryFilter from '~/components/common/QueryFilter.vue';
 import DataTable from '~/components/common/DataTable.vue';
 import ActionButton from '~/components/common/ActionButton.vue';
 import { useRouter } from 'vue-router';
-import { doGetTemplateLanguageList, doGetTemplatePage, doDelTemplate }  from "~/apis/finance/publish";
+import { doGetTemplateLanguageList, doGetauthorizeList, doGetTemplatePage, doDelTemplate }  from "~/apis/finance/publish";
 
 // 声明router变量
 const router = useRouter();
@@ -67,6 +67,7 @@ interface TemplateRecord {
   updateTime: string;
 }
 const languageOptions = ref<any[]>([]) // 模板语言列表选项
+const shopOptions = ref<any[]>([]) // 店铺列表选项
 // 查询相关
 const queryFields = [
   {
@@ -77,11 +78,7 @@ const queryFields = [
   {
     key: 'shopId',
     type: 'select' as const,
-    options: [
-      { label: '所属店铺', value: '' },
-      { label: 'TEMU-PhoneCase', value: 'temu-phonecase' },
-      { label: 'TikTok-CaseShop', value: 'tiktok-caseshop' }
-    ]
+    options: []
   },
   {
     key: 'templateLanguages',
@@ -289,6 +286,16 @@ const getLanguageList = async () => {
   }
 }
 
+// 获取店铺列表
+const getShopList = async () => {
+  const { data } = await doGetauthorizeList()
+  shopOptions.value = data.map(item => ({ label: item.shopName, value: item.shopId  }))
+  const targetField = queryFields.find(item => item.key === 'shopId')
+  if (targetField) {
+    targetField.options = [...shopOptions.value]
+  }
+}
+
 // 分页
 const pagination = reactive({
   current: 1,
@@ -364,6 +371,7 @@ const showQueryFilter = ref(false);
 // 初始化页面
 onMounted(async() => {
   await getLanguageList();
+  await getShopList();
   showQueryFilter.value = true;
   // 获取初始数据
   fetchTemplateList();
