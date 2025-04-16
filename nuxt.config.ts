@@ -150,8 +150,10 @@ export default defineNuxtConfig({
     // 产品页面使用 SSR（服务器端渲染）带缓存
     "/products": { swr: 600 }, // 10分钟缓存
     "/products/**": { swr: 300 }, // 5分钟缓存
+    // 选品列表页面不需要登录验证
+    "/dashboard/sourcing/list": { ssr: true, middleware: false },
     // 仪表板页面使用 SSR 但不缓存（动态内容）
-    "/dashboard/**": { ssr: true, cache: false },
+    "/dashboard/**": { ssr: true, cache: false }
   },
 
   // Tailwind CSS 配置

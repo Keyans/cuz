@@ -31,11 +31,13 @@
           />
         </div>
       <div class="flex items-center">
-        <ShimmerButton>
-          <span>
-            开始选品
-          </span>
-        </ShimmerButton>
+        <NuxtLink to="/dashboard/sourcing/list">
+          <ShimmerButton>
+            <span>
+              开始选品
+            </span>
+          </ShimmerButton>
+        </NuxtLink>
         <a :href="config.public.MICRO_POD_URL">
           <InteractiveHoverButton class="ml-10" text="免费设计"/>
         </a>
