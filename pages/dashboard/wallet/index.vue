@@ -31,9 +31,8 @@
         </p>
         <div class="flex w-full justify-between mt-4 items-center">
           <p class="text-sm text-gray-500">
-            总预付余额：￥{{ amountInfo?.total }} - 冻结金额：￥{{
-              amountInfo?.freeze
-            }}
+            总预付余额：￥{{ +(amountInfo?.total ?? 0) / 10000 }} -
+            冻结金额：￥{{ +(amountInfo?.freeze ?? 0) / 10000 }}
           </p>
           <button
             @click="showRecharge = true"
@@ -79,7 +78,7 @@
           </div>
         </div>
         <p class="text-3xl font-bold text-yellow-600">
-          ¥{{ amountInfo?.uncompleted }}
+          ¥{{ +(amountInfo?.uncompleted ?? 0) / 10000 }}
         </p>
         <div class="flex w-full justify-between mt-4 items-center">
           <p class="text-sm text-gray-500">
@@ -206,90 +205,93 @@
         </div>
       </div>
     </div>
-     <ClientOnly>
+    <ClientOnly>
       <TransactionTable v-model:table-data="tableData"></TransactionTable>
-     </ClientOnly>
-    <!-- 分页 -->
-    <Pagination v-model="pageConfig"></Pagination>
-
-    <el-dialog
-      v-model="showRecharge"
-      :close-on-click-modal="false"
-      width="500"
-      v-loading=""
-    >
-      <div class="flex flex-col space-y-4">
+      <!-- 分页 -->
+      <Pagination v-model="pageConfig"></Pagination>
+    </ClientOnly>
+    <ClientOnly>
+      <el-dialog
+        v-model="showRecharge"
+        :close-on-click-modal="false"
+        width="500"
+        v-loading=""
+      >
         <div class="flex flex-col space-y-4">
-          <div class="text-[22px] font-semibold shrink-0">充值金额</div>
+          <div class="flex flex-col space-y-4">
+            <div class="text-[22px] font-semibold shrink-0">充值金额</div>
 
-          <div
-            class="flex items-center text-[18px] space-x-2 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <div>￥</div>
-            <input
-              @blur="checkRechargeAmount"
-              v-model="rechargeAmount"
-              placeholder="请输入预付到账金额"
-              class="w-full outline-none"
-            />
+            <div
+              class="flex items-center text-[18px] space-x-2 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <div>￥</div>
+              <input
+                @blur="checkRechargeAmount"
+                v-model="rechargeAmount"
+                placeholder="请输入预付到账金额"
+                class="w-full outline-none"
+              />
+            </div>
           </div>
-        </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <button
-            v-for="item in [
-              '100',
-              '500',
-              '1000',
-              '2000',
-              '3000',
-              '5000',
-              '10000',
-              '20000',
-            ]"
-            :key="item"
-            class="bg-[#f2f2f2] rounded-lg text-center px-2 py-2 shadow"
-            @click="rechargeAmount = item"
-          >
-            <text class="text-[14px] font-semibold"> {{ item }}元 </text>
-            <div class="text-[12px]">售价：￥{{ item }}</div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button
+              v-for="item in [
+                '100',
+                '500',
+                '1000',
+                '2000',
+                '3000',
+                '5000',
+                '10000',
+                '20000',
+              ]"
+              :key="item"
+              class="bg-[#f2f2f2] rounded-lg text-center px-2 py-2 shadow"
+              @click="rechargeAmount = item"
+            >
+              <text class="text-[14px] font-semibold"> {{ item }}元 </text>
+              <div class="text-[12px]">售价：￥{{ item }}</div>
+            </button>
+          </div>
+
+          <button class="btn-secondary w-full" @click="confirmPay">
+            确认支付
           </button>
         </div>
+      </el-dialog>
+    </ClientOnly>
 
-        <button class="btn-secondary w-full" @click="confirmPay">
-          确认支付
-        </button>
-      </div>
-    </el-dialog>
-     
     <!--二维码支付弹窗-->
     <ClientOnly>
-    <el-dialog
-      v-model="showPayQRcode"
-      :close-on-click-modal="false"
-      width="500"
-      v-loading=""
-      :before-close="handleCloseQRcode"
-    >
-      <div class="qccode-box">
-        <p>
-          向
-          <span class="text-[14px] font-semibold">深圳市深航科技有限公司</span>
-        </p>
-        <p class="text-[14px] font-semibold text-blue-600">
-          扫码支付{{ rechargeAmount }}元
-        </p>
-        <img :src="qrCodeUrl" />
-        <p>支付平台：</p>
-        <img src="/assets/pay-platform.png" class="h-12" />
-        <p>
-          若未到账，请前往<span class="text-[14px] text-blue-400">帮助中心</span
-          >联系客服处理。
-        </p>
-      </div>
-    </el-dialog>
-  </ClientOnly>
-
+      <el-dialog
+        v-model="showPayQRcode"
+        :close-on-click-modal="false"
+        width="500"
+        v-loading=""
+        :before-close="handleCloseQRcode"
+      >
+        <div class="qccode-box">
+          <p>
+            向
+            <span class="text-[14px] font-semibold">
+              深圳市深航科技有限公司
+            </span>
+          </p>
+          <p class="text-[14px] font-semibold text-blue-600">
+            扫码支付{{ rechargeAmount }}元
+          </p>
+          <img :src="qrCodeUrl" />
+          <p>支付平台：</p>
+          <img src="/assets/pay-platform.png" class="h-12" />
+          <p>
+            若未到账，请前往<span class="text-[14px] text-blue-400"
+              >帮助中心</span
+            >联系客服处理。
+          </p>
+        </div>
+      </el-dialog>
+    </ClientOnly>
   </div>
 </template>
 
@@ -315,6 +317,7 @@ const amountInfo = ref<Record<string, string> | undefined>();
 const showRecharge = ref(false);
 onMounted(async () => {
   try {
+    search();
     const { data } = await doGetShopBalance();
     if (data) {
       amountInfo.value = data;
@@ -373,9 +376,6 @@ const search = async () => {
   tableData.value = data.records;
   pageConfig.value.total = data.total;
 };
-onMounted(() => {
-  search();
-});
 
 /**
  * 确认支付函数
@@ -407,10 +407,10 @@ const qrCodeUrl = ref("");
  */
 const interval = ref<NodeJS.Timeout | null>(null);
 const createQrCode = async (url: string, outTradeNo: string) => {
-    if (process.client) {
-      const QRCode = await import('qrcode') // ⬅️ 运行时导入，不进入 SSR 构建
-      qrCodeUrl.value = await QRCode.toDataURL(url);
-      showPayQRcode.value = true;
+  if (import.meta.client) {
+    const QRCode = await import("qrcode"); // ⬅️ 运行时导入，不进入 SSR 构建
+    qrCodeUrl.value = await QRCode.toDataURL(url);
+    showPayQRcode.value = true;
   }
   // 每隔5秒轮询支付状态接口
   interval.value = setInterval(async () => {

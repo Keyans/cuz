@@ -28,6 +28,7 @@
     "world-countries": "^5.1.0"
   },
   "devDependencies": {
+    "@types/qrcode": "^1.5.5",
     "@element-plus/nuxt": "^1.1.1",
     "@inspira-ui/plugins": "^0.0.1",
     "@nuxt/image": "^1.10.0",
