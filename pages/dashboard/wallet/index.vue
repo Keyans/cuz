@@ -260,7 +260,7 @@
         </button>
       </div>
     </el-dialog>
-
+     
     <!--二维码支付弹窗-->
     <el-dialog
       v-model="showPayQRcode"
@@ -301,7 +301,8 @@ import type { TableDataProp } from "./components/transactionTable.vue";
 import TransactionTable from "./components/transactionTable.vue";
 import Pagination from "~/components/ui/pagination/Pagination.vue";
 import { payBizTypeMap } from "~/apis/finance/transaction/types";
-import QRCode from "qrcode";
+import { generateQRCode } from '~/utils/qrcodeHelper'
+
 definePageMeta({
   layout: "dashboard",
   middleware: ["auth"],
@@ -404,7 +405,7 @@ const qrCodeUrl = ref("");
  */
 const interval = ref<NodeJS.Timeout | null>(null);
 const createQrCode = async (url: string, outTradeNo: string) => {
-  qrCodeUrl.value = await QRCode.toDataURL(url);
+  qrCodeUrl.value = await generateQRCode(url);
   showPayQRcode.value = true;
   // 每隔5秒轮询支付状态接口
   interval.value = setInterval(async () => {
