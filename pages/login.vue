@@ -281,8 +281,8 @@
         </div> -->
       </div>
     </div>
-
-    <el-dialog v-model="captchaConfig.showSliderCaptcha" width="fit-content">
+    <ClientOnly>
+      <el-dialog v-model="captchaConfig.showSliderCaptcha" width="fit-content">
       <template #header></template>
       <SliderCaptcha
         v-model="captchaConfig.showSliderCaptcha"
@@ -293,6 +293,7 @@
       ></SliderCaptcha>
       <template #footer></template>
     </el-dialog>
+    </ClientOnly>
   </div>
 </template>
 
