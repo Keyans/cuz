@@ -45,6 +45,13 @@ export default defineNuxtConfig({
 
     // 提高SEO性能的缓存策略
     routeRules: {
+      // 匹配所有以 saas-aimall- 开头的路径
+      "/saas-aimall-*": {
+        // 代理到目标服务（保留原始路径）
+        proxy: "http://10.233.13.136:9999",
+        // 可选：设置缓存
+        cache: { maxAge: 60 * 60 } // 缓存 1 小时
+      },
       "/**": { swr: 600 }, // 默认使用SWR缓存600秒
     },
   },
