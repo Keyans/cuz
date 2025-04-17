@@ -390,7 +390,7 @@ const loginWithDemoAccount = async () => {
     });
 
     // Redirect to dashboard
-    navigateTo("/dashboard");
+    navigateTo("/dashboard/sourcing");
   } catch (err: any) {
     error.value =
       err.message || "Failed to login with demo account. Please try again.";
@@ -413,7 +413,7 @@ const login = async () => {
     });
 
     // Redirect to dashboard on successful login
-    navigateTo("/dashboard");
+    navigateTo("/dashboard/sourcing");
   } catch (err: any) {
     error.value =
       err.message || "Failed to login. Please check your credentials.";

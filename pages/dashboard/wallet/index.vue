@@ -206,8 +206,9 @@
         </div>
       </div>
     </div>
-
-    <TransactionTable v-model:table-data="tableData"></TransactionTable>
+     <ClientOnly>
+      <TransactionTable v-model:table-data="tableData"></TransactionTable>
+     </ClientOnly>
     <!-- 分页 -->
     <Pagination v-model="pageConfig"></Pagination>
 
@@ -262,6 +263,7 @@
     </el-dialog>
      
     <!--二维码支付弹窗-->
+    <ClientOnly>
     <el-dialog
       v-model="showPayQRcode"
       :close-on-click-modal="false"
@@ -286,6 +288,8 @@
         </p>
       </div>
     </el-dialog>
+  </ClientOnly>
+
   </div>
 </template>
 
@@ -301,7 +305,6 @@ import type { TableDataProp } from "./components/transactionTable.vue";
 import TransactionTable from "./components/transactionTable.vue";
 import Pagination from "~/components/ui/pagination/Pagination.vue";
 import { payBizTypeMap } from "~/apis/finance/transaction/types";
-import { generateQRCode } from '~/utils/qrcodeHelper'
 
 definePageMeta({
   layout: "dashboard",
@@ -321,7 +324,6 @@ onMounted(async () => {
   }
 });
 const rechargeAmount = ref<string>();
-const rechargeLoading = ref(false);
 
 const pageConfig = ref({
   size: 10,
@@ -405,8 +407,11 @@ const qrCodeUrl = ref("");
  */
 const interval = ref<NodeJS.Timeout | null>(null);
 const createQrCode = async (url: string, outTradeNo: string) => {
-  qrCodeUrl.value = await generateQRCode(url);
-  showPayQRcode.value = true;
+    if (process.client) {
+      const QRCode = await import('qrcode') // ⬅️ 运行时导入，不进入 SSR 构建
+      qrCodeUrl.value = await QRCode.toDataURL(url);
+      showPayQRcode.value = true;
+  }
   // 每隔5秒轮询支付状态接口
   interval.value = setInterval(async () => {
     const { data } = await doGetPayOrderStatus({

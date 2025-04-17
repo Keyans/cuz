@@ -95,7 +95,7 @@ export const useAuthStore = defineStore("auth", {
                   email: credentials.email,
                   name: "体验账号用户",
                   role: "demo",
-                  avatar: "/assets/demo-avatar.png",
+                  avatar: "/assets/favicon.png",
                 },
                 token: "demo-jwt-token",
               });
@@ -118,7 +118,7 @@ export const useAuthStore = defineStore("auth", {
         localStorage.setItem("token", this.token!);
         localStorage.setItem("refreshToken", this.refreshToken!);
         localStorage.setItem("user", JSON.stringify(this.user));
-        navigateTo("/dashboard");
+        navigateTo("/dashboard/sourcing");
       } catch (err: any) {
         this.error = err.message || "Failed to login";
         throw err;

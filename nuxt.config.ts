@@ -47,6 +47,9 @@ export default defineNuxtConfig({
     routeRules: {
       "/**": { swr: 600 }, // 默认使用SWR缓存600秒
     },
+    externals: {
+      external: ['qrcode'], // 💥 告诉 Nitro 不要打包 qrcode
+    }
   },
 
   vite: {
@@ -58,6 +61,9 @@ export default defineNuxtConfig({
     json: {
       stringify: true,
       namedExports: true
+    },
+    ssr: {
+      noExternal: ['qrcode'], // ⛔️ 防止它被 SSR bundle 编译（不转为 ESM）
     },
     build: {
       chunkSizeWarningLimit: 2000,
@@ -148,12 +154,11 @@ export default defineNuxtConfig({
     "/login": { ssr: true },
     "/register": { ssr: true },
     // 产品页面使用 SSR（服务器端渲染）带缓存
-    "/products": { swr: 600 }, // 10分钟缓存
     "/products/**": { swr: 300 }, // 5分钟缓存
     // 选品列表页面不需要登录验证
     "/dashboard/sourcing/list": { ssr: true, middleware: false },
     // 仪表板页面使用 SSR 但不缓存（动态内容）
-    "/dashboard/**": { ssr: true, cache: false }
+    "/dashboard/**": { ssr: true, swr: 600 }
   },
 
   // Tailwind CSS 配置
