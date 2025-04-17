@@ -102,6 +102,7 @@
                 v-model="formData.attrs[category.code]"
                 @change="val => handleSiteChange(val, category)"
                 :placeholder="`请选择${category.name}`"
+                style="width: 200px"
               >
                 <el-option
                   v-for="option in category.value"
@@ -127,6 +128,7 @@
                     val => handleFirstLevelChange(val, category)
                   "
                   :placeholder="`请选择${category.name}`"
+                  style="width: 200px"
                 >
                   <el-option
                     v-for="option in category.value"
@@ -157,6 +159,7 @@
                     val => handleSecondLevelChange(val, category)
                   "
                   :placeholder="'请选择省份'"
+                  style="width: 200px"
                 >
                   <el-option
                     v-for="option in getSecondLevelOptions(category)"
@@ -322,12 +325,11 @@ const initializeFormData = (categories: any[]) => {
 
 const loadFormConfig = async () => {
   try {
-    // const res = mockPub.data;
-    const res = await doGetPublicInformationList({
-      shopType: props.appShopId?.[0],
-      publicShopId: props.appShopId?.[1]
+    const { data } = await doGetPublicInformationList({
+      appShopId: props.appShopId?.[0],
+      appType:35, //TODO: 暂时写死，后续改成动态获取
     });
-    const TMP_LIST = Object.values(res.publicInformation);
+    const TMP_LIST = Object.values(data.publicInformation);
 
     // 1. 先初始化基础数据结构
     formData.attrs = initializeFormData(TMP_LIST);

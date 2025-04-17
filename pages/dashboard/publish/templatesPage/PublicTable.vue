@@ -169,10 +169,11 @@ const updateWarehouseList = async (siteCode: string | number | null) => {
     try {
       const requestUrl = props.tableData.url || "";
 
-      const data = await doGetWarehouseList({
+      const { data } = await doGetWarehouseList({
         url: requestUrl,
-        publicShopId: props.appShopId[1],
-        siteId: siteCode
+        appShopId: props.appShopId[0],
+        siteId: siteCode,
+        appType: 35,//TODO: 改成真实的appType值
       });
       if (data?.warehouseList) {
         siteWarehouse.second.valueList = data.warehouseList;

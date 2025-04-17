@@ -2,29 +2,67 @@
   <div class="image-uploader">
     <div class="uploader-content">
       <!-- 左侧图片列表区域 -->
-      <div v-if="modelValue.length" class="image-list-container">
-        <div
-          v-for="(element, index) in imageList"
-          :key="index"
-          class="image-item"
-        >
-          <el-image :src="element.imagePath" fit="cover" />
-          <div class="image-actions">
-            <el-button
-              type="danger"
-              link
-              @click.stop="handleRemove(element, index)"
-            >
-              <el-icon>
-                <Delete />
-              </el-icon>
-            </el-button>
-          </div>
+      <div class="image-item" v-for="element in imageList">
+            <el-image
+              v-if="element.imagePath"
+              :src="element.imagePath"
+              fit="cover"
+            />
+            <div v-else style="text-align: center; line-height: 120px">
+              效果图 {{ element.position }}
+            </div>
+            <div class="image-actions">
+              <el-button
+                type="danger"
+                link
+                @click.stop="handleRemove(element, index)"
+              >
+                <el-icon>
+                  <Delete />
+                </el-icon>
+              </el-button>
+            </div>
         </div>
-      </div>
+      <!--TODO 拖拽排序有问题-->
+      <!-- <VueDraggable
+        v-if="imageList.length"
+        v-model="imageList"
+        class="image-list-container"
+        item-key="index"
+        @end="onDragEnd"
+        :disabled="!props.draggable"
+      >
+        <template #item="{ element, index }">
+          <div class="image-item">
+            <el-image
+              v-if="element.imagePath"
+              :src="element.imagePath"
+              fit="cover"
+            />
+            <div v-else style="text-align: center; line-height: 120px">
+              效果图 {{ element.position }}
+            </div>
+            <div class="image-actions">
+              <el-button
+                type="danger"
+                link
+                @click.stop="handleRemove(element, index)"
+              >
+                <el-icon>
+                  <Delete />
+                </el-icon>
+              </el-button>
+            </div>
+          </div>
+        </template>
+      </VueDraggable> -->
 
       <!-- 右侧操作按钮区域 -->
-      <div class="action-buttons" v-if="modelValue.length < props.limit">
+      <div
+        class="action-buttons"
+        v-if="modelValue.length < props.limit"
+        v-loading="loading"
+      >
         <input
           ref="fileInput"
           type="file"
@@ -38,11 +76,28 @@
           @click="triggerFileInput"
           >{{ props.localText }}</el-button
         >
-        <el-button
-          v-if="props.uploadMethod.includes('gallery')"
-          @click="openGallery"
-          >{{ props.galleryText }}</el-button
+
+        <el-popover
+          ref="popoverRef"
+          placement="right"
+          trigger="click"
+          width="225"
         >
+          <template #default>
+            <div v-for="item in 20" style="margin-bottom: 5px">
+              <el-button style="width: 200px" @click="addSeat(item)"
+                >效果图 {{ item }}</el-button
+              >
+            </div>
+          </template>
+          <template #reference>
+            <el-button
+              v-if="props.uploadMethod.includes('gallery')"
+              @click="openGallery"
+              >{{ props.galleryText }}</el-button
+            >
+          </template>
+        </el-popover>
       </div>
     </div>
     <!-- <ImageSelect ref="imageSelectRef" :limit="1" @confirm="handleConfirm" /> -->
@@ -51,11 +106,13 @@
 
 <script setup lang="ts">
 import { ref, defineProps, defineEmits, computed } from "vue";
+import { Delete } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import type { UploadFile } from "element-plus";
 // import ImageSelect from "@/views/components/image/ImageSelect.vue";
-// import { imageCosUpload } from "@/api/trade/goodsManagement/productManage";
+// import { imageCosUpload } from "@/api/shop/listingsTemplate";
 import { doUpload } from "~/apis/finance/publish";
+import VueDraggable from "vuedraggable";
 
 interface ImageFile extends UploadFile {
   width?: number;
@@ -69,12 +126,14 @@ const props = withDefaults(
     modelValue: ImageFile[]; // 上传方式
     localText: string; // 本地按钮文本
     galleryText: string; // 图库按钮文本
+    draggable: boolean; // 是否允许拖拽
   }>(),
   {
     limit: 10,
     uploadMethod: () => ["local", "gallery"],
     localText: "本地",
-    galleryText: "图库"
+    galleryText: "图库",
+    draggable: true
   }
 );
 
@@ -84,7 +143,12 @@ const emit = defineEmits<{
 
 const drag = ref(false);
 
-const imageList = computed(() => props.modelValue);
+const imageList = computed({
+  get: () => props.modelValue,
+  set: value => {
+    emit("update:modelValue", value);
+  }
+});
 const fileInput = ref<HTMLInputElement | null>(null);
 
 // 文件验证
@@ -97,7 +161,13 @@ const beforeUpload = (file: File) => {
         if (file.size > 2 * 1024 * 1024) {
           ElMessage.error("图片大小不能超过2M");
           resolve(false);
+          return;
         }
+        // 保存图片的宽高信息
+        const width = img.width;
+        const height = img.height;
+        file.width = width;
+        file.height = height;
         resolve(true);
       };
       img.src = e.target!.result as string;
@@ -140,32 +210,58 @@ const handleLocalFileSelect = async (event: Event) => {
   input.value = "";
 };
 
+const loading = ref(false);
 // 上传本地图片获取URL
 const getLocalImageUrl = file => {
+  // imageCosUpload
   const formData = new FormData();
   formData.append("fileList", file);
-  doUpload(formData).then((res: any) => {
-    console.log(111, res);
-    // 修改这里的数据结构匹配
-    const file = {
-      imagePath: res[0].imageUrl, // 使用 imageUrl 而不是 url
-      fileId: res[0].imageCode // 使用 imageCode 而不是 id
-    };
-    const newFileList = [...props.modelValue, file];
-    emit("update:modelValue", newFileList);
-  });
+  loading.value = true;
+  doUpload(formData)
+    .then((res: any) => {
+      const uploadFile = {
+        imagePath: res[0].imageUrl,
+        fileId: null,
+        position: null,
+        width: file.width,
+        height: file.height
+      };
+      const newFileList = [...props.modelValue, uploadFile];
+      emit("update:modelValue", newFileList);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 
 const imageSelectRef = ref();
+// TODO: 实现图库选择功能
 const openGallery = () => {
+  return;
   imageSelectRef.value.show();
 };
 
+// 添加效果图占位
+const popoverRef = ref();
+async function addSeat(index) {
+  const file = {
+    imagePath: "",
+    fileId: null,
+    position: index,
+    width: null,
+    height: null
+  };
+  const newFileList = [...props.modelValue, file];
+  console.log(newFileList);
+  await emit("update:modelValue", newFileList);
+  popoverRef.value.hide();
+}
+
 const handleConfirm = selectedImages => {
-  console.log("selectedImages", selectedImages);
   const file = {
     imagePath: selectedImages[0].imageSourceUrl,
     fileId: selectedImages[0].id
+    // uid: `${Date.now()}-${Math.random().toString(36).slice(2)}` // 确保uid唯一
   };
   const newFileList = [...props.modelValue, file];
   emit("update:modelValue", newFileList);
@@ -188,6 +284,11 @@ const handleRemove = (file: UploadFile, index) => {
   newFileList.splice(index, 1);
   emit("update:modelValue", newFileList);
 };
+
+// 拖拽排序
+const onDragEnd = () => {
+  emit("update:modelValue", imageList.value);
+};
 </script>
 
 <style scoped>
@@ -206,6 +307,7 @@ const handleRemove = (file: UploadFile, index) => {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .action-buttons {
@@ -236,7 +338,7 @@ const handleRemove = (file: UploadFile, index) => {
   position: relative;
   border-radius: 6px;
   overflow: hidden;
-  cursor: move;
+  cursor: v-bind("props.draggable ? 'move' : 'default'");
   background: #fff;
   border: 1px solid #dcdfe6;
   transition: all 0.3s;
@@ -279,5 +381,13 @@ const handleRemove = (file: UploadFile, index) => {
 :deep(.el-image) {
   width: 100%;
   height: 100%;
+}
+
+.flip-list-move {
+  transition: transform 0.5s;
+}
+
+.no-move {
+  transition: transform 0s;
 }
 </style>

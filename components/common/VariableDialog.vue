@@ -21,7 +21,7 @@
     <div class="mb-6">
       <div class="text-sm font-medium mb-2">标题预览：</div>
       <div class="p-3 bg-gray-50 border border-gray-200 rounded">
-        {{ productTitle }}
+        {{ filteredProductTitle }}
       </div>
     </div>
     
@@ -29,61 +29,17 @@
     <div class="mb-6">
       <div class="text-sm font-medium mb-2">变量面板</div>
       <p>基础信息变量</p>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <button @click="insertVariable('customProductName')" class="variable-btn">
-              <span class="plus-icon">+</span> 定制商品名称
-            </button>
-            <button @click="insertVariable('templateName')" class="variable-btn">
-              <span class="plus-icon">+</span> 模板名称
-            </button>
-            <button @click="insertVariable('designFileName')" class="variable-btn">
-              <span class="plus-icon">+</span> 设计图片名称
-            </button>
-            <button @click="insertVariable('storeBrand')" class="variable-btn">
-              <span class="plus-icon">+</span> 店铺授权品牌
-            </button>
-          </div>
-          <p>规格变量</p>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <button @click="insertVariable('keyword')" class="variable-btn">
-              <span class="plus-icon">+</span> 关键词
-            </button>
-            <button @click="insertVariable('randomKeyword')" class="variable-btn">
-              <span class="plus-icon">+</span> 随机关键词
-            </button>
-            <button @click="insertVariable('keywordN')" class="variable-btn">
-              <span class="plus-icon">+</span> 关键词N
-            </button>
-            <button @click="insertVariable('randomKeywordN')" class="variable-btn">
-              <span class="plus-icon">+</span> 随机关键词N
-            </button>
-            
-            <button @click="insertVariable('colorValue')" class="variable-btn">
-              <span class="plus-icon">+</span> 颜色值
-            </button>
-            <button @click="insertVariable('randomColorValue')" class="variable-btn">
-              <span class="plus-icon">+</span> 随机颜色值
-            </button>
-            <button @click="insertVariable('colorValueN')" class="variable-btn">
-              <span class="plus-icon">+</span> 颜色值N
-            </button>
-            <button @click="insertVariable('randomColorValueN')" class="variable-btn">
-              <span class="plus-icon">+</span> 随机颜色值N
-            </button>
-            
-            <button @click="insertVariable('sizeValue')" class="variable-btn">
-              <span class="plus-icon">+</span> 尺码值
-            </button>
-            <button @click="insertVariable('randomSizeValue')" class="variable-btn">
-              <span class="plus-icon">+</span> 随机尺码值
-            </button>
-            <button @click="insertVariable('sizeValueN')" class="variable-btn">
-              <span class="plus-icon">+</span> 尺码值N
-            </button>
-            <button @click="insertVariable('randomSizeValueN')" class="variable-btn">
-              <span class="plus-icon">+</span> 随机尺码值N
-            </button>
-          </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <button v-for="item in basicInformationList" @click="insertVariable(item.variableName)" class="variable-btn">
+          <span class="plus-icon">+</span> {{ item.variableName }}
+        </button>
+      </div>
+      <p>规格变量</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <button v-for="item in specList" @click="insertVariable(item.variableName)" class="variable-btn">
+          <span class="plus-icon">+</span> {{ item.variableName }}
+        </button>
+      </div>
     </div>
     
     <!-- 自定义变量 -->
@@ -150,6 +106,10 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  variableList:{
+    type:Object,
+    default: () => ({})
+  },
   initialValue: {
     type: String,
     default: ''
@@ -164,10 +124,18 @@ const customVarName = ref('')
 const customVarValue = ref('')
 const customGroupName = ref('')
 const customGroupValue = ref('')
-
+const basicInformationList = ref([]) // 基础信息变量列表
+const specList = ref([]) // 规格变量列表
+const filteredProductTitle = computed(() => {
+  return productTitle.value.replace(/[\$\{\}]/g, '');
+});
 // 监听visible prop变化
 watch(() => props.visible, (newVal) => {
   dialogVisible.value = newVal
+  if(newVal) {
+    basicInformationList.value = props.variableList.basicInformationList||[]
+    specList.value = props.variableList.specList||[]
+  }
 })
 
 // 监听dialogVisible变化
@@ -192,27 +160,8 @@ const handleConfirm = () => {
 }
 
 // 插入变量
-const insertVariable = (variable: string) => {
-  const variableMap: Record<string, string> = {
-    'customProductName': '${定制商品名称}',
-    'templateName': '${模板名称}',
-    'designFileName': '${设计图片名称}',
-    'storeBrand': '${店铺授权品牌}',
-    'keyword': '${关键词}',
-    'randomKeyword': '${随机关键词}',
-    'keywordN': '${关键词N}',
-    'randomKeywordN': '${随机关键词N}',
-    'colorValue': '${颜色值}',
-    'randomColorValue': '${随机颜色值}',
-    'colorValueN': '${颜色值N}',
-    'randomColorValueN': '${随机颜色值N}',
-    'sizeValue': '${尺码值}',
-    'randomSizeValue': '${随机尺码值}',
-    'sizeValueN': '${尺码值N}',
-    'randomSizeValueN': '${随机尺码值N}'
-  }
-  
-  const variableText = variableMap[variable] || `\${${variable}}`
+const insertVariable = (variableName: string) => {
+  const variableText = `\${${variableName}}`
   const cursorPosition = document.activeElement === document.querySelector('textarea') 
     ? (document.querySelector('textarea') as HTMLTextAreaElement).selectionStart
     : productTitle.value.length

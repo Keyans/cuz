@@ -18,6 +18,7 @@
         "qrcode": "^1.5.4",
         "swiper": "^11.2.6",
         "vue-composable": "^1.0.0-beta.25",
+        "vuedraggable": "^4.1.0",
         "world-countries": "^5.1.0",
       },
       "devDependencies": {
@@ -1445,6 +1446,8 @@
 
     "smob": ["smob@1.5.0", "https://registry.npmmirror.com/smob/-/smob-1.5.0.tgz", {}, "sha512-g6T+p7QO8npa+/hNx9ohv1E5pVCmWrVCUzUXJyLdMmftX6ER0oiWY/w9knEonLpnOp6b6FenKnMfR8gqwWdwig=="],
 
+    "sortablejs": ["sortablejs@1.14.0", "https://registry.npmmirror.com/sortablejs/-/sortablejs-1.14.0.tgz", {}, "sha512-pBXvQCs5/33fdN1/39pPL0NZF20LeRbLQ5jtnheIPN9JQAaufGjKdWduZn4U7wCtVuzKhmRkI0DFYHYRbB2H1w=="],
+
     "source-map": ["source-map@0.7.4", "https://registry.npmmirror.com/source-map/-/source-map-0.7.4.tgz", {}, "sha512-l3BikUxvPOcn5E74dZiq5BGsTb5yEwhaTSzccU6t4sDOH8NWJCstKO5QT2CvtFoK6F0saL7p9xHAqHOlCPJygA=="],
 
     "source-map-js": ["source-map-js@1.2.1", "https://registry.npmmirror.com/source-map-js/-/source-map-js-1.2.1.tgz", {}, "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA=="],
@@ -1621,11 +1624,11 @@
 
     "vue-devtools-stub": ["vue-devtools-stub@0.1.0", "https://registry.npmmirror.com/vue-devtools-stub/-/vue-devtools-stub-0.1.0.tgz", {}, "sha512-RutnB7X8c5hjq39NceArgXg28WZtZpGc3+J16ljMiYnFhKvd8hITxSWQSQ5bvldxMDU6gG5mkxl1MTQLXckVSQ=="],
 
-    "vue-pure-table": ["vue-pure-table@1.0.7", "https://registry.npmmirror.com/vue-pure-table/-/vue-pure-table-1.0.7.tgz", { "peerDependencies": { "vue": "^3.0.5" } }, "sha512-i7Oi9DOVE5Rjpjo9AWVEemgtxZytvxqFM+7KHnqJFK1ChpSTwoPOQzYSgt9Z3zlD4pgZzt2JdAD9It6AEqs2dQ=="],
-
     "vue-router": ["vue-router@4.5.0", "https://registry.npmmirror.com/vue-router/-/vue-router-4.5.0.tgz", { "dependencies": { "@vue/devtools-api": "^6.6.4" }, "peerDependencies": { "vue": "^3.2.0" } }, "sha512-HDuk+PuH5monfNuY+ct49mNmkCRK4xJAV9Ts4z9UFc4rzdDnxQLyCMGGc8pKhZhHTVzfanpNwB/lwqevcBwI4w=="],
 
     "vue-tsc": ["vue-tsc@2.2.8", "https://registry.npmmirror.com/vue-tsc/-/vue-tsc-2.2.8.tgz", { "dependencies": { "@volar/typescript": "~2.4.11", "@vue/language-core": "2.2.8" }, "peerDependencies": { "typescript": ">=5.0.0" }, "bin": { "vue-tsc": "./bin/vue-tsc.js" } }, "sha512-jBYKBNFADTN+L+MdesNX/TB3XuDSyaWynKMDgR+yCSln0GQ9Tfb7JS2lr46s2LiFUT1WsmfWsSvIElyxzOPqcQ=="],
+
+    "vuedraggable": ["vuedraggable@4.1.0", "https://registry.npmmirror.com/vuedraggable/-/vuedraggable-4.1.0.tgz", { "dependencies": { "sortablejs": "1.14.0" }, "peerDependencies": { "vue": "^3.0.1" } }, "sha512-FU5HCWBmsf20GpP3eudURW3WdWTKIbEIQxh9/8GE806hydR9qZqRRxRE3RjqX7PkuLuMQG/A7n3cfj9rCEchww=="],
 
     "webidl-conversions": ["webidl-conversions@3.0.1", "https://registry.npmmirror.com/webidl-conversions/-/webidl-conversions-3.0.1.tgz", {}, "sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ=="],
 

@@ -81,20 +81,20 @@ export const doGetCategoryList = (params: any) => {
 /**
  * 获取仓库列表
  */
-export const doGetWarehouseList = (data: any) => {
-  return post({
+export const doGetWarehouseList = (params: any) => {
+  return get({
     url: "saas-plugin-third-party-adapter/thirdParty/goods/publicInformation/getWarehouseList",
-    data,
+    params,
   });
 };
 
 /**
  * 获取公共信息列表
  */
-export const doGetPublicInformationList = (data: any) => {
-  return post({
+export const doGetPublicInformationList = (params: any) => {
+  return get({
     url: "saas-plugin-third-party-adapter/thirdParty/goods/publicInformation/getList",
-    data,
+    params,
   });
 };
 
@@ -104,5 +104,15 @@ export const doGetPublicInformationList = (data: any) => {
 export const doGetVariableList = () => {
   return get({
     url: "saas-plugin-third-party-adapter/thirdParty/posting/template/variableList ",
+  });
+};
+
+/**
+ * 上传文件
+ */
+export const doUpload = (data: any) => {
+  return post({
+    url: "saas-aimall-message-pigeon/saas-aimall-message-pigeon/oss/upload",
+    data,
   });
 };
