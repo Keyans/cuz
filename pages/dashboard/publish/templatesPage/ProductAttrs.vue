@@ -239,6 +239,7 @@ const props = withDefaults(
   defineProps<{
     categoryId: number | string;
     appShopId?: (string | number)[];
+    appType?: number;
     initialData?: Array<{
       attributeId: number;
       valueList: Array<{
@@ -262,9 +263,9 @@ const getAttributeList = async (categoryId: number | string) => {
   try {
     loading.value = true;
     const res = await doGetAttributeList({
-      appType:35,
+      appType: props.appType,
       categoryId,
-      // appShopId: props.appShopId[0] //原本是取下标1? TODO:待返回真实的appShopId
+      appShopId: props.appShopId,
     });
     loading.value = false;
     localAttributeList.value = res.data.attributeList;

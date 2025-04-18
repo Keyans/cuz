@@ -171,7 +171,7 @@ const updateWarehouseList = async (siteCode: string | number | null) => {
 
       const { data } = await doGetWarehouseList({
         url: requestUrl,
-        appShopId: props.appShopId[0],
+        appShopId: props.appShopId,
         siteId: siteCode,
         appType: 35,//TODO: 改成真实的appType值
       });

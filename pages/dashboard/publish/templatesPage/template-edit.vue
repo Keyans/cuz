@@ -28,9 +28,6 @@
             <div class="relative">
               <el-select 
                 v-model="formData.appShopId" 
-                multiple
-                collapse-tags
-                collapse-tags-tooltip
                 placeholder="请选择店铺"
                 class="w-full"
                 @change="storesChange"
@@ -44,9 +41,6 @@
             <div class="relative">
               <el-select 
                 v-model="formData.templateLanguage" 
-                multiple
-                collapse-tags
-                collapse-tags-tooltip
                 placeholder="请选择语言"
                 class="w-full"
               >
@@ -116,6 +110,7 @@
               <select 
                 v-model="formData.categoryId" 
                 class="w-full border border-gray-300 rounded px-3 py-2 appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500"
+                @change="categoryChange"
               >
                 <option v-for="item in categoryList" :value="item.categoryId">{{ item.categoryName }}</option>
               </select>
@@ -129,7 +124,13 @@
           
           <div class="mt-4">
            <!--商品属性组件-->
-           <ProductAttrs ref="productAttrsRef" :category-id="formData.categoryId" :app-shop-id="formData.appShopId" :initial-data="formData.attributeList" @formatData="handleAttrFormat"/>
+           <ProductAttrs ref="productAttrsRef" 
+              :category-id="formData.categoryId" 
+              :app-shop-id="formData.appShopId" 
+              :app-type="formData.appType" 
+              :initial-data="formData.attributeList" 
+              @formatData="handleAttrFormat"
+            />
           </div>
         </div>
       </div>
@@ -169,7 +170,7 @@
         <!-- 规格信息 -->
         <div class="mb-6">
           <label class="block text-sm text-gray-700 mb-4">规格信息：</label>
-          <el-table :data="specificationInfoList" style="width: 100%" border :header-cell-style="{background: 'var(--el-fill-color-light)',color: '#606266'}">
+          <el-table :data="formData.specificationInfoList" style="width: 100%" border :header-cell-style="{background: 'var(--el-fill-color-light)',color: '#606266'}">
             <el-table-column prop="color" label="颜色" align="center">
               <template #default="{ row }">
                 <el-input disabled placeholder="商品颜色规格" />
@@ -194,23 +195,23 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="specImage" label="利润" align="center" width="300">
+            <el-table-column prop="sellPrice" label="利润" align="center" width="300">
               <template #default="{ row }">
-                <el-select v-model="row.profitUnit" class="inline-block mr-2" style="width:100px">
-                  <el-option value="percentage" label="百分比" />
-                  <el-option value="fixedValue" label="固定数值" />
+                <el-select v-model="row.priceType" class="inline-block mr-2" style="width:100px">
+                  <el-option :value="1" label="百分比" />
+                  <el-option :value="2" label="固定数值" />
                 </el-select>
-                <el-input-number v-model="row.profit" :min="0" :max="1000"  class="inline-block">
-                  <template v-if="row.profitUnit==='percentage'" #suffix>
+                <el-input-number v-model="row.sellPrice" :min="0" :max="1000"  class="inline-block">
+                  <template v-if="row.priceType===1" #suffix>
                     <span>%</span>
                   </template>
                 </el-input-number>
               </template>
             </el-table-column>
-            <el-table-column prop="specImage" label="建议零售价" align="center">
+            <el-table-column prop="suggestPrice" label="建议零售价" align="center">
               <template #default="{ row }">
                 <el-input-number v-model="row.suggestPrice" :min="1" :max="10">
-                  <template v-if="row.profitUnit==='percentage'" #suffix>
+                  <template v-if="row.priceType===1" #suffix>
                     <span>%</span>
                   </template>
                 </el-input-number>
@@ -224,7 +225,13 @@
     <div class="bg-white rounded-lg shadow mb-6">
       <div class="p-4 lg:p-6">
         <h2 class="text-lg font-medium mb-4">平台公共信息</h2>
-        <PublicInfo ref="PublicInfoRef" :category-id="formData.categoryId" :app-shop-id="formData.appShopId" :initial-data="formData.publicInformation" @formatData="handlePublicInfoFormat"/>
+        <PublicInfo ref="PublicInfoRef" 
+          :category-id="formData.categoryId" 
+          :app-shop-id="formData.appShopId" 
+          :app-type="formData.appType" 
+          :initial-data="formData.publicInformation" 
+          @formatData="handlePublicInfoFormat"
+        />
       </div>
     </div>
 
@@ -250,7 +257,7 @@ import { useRoute, useRouter } from 'vue-router';
 import ActionButton from '~/components/common/ActionButton.vue';
 import type { InputInstance } from 'element-plus';
 import VariableDialog from '~/components/common/VariableDialog.vue';
-import { doGetTemplateDetail, doGetTemplateLanguageList, doGetauthorizeList, doGetVariableList, doGetCategoryList } from '~/apis/finance/publish'
+import { doGetTemplateDetail, doGetTemplateLanguageList, doGetauthorizeList, doGetVariableList, doGetCategoryList, doSaveTemplate } from '~/apis/finance/publish'
 import ProductAttrs from './ProductAttrs.vue'
 import ProductImage from './ProductImage.vue'
 import PublicInfo from './PublicInfo.vue'
@@ -274,46 +281,18 @@ interface PackagingImages {
 interface FormDataType {
   id: string;
   templateName: string;
-  store: string;
-  stores: string[];
-  language: string;
-  templateLanguage: string[];
+  appType:string;
+  templateLanguage: string;
   sort: string;
   productTitle: string;
-  description: string;
-  category: string;
   categoryId:string;
+  categoryLinkage:string;
   appShopId:string;
   attributeList:any[];
   publicInformation:{};
-  attributes: {
-    material: string;
-    features: string[];
-    trend: string;
-    brand: string;
-    process: string[];
-    printing: string[];
-  };
   mainImageList:any[]; // 主图
   detailsImagesList:any[]; // 详情图
   materialImageList:any[]; // 素材图
-  images: {
-    main: ImageItem[];
-    detail: ImageItem[];
-    material: ImageItem[];
-    packaging: PackagingImages;
-  };
-  variants: any[];
-  platform: {
-    sites: {
-      fulfillment: string;
-      shipping: string;
-    };
-    packaging: {
-      type: string;
-      shape: string;
-    };
-  };
 }
 
 definePageMeta({
@@ -329,310 +308,32 @@ const templateId = ref('');
 const formData = reactive<FormDataType>({
   id: '',
   templateName: '',
-  // store: '',
-  // stores: [],
   appType:'',
-  // language: '',
-  templateLanguage: [],
+  templateLanguage: '',
   sort: '',
   productTitle: '',
-  // description: '',
-  // category: '',
   categoryId:'',
+  categoryLinkage:'',
   appShopId:'',
   attributeList:[],
   publicInformation:{},
-  // attributes: {
-  //   material: '',
-  //   features: ['防摔', '防震'],
-  //   trend: '',
-  //   brand: '',
-  //   process: ['哑光', '标准'],
-  //   printing: ['激光', '丝网']
-  // },
   mainImageList:[], // 主图
   detailsImagesList:[], // 详情图
   materialImageList:[], // 素材图
-  // images: {
-  //   main: [
-  //     { id: 'main1', name: '主图1', url: 'https://via.placeholder.com/100', file: null, uploading: false, progress: 0 },
-  //     { id: 'main2', name: '主图2', url: 'https://via.placeholder.com/100', file: null, uploading: false, progress: 0 }
-  //   ],
-  //   detail: [
-  //     { id: 'detail1', name: '详情1', url: 'https://via.placeholder.com/100', file: null, uploading: false, progress: 0 },
-  //     { id: 'detail4', name: '详情4', url: 'https://via.placeholder.com/100', file: null, uploading: false, progress: 0 }
-  //   ],
-  //   material: [
-  //     { id: 'material1', name: '素材图', url: 'https://via.placeholder.com/100', file: null, uploading: false, progress: 0 }
-  //   ],
-  //   packaging: {
-  //     front: null,
-  //     side: null,
-  //     top: null
-  //   }
-  // },
-  // variants: [],
-  // platform: {
-  //   sites: {
-  //     fulfillment: '',
-  //     shipping: ''
-  //   },
-  //   packaging: {
-  //     type: 'hardbox',
-  //     shape: 'long',
-  //   }
-  // }
+  specificationInfoList:[{
+    color: "", //颜色
+    size: "", //尺码
+    specImage: [], //sku图
+    sellPrice: "", //利润
+    priceType: 1,// 售价类型 1:百分比 2:固定值
+    suggestPrice: "" //建议售价
+  }]
 });
-
-// 规格信息表格
-const specificationInfoList = ref<any[]>([{
-  color: "", //颜色
-  size: "", //尺码
-  specImage: [], //sku图
-  specName: "", //规格名称
-  specAttribute: "", //规格属性
-  profit: "", //利润
-  profitUnit: "percentage", //利润单位
-  suggestPrice: "" //建议售价
-}]);
-
-// 主图上传部分
-const mainImageInput = ref<HTMLInputElement | null>(null);
-const detailImageInput = ref<HTMLInputElement | null>(null);
-const materialImageInput = ref<HTMLInputElement | null>(null);
-const packagingFrontImageInput = ref<HTMLInputElement | null>(null);
-
-// 标签输入相关
-const featureInputVisible = ref(false);
-const featureInputValue = ref('');
-const featureInputRef = ref<InputInstance>();
-
-const processInputVisible = ref(false);
-const processInputValue = ref('');
-const processInputRef = ref<InputInstance>();
-
-const printingInputVisible = ref(false);
-const printingInputValue = ref('');
-const printingInputRef = ref<InputInstance>();
 
 // 变量对话框相关
 const variableDialogVisible = ref(false);
 const currentEditingField = ref<'productTitle' | 'description'>('productTitle');
 const currentEditingText = ref('');
-
-// 触发文件选择
-function triggerFileSelect(type: string) {
-  switch (type) {
-    case 'main':
-      mainImageInput.value?.click();
-      break;
-    case 'detail':
-      detailImageInput.value?.click();
-      break;
-    case 'material':
-      materialImageInput.value?.click();
-      break;
-    case 'packaging-front':
-      packagingFrontImageInput.value?.click();
-      break;
-  }
-}
-
-// 处理文件选择
-const handleFileSelect = (event: Event, type: string) => {
-  const input = event.target as HTMLInputElement;
-  if (!input.files || input.files.length === 0) return;
-  
-  const file = input.files[0];
-  
-  // 检查文件类型和大小
-  if (!file.type.startsWith('image/')) {
-    alert('请选择图片文件');
-    return;
-  }
-  
-  if (file.size > 2 * 1024 * 1024) { // 2MB
-    alert('图片大小不能超过2MB');
-    return;
-  }
-  
-  // 创建图片对象
-  const img: ImageItem = {
-    id: `${type}-${Date.now()}`,
-    name: type === 'main' ? `主图${formData.images.main.length + 1}` :
-          type === 'detail' ? `详情${formData.images.detail.length + 1}` :
-          type === 'material' ? '素材图' : '正面图',
-    url: URL.createObjectURL(file),
-    file: file,
-    uploading: true,
-    progress: 0
-  };
-  
-  // 添加到相应数组
-  if (type === 'main') {
-    if (formData.images.main.length >= 10) {
-      alert('主图最多上传10张');
-      return;
-    }
-    formData.images.main.push(img);
-  } else if (type === 'detail') {
-    if (formData.images.detail.length >= 20) {
-      alert('详情图最多上传20张');
-      return;
-    }
-    formData.images.detail.push(img);
-  } else if (type === 'material') {
-    if (formData.images.material.length >= 1) {
-      alert('素材图最多上传1张');
-      return;
-    }
-    formData.images.material.push(img);
-  } else if (type === 'packaging-front') {
-    formData.images.packaging.front = img;
-  }
-  
-  // 模拟上传过程
-  simulateUpload(img);
-  
-  // 清空文件输入，以便可以再次选择同一文件
-  input.value = '';
-}
-
-// 模拟上传过程
-function simulateUpload(img: ImageItem) {
-  const interval = setInterval(() => {
-    img.progress += 10;
-    if (img.progress >= 100) {
-      clearInterval(interval);
-      img.uploading = false;
-      // 这里实际项目中应该是上传成功后的回调，获取到服务器返回的URL
-      // img.url = response.url;
-    }
-  }, 300);
-}
-
-// 删除图片
-const deleteImage = (type: string, id: string) => {
-  if (type === 'main') {
-    const index = formData.images.main.findIndex(img => img.id === id);
-    if (index !== -1) {
-      const img = formData.images.main[index];
-      if (img.url && img.url.startsWith('blob:')) {
-        URL.revokeObjectURL(img.url);
-      }
-      formData.images.main.splice(index, 1);
-    }
-  } else if (type === 'detail') {
-    const index = formData.images.detail.findIndex(img => img.id === id);
-    if (index !== -1) {
-      const img = formData.images.detail[index];
-      if (img.url && img.url.startsWith('blob:')) {
-        URL.revokeObjectURL(img.url);
-      }
-      formData.images.detail.splice(index, 1);
-    }
-  } else if (type === 'material') {
-    const index = formData.images.material.findIndex(img => img.id === id);
-    if (index !== -1) {
-      const img = formData.images.material[index];
-      if (img.url && img.url.startsWith('blob:')) {
-        URL.revokeObjectURL(img.url);
-      }
-      formData.images.material.splice(index, 1);
-    }
-  } else if (type === 'packaging-front') {
-    if (formData.images.packaging.front) {
-      if (formData.images.packaging.front.url.startsWith('blob:')) {
-        URL.revokeObjectURL(formData.images.packaging.front.url);
-      }
-      formData.images.packaging.front = null;
-    }
-  }
-}
-
-// 替换图片
-const replaceImage = (type: string, id: string) => {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  
-  input.onchange = (event) => {
-    const target = event.target as HTMLInputElement;
-    if (!target.files || target.files.length === 0) return;
-    
-    const file = target.files[0];
-    
-    // 检查文件类型和大小
-    if (!file.type.startsWith('image/')) {
-      alert('请选择图片文件');
-      return;
-    }
-    
-    if (file.size > 2 * 1024 * 1024) { // 2MB
-      alert('图片大小不能超过2MB');
-      return;
-    }
-    
-    // 获取要替换的图片
-    let imgToReplace: ImageItem | null = null;
-    if (type === 'main') {
-      imgToReplace = formData.images.main.find(img => img.id === id) || null;
-    } else if (type === 'detail') {
-      imgToReplace = formData.images.detail.find(img => img.id === id) || null;
-    } else if (type === 'material') {
-      imgToReplace = formData.images.material.find(img => img.id === id) || null;
-    } else if (type === 'packaging-front') {
-      imgToReplace = formData.images.packaging.front;
-    }
-    
-    if (imgToReplace) {
-      // 释放之前的URL
-      if (imgToReplace.url && imgToReplace.url.startsWith('blob:')) {
-        URL.revokeObjectURL(imgToReplace.url);
-      }
-      
-      // 更新图片信息
-      imgToReplace.url = URL.createObjectURL(file);
-      imgToReplace.file = file;
-      imgToReplace.uploading = true;
-      imgToReplace.progress = 0;
-      
-      // 模拟上传
-      simulateUpload(imgToReplace);
-    }
-  };
-  
-  input.click();
-}
-
-// 在组件销毁时清理blob URL
-onUnmounted(() => {
-  // 清理主图
-  formData.images.main.forEach(img => {
-    if (img.url && img.url.startsWith('blob:')) {
-      URL.revokeObjectURL(img.url);
-    }
-  });
-  
-  // 清理详情图
-  formData.images.detail.forEach(img => {
-    if (img.url && img.url.startsWith('blob:')) {
-      URL.revokeObjectURL(img.url);
-    }
-  });
-  
-  // 清理素材图
-  formData.images.material.forEach(img => {
-    if (img.url && img.url.startsWith('blob:')) {
-      URL.revokeObjectURL(img.url);
-    }
-  });
-  
-  // 清理包装图
-  if (formData.images.packaging.front && formData.images.packaging.front.url.startsWith('blob:')) {
-    URL.revokeObjectURL(formData.images.packaging.front.url);
-  }
-});
 
 // 初始化页面，判断是新建还是编辑
 onMounted(async () => {
@@ -651,51 +352,72 @@ onMounted(async () => {
 async function fetchTemplateData(id: string) {
   try {
     const { data } = await doGetTemplateDetail({id});
-
-    // 模拟数据
-    // const data = {
-    //   id: id,
-    //   name: 'T恤模板',
-    //   store: 'TEMU-PhoneCase',
-    //   stores: ['TEMU-PhoneCase', 'TikTok-CaseShop'],
-    //   language: 'zh',
-    //   languages: ['zh', 'en'],
-    //   sort: '0',
-    //   title: '高品质手机壳保护套',
-    //   description: '优质材料制作，完美贴合手机，有效保护手机不受损伤。',
-    //   category: '3C数码配件>手机配件>其他'
-    // };
-    
     // 更新表单数据
+    formData.id = id;
     Object.assign(formData, data);
+    formData.productTitle = await getProductTitleNameOrCode(formData.productTitle, variableList.value.basicInformationList, false)
+    formData.productTitle = await getProductTitleNameOrCode(formData.productTitle, variableList.value.specList, false)
+    formData.attributeList = data.attributeInfo;
+    formData.specificationInfoList = data.specificationInfo.map(item => {
+      return {
+        ...item,
+        specImage: [JSON.parse(item.specImage)]
+      }})
+    formData.mainImageList = data.mainImages;
+    formData.detailsImagesList = data.detailsImages;
+    formData.materialImageList = data.materialImages;
+    // 获取商品类目列表
+    await getCategoryList(formData.appType)
   } catch (error) {
     console.error('获取模板数据失败', error);
   }
 }
-
+const getProductTitleCode = (text:string,list:any) => {
+  list.forEach(variable => {
+    // 使用正则表达式找到匹配的模式并替换
+    const regex = new RegExp(`\\{${variable.variableName}\\}`, 'g');
+    text = text.replace(regex, `{${variable.variableCode}}`);
+  });
+  return text;
+}
+/**
+ * 根据给定的文本和变量列表，将文本中的变量名称或代码替换为对应的代码或名称
+ *
+ * @param text 要处理的文本
+ * @param list 包含变量名称和代码的列表，每个变量应包含变量名称（variableName）和变量代码（variableCode）
+ * @param fromNameToCode 是否将变量名称替换为变量代码，true 表示替换，false 表示将变量代码替换为变量名称
+ * @returns 处理后的文本
+ */
+const getProductTitleNameOrCode = (text:string, list:any, fromNameToCode:boolean) => {
+  if (!list?.length) return text;
+  return list.reduce((result, variable) => {
+    const source = fromNameToCode ? variable.variableName : variable.variableCode;
+    const target = fromNameToCode ? variable.variableCode : variable.variableName;
+    const regex = new RegExp(`\\{${source}\\}`, 'g');
+    return result.replace(regex, `{${target}}`);
+  }, text);
+}
 // 保存模板
 async function save() {
   try {
-    // 在保存前把多选的第一个值赋给单选字段，保持兼容性
-    // if (formData.stores.length > 0) {
-    //   formData.store = formData.stores[0];
-    // }
-    // if (formData.languages.length > 0) {
-    //   formData.language = formData.languages[0];
-    // }
-    
-    if (isEdit.value) {
-      // 更新模板
-      console.log('更新模板', formData);
-    } else {
-      // 创建模板
-      console.log('创建模板', formData);
-    }
-    
+    let productTitleCode = await getProductTitleNameOrCode(formData.productTitle, variableList.value.basicInformationList, true);
+    productTitleCode = await getProductTitleNameOrCode(productTitleCode, variableList.value.specList, true);
+
+    const specificationInfoList = formData.specificationInfoList.map(item => {
+      return {
+        ...item,
+        specImage: item.specImage && item.specImage.length > 0 ? item.specImage[0] : ''
+      };
+    });
+    if(!specificationInfoList) return ElMessage.error('请先上传规格图')
+
+    const { success } = await doSaveTemplate({...formData, productTitle:productTitleCode, specificationInfoList});
+
+    ElMessage.success('保存成功');
     // 保存成功后返回列表页
     router.push('/dashboard/publish/templates');
   } catch (error) {
-    console.error('保存模板失败', error);
+    ElMessage.error('保存失败')
   }
 }
 
@@ -703,72 +425,6 @@ async function save() {
 function cancel() {
   router.push('/dashboard/publish/templates');
 }
-
-// 功能特点标签方法
-const handleFeatureClose = (tag: string) => {
-  formData.attributes.features = formData.attributes.features.filter(item => item !== tag);
-};
-
-const showFeatureInput = () => {
-  featureInputVisible.value = true;
-  nextTick(() => {
-    featureInputRef.value!.input!.focus();
-  });
-};
-
-const handleFeatureConfirm = () => {
-  if (featureInputValue.value) {
-    if (!formData.attributes.features.includes(featureInputValue.value)) {
-      formData.attributes.features.push(featureInputValue.value);
-    }
-  }
-  featureInputVisible.value = false;
-  featureInputValue.value = '';
-};
-
-// 美体工艺标签方法
-const handleProcessClose = (tag: string) => {
-  formData.attributes.process = formData.attributes.process.filter(item => item !== tag);
-};
-
-const showProcessInput = () => {
-  processInputVisible.value = true;
-  nextTick(() => {
-    processInputRef.value!.input!.focus();
-  });
-};
-
-const handleProcessConfirm = () => {
-  if (processInputValue.value) {
-    if (!formData.attributes.process.includes(processInputValue.value)) {
-      formData.attributes.process.push(processInputValue.value);
-    }
-  }
-  processInputVisible.value = false;
-  processInputValue.value = '';
-};
-
-// 印花工艺标签方法
-const handlePrintingClose = (tag: string) => {
-  formData.attributes.printing = formData.attributes.printing.filter(item => item !== tag);
-};
-
-const showPrintingInput = () => {
-  printingInputVisible.value = true;
-  nextTick(() => {
-    printingInputRef.value!.input!.focus();
-  });
-};
-
-const handlePrintingConfirm = () => {
-  if (printingInputValue.value) {
-    if (!formData.attributes.printing.includes(printingInputValue.value)) {
-      formData.attributes.printing.push(printingInputValue.value);
-    }
-  }
-  printingInputVisible.value = false;
-  printingInputValue.value = '';
-};
 
 // 打开变量对话框 - 商品标题
 const openVariableDialog = () => {
@@ -778,11 +434,11 @@ const openVariableDialog = () => {
 };
 
 // 打开变量对话框 - 商品描述
-const openVariableDialogForDesc = () => {
-  currentEditingField.value = 'description';
-  currentEditingText.value = formData.description;
-  variableDialogVisible.value = true;
-};
+// const openVariableDialogForDesc = () => {
+//   currentEditingField.value = 'description';
+//   currentEditingText.value = formData.description;
+//   variableDialogVisible.value = true;
+// };
 
 // 处理变量对话框确认
 const handleVariableConfirm = (value: string) => {
@@ -792,7 +448,13 @@ const handleVariableConfirm = (value: string) => {
     formData.description = value;
   }
 };
-
+// 获取分类链路
+const categoryChange = ()=>{
+  const index = categoryList.value.findIndex(item=>item.categoryId===formData.categoryId)
+  if (index !== -1) {
+    formData.categoryLinkage = categoryList.value[index].categoryLinkage
+  }
+}
 const languageOptions = ref([])
 // 获取模板语言列表
 const getLanguageList = async () => {

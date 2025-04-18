@@ -222,6 +222,7 @@ import { doGetPublicInformationList } from '~/apis/finance/publish'
 const props = defineProps<{
   categoryId: string | number;
   appShopId: (string | number)[] | undefined;
+  appType: number;
   initialData?: any;
 }>();
 
@@ -326,8 +327,8 @@ const initializeFormData = (categories: any[]) => {
 const loadFormConfig = async () => {
   try {
     const { data } = await doGetPublicInformationList({
-      appShopId: props.appShopId?.[0],
-      appType:35, //TODO: 暂时写死，后续改成动态获取
+      appShopId: props.appShopId,
+      appType:props.appType,
     });
     const TMP_LIST = Object.values(data.publicInformation);
 
