@@ -256,15 +256,13 @@ export default defineNuxtConfig({
   // 公共运行时配置，可用于SEO设置等
   runtimeConfig: {
     public: {
-      siteUrl: "https://your-domain.com",
+      siteUrl: "https://cuzcuz.cn",
       siteName: "cuzcuz",
       siteDescription: "cuzcuz - 按需定制产品平台",
       language: "zh-CN",
-
       BASE_URL: process.env.BASE_URL,
       MICRO_POD_URL: process.env.MICRO_POD_URL,
       GALLERY_URL: process.env.GALLERY_URL,
-
       CLIENT_TYPE: process.env.CLIENT_TYPE,
       IS_AONE: process.env.IS_AONE,
     },

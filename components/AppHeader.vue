@@ -124,7 +124,7 @@
             </div>
             <!-- User auth status -->
             <div v-if="isAuthenticated" class="hidden sm:flex items-center space-x-2">
-              <NuxtLink to="/dashboard/sourcing" class="flex items-center space-x-2 text-sm text-primary hover:text-primary hover:bg-secondary hover:bg-opacity-10 rounded-md transition-colors">
+              <NuxtLink to="/dashboard/sourcing" class="flex items-center space-x-2 text-sm text-primary hover:text-primary hover:bg-secondary hover:bg-opacity-10 rounded-md transition-colors flex">
                 <img src="/assets/favicon.png" alt="User Avatar" class="h-8 w-8 rounded-full mr-2" />
                 <span class="flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
