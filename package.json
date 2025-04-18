@@ -11,7 +11,7 @@
     "generate": "nuxt generate && mkdir -p dist/assets && cp -r public/assets/* dist/assets/ && cp public/assets/favicon.png dist/",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare && node fix-element-plus.js",
-    "start": "dotenv -e .env.production -- node .output/server/index.mjs"
+    "start": "node .output/server/index.mjs"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
