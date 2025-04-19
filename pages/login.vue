@@ -51,7 +51,7 @@
 
       <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
         <!-- Demo account login button -->
-        <div class="mb-6">
+        <div class="mb-6" v-if="formMode === 'login'">
           <button
             @click="loginWithDemoAccount"
             class="w-full flex justify-center items-center py-2 px-4 border border-dashed border-primary rounded-md shadow-sm text-sm font-medium text-primary bg-secondary bg-opacity-30 hover:bg-opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
@@ -74,7 +74,7 @@
           </button>
         </div>
 
-        <form class="space-y-6" @submit.prevent="login">
+        <form class="space-y-6" @submit.prevent="submitForm">
           <div
             v-if="error"
             class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
@@ -100,7 +100,7 @@
             </div>
           </div>
 
-          <div>
+          <div v-if="formMode === 'register'">
             <label
               for="invitation"
               class="block text-sm font-medium text-gray-700"
@@ -204,7 +204,7 @@
                     ></path>
                   </svg>
                 </span>
-                登 录 / 注 册
+                {{ formMode === "login" ? "登 录" : "注 册" }}
               </button>
             </Motion>
           </div>
@@ -280,27 +280,34 @@
           </div>
         </div> -->
       </div>
+      <h3 class="mt-6 mx-auto w-fit">
+        {{ formMode === "login" ? "没有账号？" : "已有账户？" }}
+        <button class="underline underline-offset-2" @click="switchMode">
+          {{ formMode === "login" ? "立即注册" : "前往登录" }}
+        </button>
+      </h3>
     </div>
-
-    <el-dialog v-model="captchaConfig.showSliderCaptcha" width="fit-content">
-      <template #header></template>
-      <SliderCaptcha
-        v-model="captchaConfig.showSliderCaptcha"
-        :do-submit="doPostSmsCode"
-        :get-form="() => phone"
-        :scale="1"
-        @success="slideCaptchaSuccess"
-      ></SliderCaptcha>
-      <template #footer></template>
-    </el-dialog>
+    <ClientOnly>
+      <el-dialog v-model="captchaConfig.showSliderCaptcha" width="fit-content">
+        <template #header></template>
+        <SliderCaptcha
+          v-model="captchaConfig.showSliderCaptcha"
+          :do-submit="doPostSmsCode"
+          :get-form="() => phone"
+          :scale="1"
+          @success="slideCaptchaSuccess"
+        ></SliderCaptcha>
+        <template #footer></template>
+      </el-dialog>
+    </ClientOnly>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { useAuthStore } from "~/stores/auth";
+import { useAuthStore, type LoginCredentials } from "~/stores/auth";
 import { Motion } from "motion-v";
-import { doPostSmsCode } from "~/apis/sign";
+import { doPostSmsCode, signByUser } from "~/apis/sign";
 import SliderCaptcha from "~/components/ui/slide-captcha/SliderCaptcha.vue";
 
 definePageMeta({
@@ -320,7 +327,24 @@ const checkPhone = () => {
   else error.value = null;
 };
 const invitation = ref("");
-
+const route = useRoute();
+const router = useRouter();
+const formMode = computed<"login" | "register">({
+  get() {
+    const type = route.query?.type;
+    if (type === "login" || type === "register") return type;
+    else return "login";
+  },
+  set(value) {
+    router.replace({ query: { type: value } });
+  },
+});
+const switchMode = () => {
+  captcha.value = "";
+  formMode.value === "login"
+    ? (formMode.value = "register")
+    : (formMode.value = "login");
+};
 const captcha = ref("");
 
 const intervalTime = 120;
@@ -361,6 +385,7 @@ const slideCaptchaSuccess = (response: { code: number; data: string }) => {
 
 const getCaptcha = () => {
   if (!phone.value) {
+    error.value = "请输入手机号";
     return;
   }
 
@@ -389,7 +414,7 @@ const loginWithDemoAccount = async () => {
     });
 
     // Redirect to dashboard
-    navigateTo("/dashboard");
+    navigateTo("/dashboard/sourcing");
   } catch (err: any) {
     error.value =
       err.message || "Failed to login with demo account. Please try again.";
@@ -399,20 +424,32 @@ const loginWithDemoAccount = async () => {
 };
 
 // Login method
-const login = async () => {
+const submitForm = async () => {
   loading.value = true;
   error.value = null;
 
-  try {
-    await authStore.login({
+  let credentials: LoginCredentials | undefined = undefined;
+
+  if (formMode.value === "login") {
+    credentials = {
       mobile: phone.value,
-      // invitationCode: invitation.value,
       code: captcha.value,
       grant_type: "sms_code",
-    });
+    };
+  } else if (formMode.value === "register") {
+    credentials = {
+      mobile: phone.value,
+      invitation_code: invitation.value,
+      code: captcha.value,
+      grant_type: "creative_shop",
+    };
+  }
 
-    // Redirect to dashboard on successful login
-    navigateTo("/dashboard");
+  if (!credentials) return;
+
+  try {
+    await authStore.login(credentials);
+    navigateTo("/dashboard/sourcing");
   } catch (err: any) {
     error.value =
       err.message || "Failed to login. Please check your credentials.";

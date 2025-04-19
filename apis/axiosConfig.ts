@@ -8,6 +8,10 @@ const axiosCancel = new AxiosCanceler();
 let isCancel = true;
 // const LastModified = ref('')
 // const $useLastModified = useLastModified()
+
+// const config = useRuntimeConfig()
+console.log("🚀 ~ config:",  import.meta)
+
 const TOKEN_TYPE = "Bearer ";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 axios.defaults.headers.put["Content-Type"] = "application/json";

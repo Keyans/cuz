@@ -17,7 +17,7 @@ export default defineNuxtConfig({
   nitro: {
     // 针对需要动态内容的页面使用服务器端渲染
     // preset: process.env.NODE_ENV === "production" ? "vercel" : "node-server",
-    preset: 'node-server',
+    preset: "node-server",
 
     // 静态资源优化
     compressPublicAssets: {
@@ -47,6 +47,9 @@ export default defineNuxtConfig({
     routeRules: {
       "/**": { swr: 600 }, // 默认使用SWR缓存600秒
     },
+    externals: {
+      external: ["qrcode"], // 💥 告诉 Nitro 不要打包 qrcode
+    },
   },
 
   vite: {
@@ -54,17 +57,20 @@ export default defineNuxtConfig({
     server: {
       proxy: proxy(),
     },
-    assetsInclude: ['**/*.json'],
+    assetsInclude: ["**/*.json"],
     json: {
       stringify: true,
-      namedExports: true
+      namedExports: true,
+    },
+    ssr: {
+      noExternal: ["qrcode"], // ⛔️ 防止它被 SSR bundle 编译（不转为 ESM）
     },
     build: {
       chunkSizeWarningLimit: 2000,
       rollupOptions: {
-        maxParallelFileOps: 3
-      }
-    }
+        maxParallelFileOps: 3,
+      },
+    },
   },
 
   app: {
@@ -148,10 +154,11 @@ export default defineNuxtConfig({
     "/login": { ssr: true },
     "/register": { ssr: true },
     // 产品页面使用 SSR（服务器端渲染）带缓存
-    "/products": { swr: 600 }, // 10分钟缓存
     "/products/**": { swr: 300 }, // 5分钟缓存
+    // 选品列表页面不需要登录验证
+    "/dashboard/sourcing/list": { ssr: true, middleware: false },
     // 仪表板页面使用 SSR 但不缓存（动态内容）
-    "/dashboard/**": { ssr: true, cache: false },
+    "/dashboard/**": { ssr: true, swr: 600 },
   },
 
   // Tailwind CSS 配置
@@ -249,17 +256,16 @@ export default defineNuxtConfig({
   // 公共运行时配置，可用于SEO设置等
   runtimeConfig: {
     public: {
-      siteUrl: "https://your-domain.com",
+      siteUrl: "https://cuzcuz.cn",
       siteName: "cuzcuz",
       siteDescription: "cuzcuz - 按需定制产品平台",
       language: "zh-CN",
 
-      BASE_URL: process.env.BASE_URL,
       MICRO_POD_URL: process.env.MICRO_POD_URL,
       GALLERY_URL: process.env.GALLERY_URL,
-
       CLIENT_TYPE: process.env.CLIENT_TYPE,
-      IS_AONE: process.env.IS_AONE,
+
+      BACKEND_API: process.env.BACKEND_API,
     },
   },
 

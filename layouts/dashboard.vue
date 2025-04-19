@@ -9,6 +9,7 @@
           <!-- Mobile menu button and logo -->
           <div class="flex items-center">
             <button
+              v-if="!hideSidebar"
               @click="toggleSidebar"
               class="p-2 rounded-md text-primary hover:bg-secondary hover:bg-opacity-20 transition-colors md:hidden focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-50"
               aria-label="Toggle sidebar"
@@ -137,7 +138,7 @@
     <!-- Dashboard container -->
     <div class="flex-grow flex relative">
       <!-- Sidebar -->
-      <div class="md:w-64 flex-shrink-0">
+      <div v-if="!hideSidebar" class="md:w-64 flex-shrink-0">
         <DashboardSidebar
           :is-mobile-open="sidebarOpen"
           @close="sidebarOpen = false"
@@ -181,7 +182,7 @@
     </div>
 
     <!-- Mobile action button - quick access to workspace -->
-    <div class="fixed bottom-4 right-4 md:hidden z-30">
+    <div v-if="!hideSidebar" class="fixed bottom-4 right-4 md:hidden z-30">
       <button
         @click="navigateToWorkspace"
         class="w-14 h-14 rounded-full bg-secondary shadow-lg flex items-center justify-center text-primary hover:bg-opacity-90 transition-colors"
@@ -209,6 +210,15 @@
 import { ref, computed } from "vue";
 import { ScrollCallBackSymbol } from "~/constant";
 import { useAuthStore } from "~/stores/auth";
+import { shouldHideSidebar } from "~/constant/auth";
+import { useRoute } from "vue-router";
+
+// 获取当前路由
+const route = useRoute();
+// 获取用户登录状态
+const authStore = useAuthStore();
+// 判断是否需要隐藏侧边栏，增加登录状态判断
+const hideSidebar = computed(() => shouldHideSidebar(route.path, authStore.isAuthenticated));
 
 // Mobile sidebar state
 const sidebarOpen = ref(false);
@@ -269,7 +279,6 @@ const goTop = () => {
 provide(ScrollCallBackSymbol, registerScrollCallback);
 
 // Get user info from auth store
-const authStore = useAuthStore();
 const user = computed(() => authStore.currentUser);
 const userName = computed(() => user.value?.name || "User");
 const userAvatar = computed(() => user.value?.avatar || null);

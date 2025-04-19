@@ -12,17 +12,15 @@
         <template #default="props">
           <span
             :class="
-              ['REFUND', 'COMPENSATION'].includes(props.row.payBizType)
-                ? 'text-red-300'
+              plusTypes.slice(0, 2).includes(props.row.payBizType)
+                ? 'text-red-300' // 仅平台退款或赔付才变色
                 : ''
             "
           >
             {{
-              (["REFUND", "COMPENSATION"].includes(props.row.payBizType)
-                ? "+"
-                : "-") +
+              (plusTypes.includes(props.row.payBizType) ? "+" : "-") +
               "￥" +
-              props.row.transAmount
+              +props.row?.transAmount / 10000
             }}
           </span>
         </template>
@@ -75,21 +73,26 @@
         :formatter="
           (_, __, cell) => (cell ? tradeStatusMap[cell] ?? '未知状态' : '')
         "
-      />
+      >
+        <template #default="props">
+          <span
+            :class="
+              props?.row?.tradeStatus === 'FAIL_TRADE' ? 'text-red-300' : ''
+            "
+          >
+            {{
+              props?.row?.tradeStatus
+                ? tradeStatusMap[props?.row?.tradeStatus] ?? "未知状态"
+                : ""
+            }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column
         width="200"
         prop="payChannelNo"
         label="第三方支付流水号"
-        :formatter="
-          (row, _column, cell) => {
-            if (
-              row.payBizType === 'REFUND' ||
-              row.payBizType === 'COMPENSATION'
-            )
-              return '';
-            return cell;
-          }
-        "
+        :formatter="formatter['payChannelNo']"
       />
       <el-table-column width="200" prop="tradeTime" label="日期" />
     </el-table>
@@ -121,6 +124,17 @@ let tableData = defineModel<TableDataProp[]>("tableData", {
   required: true,
   default: [],
 });
+
+const plusTypes = ["REFUND", "COMPENSATION", "RECHARGE"];
+
+const formatter: Record<string, (row: any, column: any, cell: any) => string> =
+  {
+    payChannelNo: (row, _column, cell) => {
+      if (row.payBizType === "REFUND" || row.payBizType === "COMPENSATION")
+        return "";
+      return cell;
+    },
+  };
 </script>
 
 <style scoped>
