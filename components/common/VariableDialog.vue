@@ -15,6 +15,8 @@
         :rows="3"
         placeholder="请输入商品标题"
       />
+      <!--后续优化：校验变量值是否会改变-->
+      <div class="text-xs font-medium mb-2 mt-1 text-gray-500">提示：变量符号 '${}' 的值不能改变，否则不生效！</div>
     </div>
     
     <!-- 标题预览 -->
