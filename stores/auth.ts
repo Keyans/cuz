@@ -13,9 +13,16 @@ interface User {
 interface PhoneCredentials {
   mobile: string;
   code: string;
-  invitationCode?: string;
   grant_type: "sms_code";
 }
+
+interface RegisterCredentials {
+  mobile: string;
+  code: string;
+  invitation_code: string;
+  grant_type: "creative_shop";
+}
+
 // 邮件（暂无）
 interface EmailCredentials {
   email: string;
@@ -34,17 +41,13 @@ interface RefreshTokenCredentials {
   grant_type: "refreshToken";
 }
 
-type LoginCredentials =
+export type LoginCredentials =
+  | RegisterCredentials
   | PhoneCredentials
   | EmailCredentials
   | RefreshTokenCredentials
   | UsernameCredentials;
 
-interface RegisterCredentials {
-  name: string;
-  email: string;
-  password: string;
-}
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null as User | null,
@@ -104,8 +107,12 @@ export const useAuthStore = defineStore("auth", {
           this.user = response.user;
           this.token = response.token;
         } else {
-          const { data } = await signByUser(credentials);
-          console.log(data);
+          const { data, msg } = await signByUser(credentials);
+
+          if (msg) throw new Error(msg);
+
+          if (!data) throw new Error("未知错误");
+
           this.user = {
             id: data.additionalInformation?.userId,
             shopId: data.additionalInformation?.shopId?.[0],
@@ -121,51 +128,6 @@ export const useAuthStore = defineStore("auth", {
         navigateTo("/dashboard/sourcing");
       } catch (err: any) {
         this.error = err.message || "Failed to login";
-        throw err;
-      } finally {
-        this.loading = false;
-      }
-    },
-
-    // Register action
-    async register(credentials: RegisterCredentials) {
-      this.loading = true;
-      this.error = null;
-
-      try {
-        // In a real app, this would be an API call
-        // For demo purposes, we'll simulate a successful registration
-        const response = await new Promise<{
-          user: User;
-          token: string;
-          refreshToken: string;
-        }>((resolve) => {
-          setTimeout(() => {
-            resolve({
-              user: {
-                id: "1",
-                shopId: "demo",
-                email: credentials.email,
-                name: credentials.name,
-                role: "user",
-              },
-              token: "fake-jwt-token",
-              refreshToken: "fake-jwt-token",
-            });
-          }, 1000);
-        });
-
-        this.user = response.user;
-        this.token = response.token;
-
-        // Store in localStorage
-        localStorage.setItem("refreshToken", response.refreshToken);
-        localStorage.setItem("token", response.token);
-        localStorage.setItem("user", JSON.stringify(response.user));
-
-        return response;
-      } catch (err: any) {
-        this.error = err.message || "Failed to register";
         throw err;
       } finally {
         this.loading = false;
