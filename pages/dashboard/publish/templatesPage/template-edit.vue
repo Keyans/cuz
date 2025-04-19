@@ -262,6 +262,9 @@ import ProductAttrs from './ProductAttrs.vue'
 import ProductImage from './ProductImage.vue'
 import PublicInfo from './PublicInfo.vue'
 
+const productAttrsRef = ref();
+const publicInfoRef = ref();
+
 // 创建接口类型
 interface ImageItem {
   id: string;
@@ -400,6 +403,14 @@ const getProductTitleNameOrCode = (text:string, list:any, fromNameToCode:boolean
 // 保存模板
 async function save() {
   try {
+    // 验证 ProductAttrs 组件的表单
+    const attrsValidation = await productAttrsRef.value?.validate();
+    if (!attrsValidation) return;
+
+    // 验证 PublicInfo 组件的表单
+    const publicInfoValidation = await publicInfoRef.value?.validateForm();
+    if (!publicInfoValidation) return;
+
     let productTitleCode = await getProductTitleNameOrCode(formData.productTitle, variableList.value.basicInformationList, true);
     productTitleCode = await getProductTitleNameOrCode(productTitleCode, variableList.value.specList, true);
 
