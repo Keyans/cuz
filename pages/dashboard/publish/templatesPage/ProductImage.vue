@@ -63,7 +63,7 @@
         v-if="modelValue.length < props.limit"
         v-loading="loading"
       >
-        <input
+        <!-- <input
           ref="fileInput"
           type="file"
           multiple
@@ -75,8 +75,10 @@
           v-if="props.uploadMethod.includes('local')"
           @click="triggerFileInput"
           >{{ props.localText }}</el-button
-        >
-
+        > -->
+        <q-upload v-if="props.uploadMethod.includes('local')" @change="handleLocalFileSelect">
+          <el-button style="width: 94.5px">{{ props.localText }}</el-button>
+        </q-upload>
         <el-popover
           ref="popoverRef"
           placement="right"
@@ -111,8 +113,8 @@ import { ElMessage } from "element-plus";
 import type { UploadFile } from "element-plus";
 // import ImageSelect from "@/views/components/image/ImageSelect.vue";
 // import { imageCosUpload } from "@/api/shop/listingsTemplate";
-import { doUpload } from "~/apis/finance/publish";
 import VueDraggable from "vuedraggable";
+import QUpload from '@/components/q-upload/q-upload.vue'
 
 interface ImageFile extends UploadFile {
   width?: number;
@@ -180,7 +182,7 @@ const beforeUpload = (file: File) => {
 const triggerFileInput = () => {
   fileInput.value?.click();
 };
-
+const handleUploadRequest = async (file: File) => {}
 // 处理本地文件选择
 const handleLocalFileSelect = async (event: Event) => {
   const input = event.target as HTMLInputElement;
@@ -201,7 +203,7 @@ const handleLocalFileSelect = async (event: Event) => {
         };
         // const newFileList = [...props.modelValue, newFile];
         // emit('update:modelValue', newFileList);
-        getLocalImageUrl(file);
+        // getLocalImageUrl(file);
       };
       reader.readAsDataURL(file);
     }
@@ -212,27 +214,27 @@ const handleLocalFileSelect = async (event: Event) => {
 
 const loading = ref(false);
 // 上传本地图片获取URL
-const getLocalImageUrl = file => {
-  // imageCosUpload
-  const formData = new FormData();
-  formData.append("fileList", file);
-  loading.value = true;
-  doUpload(formData)
-    .then((res: any) => {
-      const uploadFile = {
-        imagePath: res[0].imageUrl,
-        fileId: null,
-        position: null,
-        width: file.width,
-        height: file.height
-      };
-      const newFileList = [...props.modelValue, uploadFile];
-      emit("update:modelValue", newFileList);
-    })
-    .finally(() => {
-      loading.value = false;
-    });
-};
+// const getLocalImageUrl = file => {
+//   // imageCosUpload
+//   const formData = new FormData();
+//   formData.append("fileList", file);
+//   loading.value = true;
+//   doUpload(formData)
+//     .then((res: any) => {
+//       const uploadFile = {
+//         imagePath: res[0].imageUrl,
+//         fileId: null,
+//         position: null,
+//         width: file.width,
+//         height: file.height
+//       };
+//       const newFileList = [...props.modelValue, uploadFile];
+//       emit("update:modelValue", newFileList);
+//     })
+//     .finally(() => {
+//       loading.value = false;
+//     });
+// };
 
 const imageSelectRef = ref();
 // TODO: 实现图库选择功能

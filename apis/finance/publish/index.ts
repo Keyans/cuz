@@ -103,7 +103,7 @@ export const doGetPublicInformationList = (params: any) => {
  */
 export const doGetVariableList = () => {
   return get({
-    url: "saas-plugin-third-party-adapter/thirdParty/posting/template/variableList ",
+    url: "saas-plugin-third-party-adapter/thirdParty/posting/template/variableList",
   });
 };
 
@@ -112,7 +112,7 @@ export const doGetVariableList = () => {
  */
 export const doUpload = (data: any) => {
   return post({
-    url: "saas-aimall-message-pigeon/saas-aimall-message-pigeon/oss/upload",
+    url: "saas-aimall-message-pigeon/oss/upload",
     data,
   });
 };
