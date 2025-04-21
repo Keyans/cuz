@@ -361,7 +361,7 @@
         { name: '家居用品', href: '/products/home' }
       ] 
     },
-    { name: '网站设计', href: config.public.MICRO_POD_URL, icon: 'design', isExternal: true },
+    { name: '网站设计', href: `${config.public.MICRO_POD_URL}`, icon: 'design', isExternal: true },
     // { name: '创意图库', href: config.public.GALLERY_URL, icon: 'gallery', isExternal: true },
     // { name: '个人中心', href: '/dashboard', icon: 'user' },
   ]
