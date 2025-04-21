@@ -279,10 +279,10 @@ function proxy() {
   let uaaTargetLocal = "http://10.233.90.164:9999";
   let targetLocal = "http://10.120.22.174:9999"; //hzh本地
   let targetLocal2 = "http://10.120.23.102:9210"; //lxl本地
-
+  let targetLocal3 = 'http://10.120.20.59:8415' //syx本地
   return {
     "/dev/saas-aimall-finance": {
-      target: targetLocal,
+      target: devTarget,
       ws: false,
       changeOrigin: true,
       secure: false, //证书免校验
