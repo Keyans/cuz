@@ -30,7 +30,10 @@
         prop="currentBalance"
         label="可用预付余额"
         :formatter="
-          (row, _column, cell) => (row.payType === 'BALANCE' ? cell : '')
+          (row, _column, cell) =>
+            row.payType === 'BALANCE' || row.payBizType === 'RECHARGE'
+              ? '￥' + +cell / 10000
+              : ''
         "
       />
       <el-table-column
@@ -71,7 +74,12 @@
         prop="tradeStatus"
         label="交易状态"
         :formatter="
-          (_, __, cell) => (cell ? tradeStatusMap[cell] ?? '未知状态' : '')
+          (row, __, cell) => {
+            if (!cell) return '';
+            if (row.payBizType === 'RECHARGE' && cell === 'SUCCESS_TRADE')
+              cell = 'RECHARGE_SUCCESS_TRADE';
+            return tradeStatusMap[cell] ?? '未知状态';
+          }
         "
       >
         <template #default="props">
