@@ -293,7 +293,6 @@
         </div>
       </div>
     </div>
-  </div>
   
   <!-- 新建文件夹弹窗 -->
   <el-dialog
@@ -339,6 +338,7 @@
       </div>
     </template>
   </el-dialog>
+</div>
 </template>
 
 <script setup lang="ts">
