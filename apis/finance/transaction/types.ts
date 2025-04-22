@@ -55,8 +55,12 @@ export const tradeStatusMap: Record<string, string> = {
   OVERTIME_CLOSE: "交易关闭",
   SUCCESS_APPLY_TRADE: "交易中",
   FAIL_APPLY_TRADE: "交易失败",
-  SUCCESS_TRADE: "交易成功",
+  SUCCESS_TRADE: "交易成功", // 充值需要直接改为处理中
+  RECHARGE_SUCCESS_TRADE: "处理中",
   FAIL_TRADE: "交易失败",
+  WAITING_AUDIT: "处理中",
+  AUDIT_PASS: "交易成功",
+  AUDIT_REJECT: "交易失败",
 };
 export const payTypeMap: Record<string, string> = {
   BALANCE: "预付余额支付",
