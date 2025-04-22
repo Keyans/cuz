@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto py-6 px-4">
     <!-- 面包屑 -->
-    <Breadcrumb :items="breadcrumb"/>
+    <Breadcrumb v-if="isAuthenticated" :items="breadcrumb"/>
     <!-- 页面标题 -->
     <div class="mb-6">
       <h1 class="text-2xl font-bold">{{ pageTitle }}</h1>
@@ -97,7 +97,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useAuthStore } from '~/stores/auth'
 import Breadcrumb from '~/components/common/Breadcrumb.vue'
+
+const authStore = useAuthStore()
+const isAuthenticated = computed(() => authStore.isAuthenticated)
 
 const route = useRoute()
 const router = useRouter()
