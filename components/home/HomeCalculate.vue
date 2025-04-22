@@ -7,11 +7,11 @@
 
       <div class="flex flex-col lg:flex-row items-center gap-8 max-w-6xl mx-auto bg-white rounded-lg overflow-hidden shadow-xl">
         <!-- 左侧产品展示图片 -->
-        <div class="lg:w-1/2 overflow-hidden h-full">
+        <div class="lg:w-1/2 overflow-hidden" style="height: 552px;">
           <img 
-            :src="selectedProduct === 'tshirt' ? 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=2080&auto=format&fit=crop' : 'https://images.unsplash.com/photo-1606041011872-596597976b25?q=80&w=2187&auto=format&fit=crop'"
+            :src="selectedProduct === 'tshirt' ? 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=2080&auto=format&fit=crop' : 'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?q=80&w=1000&auto=format&fit=crop'"
             :alt="selectedProduct === 'tshirt' ? 'T恤产品展示' : '手机壳产品展示'"
-            class="w-full h-full object-fill"
+            class="w-full"
           />
         </div>
 
