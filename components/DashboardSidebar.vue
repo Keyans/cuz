@@ -237,6 +237,11 @@
           icon: 'IconBox',
         },
         {
+          name: '账单查看',
+          href: '/dashboard/wallet/reconciliations',
+          icon: 'IconBox',
+        },
+        {
           name: '发票管理',
           href: '/dashboard/wallet/invoice',
           icon: 'IconBox',
@@ -290,7 +295,7 @@
     if (href === '/dashboard' && route.path === '/dashboard') {
       return true
     }
-    return route.path.startsWith(href) && href !== '/dashboard'
+    return route.path === href && href !== '/dashboard'
   }
   
   // Define simple icon components
