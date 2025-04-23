@@ -1,11 +1,8 @@
 <template>
   <div class="container mx-auto py-6 px-4">
-    <div class="flex items-center mb-6 text-sm text-gray-500">
-      <span>订单</span>
-      <span class="mx-2">/</span>
-      <span class="font-medium text-gray-700">售后管理</span>
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">售后管理</h1>
     </div>
-
     <!-- 筛选区域 -->
     <div class="bg-white rounded-lg shadow p-4 mb-6">
       <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -106,14 +103,6 @@
         </div>
       </div>
     </div>
-
-    <!-- 表格标记数字 -->
-    <div class="relative mb-1">
-      <div class="absolute left-0 top-0 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-        1
-      </div>
-    </div>
-
     <!-- 售后列表 -->
     <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
       <div class="overflow-x-auto">
@@ -146,9 +135,6 @@
               </th>
               <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 操作
-                <div class="absolute right-4 top-3 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                  2
-                </div>
               </th>
             </tr>
           </thead>

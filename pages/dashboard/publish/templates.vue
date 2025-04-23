@@ -1,12 +1,8 @@
 <template>
   <div class="container mx-auto py-6">
-    <!-- 面包屑导航 -->
-    <div class="flex items-center mb-6 text-sm">
-      <span class="text-gray-600">产品库</span>
-      <span class="mx-2 text-gray-400">/</span>
-      <span class="text-gray-900 font-medium">刊登模板</span>
+    <div class="flex justify-between items-center mb-6 flex-wrap">
+      <h1 class="text-2xl font-bold">刊登模版</h1>
     </div>
-   
     <!-- 查询区域 -->
     <div class="mb-6">
       <QueryFilter 

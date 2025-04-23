@@ -192,7 +192,7 @@ const route = useRoute();
 
 // 面包屑数据
 const breadcrumbItems = [
-  { title: '账号', path: '/dashboard/account' },
+  { title: '账号管理', path: '/dashboard/account' },
   { title: '实名认证', path: '/dashboard/account/realName' },
   { title: '企业认证' }
 ];

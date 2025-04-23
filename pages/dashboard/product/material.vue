@@ -1,5 +1,8 @@
 <template>
   <div class="p-6 max-w-full">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">素材库</h1>
+    </div>
     <!-- 顶部标签 -->
     <div class="flex border-b mb-4">
       <div class="px-4 py-2 border-b-2 border-blue-500 text-blue-500 font-medium">图片</div>

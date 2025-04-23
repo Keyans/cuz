@@ -1,7 +1,5 @@
 <template>
   <div class="container mx-auto py-6 px-4">
-    <!-- 使用面包屑组件 -->
-    <Breadcrumb :items="breadcrumbItems" />
     <!-- 标签页 -->
     <div class="mb-6 flex">
       <div class="flex items-center space-x-2">
@@ -146,12 +144,6 @@ const enterpriseData = reactive({
   idCardFrontUrl: '',
   idCardBackUrl: ''
 });
-
-// 面包屑数据
-const breadcrumbItems = [
-  { title: '账号', path: '/dashboard/account' },
-  { title: '实名认证' }
-];
 
 // 导航到认证表单页面
 const navigateToAuthForm = () => {
