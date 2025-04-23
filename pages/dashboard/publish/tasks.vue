@@ -149,8 +149,8 @@
                   </div>
                 </div>
               </td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500" v-if="task.specList && task.specList.length > 0">
-                <p> {{ task.specList[0].sellPrice/1000 }} ~ {{ task.specList[0].suggestedPrice/1000 }} CNY ￥</p>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                <p> {{ Number(task.minSellPrice)/10000 }} ~ {{ Number(task.maxSellPrice)/10000 }} CNY ￥</p>
                 <!-- <el-button link type="primary">修改价格</el-button> -->
               </td>
               <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -169,7 +169,7 @@
                   <button class="text-blue-600 hover:text-blue-800" @click="publishTask(task.id, task.appType)">
                     {{activeStatusTab===3?'重新':''}}发布
                   </button>
-                  <button class="text-blue-600 hover:text-blue-800">编辑</button>
+                  <button class="text-blue-600 hover:text-blue-800" @click="editTask(task.id)">编辑</button>
                   <button class="text-red-600 hover:text-red-800" @click="deleteTask(task.id)">删除</button>
                 </div>
               </td>
@@ -195,7 +195,6 @@
       <div class="text-sm text-gray-700 mb-2 md:mb-0">
         显示 {{ (currentPage - 1) * pageSize + 1 }} 到 {{ Math.min(currentPage * pageSize, totalItems) }} 条，共 {{ totalItems }} 条
       </div>
-      <!--@click="currentPage > 1 && (currentPage--)"-->
       <nav class="flex space-x-2">
         <button 
           class="px-3 py-1 rounded border hover:bg-gray-100" 
@@ -214,7 +213,6 @@
         >
           {{ page }}
         </button>
-        <!--currentPage < totalPages && (currentPage++)-->
         <button 
           class="px-3 py-1 rounded border hover:bg-gray-100"
           :disabled="currentPage === totalPages"
@@ -232,7 +230,9 @@
 // 组件逻辑
 import { ref, computed, onMounted } from 'vue';
 import { doGetTaskPage, doTaskBatchDelete, doTaskDelete, doTaskCreate  }  from "~/apis/finance/publish";
-import Search from '../wallet/components/search.vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 definePageMeta({
   layout: 'dashboard',
@@ -378,6 +378,13 @@ const publishTask = async (id:string,appType:string) => {
   ElMessage.success('发布成功')
   applyFilters()
 };
+// 编辑
+const editTask = (id:string) => {
+  router.push({
+    path: '/dashboard/publish/templatesPage/tasks-edit',
+    query: { id }
+  });
+}
 // 改变当前页码
 const currentPageChange = (page:number,type:string) => {
   if(type === 'next'){

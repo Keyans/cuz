@@ -154,3 +154,19 @@ export const doTaskDelete = (id: string) => {
     url: `saas-plugin-third-party-adapter/thirdParty/posting/product/delete/${id}`,
   });
 };
+/**
+ * 根据ID查询刊登商品详情
+ */
+export const doGetTaskProductDetail = (id: string) => {
+  return get({
+    url: `saas-plugin-third-party-adapter/thirdParty/posting/product/${id}`,
+  });
+};
+/**
+ * 更新刊登商品信息
+ */
+export const doTaskUpdate = (data: any) => {
+  return post({
+    url: `saas-plugin-third-party-adapter/thirdParty/posting/product/update/${data.id}`,
+  });
+};
