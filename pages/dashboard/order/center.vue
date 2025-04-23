@@ -30,13 +30,6 @@
     <!-- 标签页 -->
     <div class="flex border-b border-gray-200 mb-6">
       <button 
-        class="px-6 py-3" 
-        :class="activeTab === 'purchase' ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-gray-500'"
-        @click="switchTab('purchase')"
-      >
-        采购订单
-      </button>
-      <button 
         class="px-6 py-3 relative"
         :class="activeTab === 'other' ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-gray-500'"
         @click="switchTab('other')"
@@ -44,6 +37,13 @@
         其他订单
         <span class="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">2114</span>
         </button>
+      <button 
+        class="px-6 py-3" 
+        :class="activeTab === 'purchase' ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-gray-500'"
+        @click="switchTab('purchase')"
+      >
+        采购订单
+      </button>
     </div>
 
     <!-- 搜索过滤区域 -->
@@ -469,7 +469,7 @@ const currentOrderNumber = ref('')
 const currentOrderProducts = ref([])
 
 // 顶部标签切换
-const activeTab = ref('purchase') // 'purchase' 或 'other'
+const activeTab = ref('other') // 'purchase' 或 'other'
 
 // 打开拆分订单弹窗
 const openSplitOrderDialog = (order) => {

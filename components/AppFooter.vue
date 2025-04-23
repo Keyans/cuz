@@ -66,9 +66,9 @@
           </div>
         </div>
   
-        <div class="mt-8 md:mt-12 border-t border-gray-700 pt-6 md:pt-8 text-center sm:text-left">
+        <div class="mt-8 md:mt-12 border-t border-gray-700 pt-6 md:pt-8 text-center">
           <p class="text-xs md:text-sm text-gray-300">
-            &copy; {{ new Date().getFullYear() }} cuzcuz. All rights reserved.
+            &copy;2024-{{ new Date().getFullYear() }} 深圳市森航科技有限公司 版权所有 粤ICP备2025395412号
           </p>
         </div>
       </div>

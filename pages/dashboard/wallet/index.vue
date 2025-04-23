@@ -215,7 +215,7 @@
         v-model="showRecharge"
         :close-on-click-modal="false"
         width="500"
-        v-loading=""
+        ref="paymentDialogRef"
       >
         <div class="flex flex-col space-y-4">
           <div class="flex flex-col space-y-4">
@@ -269,13 +269,13 @@
         :close-on-click-modal="false"
         width="500"
         v-loading=""
-        :before-close="handleCloseQRcode"
+        :before-close="() => (handleCloseQRcode(), search(), getShopBalance())"
       >
         <div class="qccode-box">
           <p>
             向
             <span class="text-[14px] font-semibold">
-              深圳市深航科技有限公司
+              深圳市森航科技有限公司
             </span>
           </p>
           <p class="text-[14px] font-semibold text-blue-600">
@@ -292,6 +292,103 @@
         </div>
       </el-dialog>
     </ClientOnly>
+
+    <ClientOnly>
+      <el-dialog
+        v-model="paymentMsgDialog"
+        :show-close="false"
+        :close-on-click-modal="false"
+        width="500"
+      >
+        <template #header>
+          <div class="flex items-center space-x-2">
+            <el-icon :color="paymentStatusColor[paymentMsgStatus]" size="24">
+              <svg
+                v-if="paymentMsgStatus === 'WAITING_AUDIT'"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 1024 1024"
+              >
+                <path
+                  fill="currentColor"
+                  d="M512 64a448 448 0 1 1 0 896 448 448 0 0 1 0-896m0 192a58.432 58.432 0 0 0-58.24 63.744l23.36 256.384a35.072 35.072 0 0 0 69.76 0l23.296-256.384A58.432 58.432 0 0 0 512 256m0 512a51.2 51.2 0 1 0 0-102.4 51.2 51.2 0 0 0 0 102.4"
+                ></path>
+              </svg>
+
+              <svg
+                v-else-if="paymentMsgStatus === 'AUDIT_PASS'"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 1024 1024"
+              >
+                <path
+                  fill="currentColor"
+                  d="M512 64a448 448 0 1 1 0 896 448 448 0 0 1 0-896m-55.808 536.384-99.52-99.584a38.4 38.4 0 1 0-54.336 54.336l126.72 126.72a38.272 38.272 0 0 0 54.336 0l262.4-262.464a38.4 38.4 0 1 0-54.272-54.336z"
+                ></path>
+              </svg>
+
+              <svg
+                v-else-if="paymentMsgStatus === 'AUDIT_REJECT'"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 1024 1024"
+              >
+                <path
+                  fill="currentColor"
+                  d="M512 64a448 448 0 1 1 0 896 448 448 0 0 1 0-896m0 393.664L407.936 353.6a38.4 38.4 0 1 0-54.336 54.336L457.664 512 353.6 616.064a38.4 38.4 0 1 0 54.336 54.336L512 566.336 616.064 670.4a38.4 38.4 0 1 0 54.336-54.336L566.336 512 670.4 407.936a38.4 38.4 0 1 0-54.336-54.336z"
+                ></path>
+              </svg>
+            </el-icon>
+            <div>
+              {{ paymentMsgTitleMap[paymentMsgStatus] }}
+            </div>
+          </div>
+        </template>
+
+        <div
+          v-if="paymentMsgStatus === 'WAITING_AUDIT'"
+          class="text-[#f59a23] space-y-4"
+        >
+          <div>
+            结果返回前，请不要重复操作！可前往
+            <NuxtLink class="text-blue-400">预付记录</NuxtLink>
+            查看结果
+          </div>
+          <div class="w-full flex justify-end">
+            <button
+              :disabled="pendingDown > 0"
+              :class="[
+                'btn-secondary',
+                pendingDown > 0 ? 'bg-gray-400 cursor-not-allowed' : '',
+              ]"
+              @click="handleResetDialog()"
+            >
+              知道了<span v-if="pendingDown > 0">({{ pendingDown }})</span>
+            </button>
+          </div>
+        </div>
+
+        <div v-else-if="paymentMsgStatus === 'AUDIT_PASS'" class="space-y-4">
+          <div>预付成功，您可在付费记录中查看</div>
+          <div class="w-full flex justify-end">
+            <button :class="['btn-secondary']" @click="handleResetDialog()">
+              确定
+            </button>
+          </div>
+        </div>
+
+        <div v-else-if="paymentMsgStatus === 'AUDIT_REJECT'" class="space-y-4">
+          <div>
+            xxx 对应的失败原因 未知 ，请前往
+            <NuxtLink class="text-blue-400">帮助中心</NuxtLink>
+            联系客服处理
+          </div>
+
+          <div class="w-full flex justify-end">
+            <button :class="['btn-secondary']" @click="handleResetDialog()">
+              确定
+            </button>
+          </div>
+        </div>
+      </el-dialog>
+    </ClientOnly>
   </div>
 </template>
 
@@ -300,8 +397,9 @@ import dayjs from "dayjs";
 import {
   doGetShopBalance,
   doRecharge,
-  doGetPayOrderStatus,
+  doGetRechargeStatus,
 } from "~/apis/finance/overview";
+import { type LoadingInstance } from "element-plus/es/components/loading/src/loading";
 import { doListShopTransaction } from "~/apis/finance/transaction";
 import type { TableDataProp } from "./components/transactionTable.vue";
 import TransactionTable from "./components/transactionTable.vue";
@@ -315,19 +413,28 @@ definePageMeta({
 const toast = useToast();
 const amountInfo = ref<Record<string, string> | undefined>();
 const showRecharge = ref(false);
+const paymentStatusColor: Record<string, string> = {
+  WAITING_AUDIT: "#fa8c15",
+  AUDIT_PASS: "#52c41a",
+  AUDIT_REJECT: "#ff4d4f",
+};
+
+const getShopBalance = async () => {
+  const { data } = await doGetShopBalance();
+  if (data) {
+    amountInfo.value = data;
+  }
+};
 onMounted(async () => {
   try {
     search();
-    const { data } = await doGetShopBalance();
-    if (data) {
-      amountInfo.value = data;
-    }
+    getShopBalance();
   } catch (error) {
     console.error(error);
   }
 });
 const rechargeAmount = ref<string>();
-
+const paymentDialogRef = ref();
 const pageConfig = ref({
   size: 10,
   current: 1,
@@ -365,16 +472,22 @@ const search = async () => {
     ];
   }
 
-  const { data } = await doListShopTransaction({
-    size: pageConfig.value.size,
-    current: pageConfig.value.current,
-    tradeNo: searchParams.tradeNo,
-    bizTypes: searchParams.bizTypes,
-    startTime: timeRange?.[0],
-    endTime: timeRange?.[1],
-  });
-  tableData.value = data.records;
-  pageConfig.value.total = data.total;
+  try {
+    tableData.value = [];
+
+    const { data } = await doListShopTransaction({
+      size: pageConfig.value.size,
+      current: pageConfig.value.current,
+      tradeNo: searchParams.tradeNo,
+      bizTypes: searchParams.bizTypes,
+      startTime: timeRange?.[0],
+      endTime: timeRange?.[1],
+    });
+    tableData.value = data.records;
+    pageConfig.value.total = data.total;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 /**
@@ -383,67 +496,139 @@ const search = async () => {
  * @returns 异步返回充值结果
  */
 const confirmPay = async () => {
-  const rechargeValue = Number(rechargeAmount.value);
-  // 检查是否为数字且大于0
-  if (isNaN(rechargeValue) || rechargeValue <= 0) {
-    return ElMessage.warning("请输入有效的充值金额（大于0）");
+  let loading: LoadingInstance;
+  try {
+    loading = ElLoading.service({
+      target:
+        paymentDialogRef.value?.$el.nextElementSibling.querySelector(
+          ".el-dialog"
+        ),
+    });
+
+    const rechargeValue = Number(rechargeAmount.value);
+    // 检查是否为数字且大于0
+    if (isNaN(rechargeValue) || rechargeValue <= 0) {
+      return ElMessage.warning("请输入有效的充值金额（大于0）");
+    }
+    const { success, msg, data } = await doRecharge({
+      payType: "CMBPAY",
+      rechargeAmt: rechargeValue * 10000,
+    });
+    if (!success) return ElMessage.error(`充值失败:${msg}`);
+    showRecharge.value = false;
+    await createQrCode(data.data, data.outTradeNo);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading!.close();
   }
-  const { success, msg, data } = await doRecharge({
-    payType: "CMBPAY",
-    rechargeAmt: rechargeValue * 10000,
-  });
-  if (!success) return ElMessage.error(`充值失败:${msg}`);
-  showRecharge.value = false;
-  await createQrCode(data.data, data.outTradeNo);
 };
 const showPayQRcode = ref(false);
 const qrCodeUrl = ref("");
+
 /**
  * 创建二维码，并扫码支付
- *
  * @param url 要生成二维码的链接
  * @param outTradeNo 订单号
-
  */
 const interval = ref<NodeJS.Timeout | null>(null);
+let cdInterval = ref<NodeJS.Timeout | null>(null);
 const createQrCode = async (url: string, outTradeNo: string) => {
   if (import.meta.client) {
     const QRCode = await import("qrcode"); // ⬅️ 运行时导入，不进入 SSR 构建
     qrCodeUrl.value = await QRCode.toDataURL(url);
     showPayQRcode.value = true;
   }
-  // 每隔5秒轮询支付状态接口
+  // 每隔3秒轮询支付状态接口
   interval.value = setInterval(async () => {
-    const { data } = await doGetPayOrderStatus({
-      outTradeNo,
-    });
-    if (data.NotifyStatus === "ACCOMPLISH") {
-      // 充值处理完成
+    // const { data } = await doGetPayOrderStatus({
+    //   outTradeNo,
+    // });
+    // if (data.NotifyStatus === "ACCOMPLISH") {
+    //   // 充值处理完成
+    //   handleCloseQRcode();
+    //   await search();
+    //   ElMessage.success("充值成功！");
+    // }
+    const { data } = await doGetRechargeStatus({ outTradeNo });
+
+    console.log(data);
+
+    if (
+      data === "WAITING_AUDIT" &&
+      paymentMsgStatus.value !== "WAITING_AUDIT"
+    ) {
+      paymentMsgStatus.value = "WAITING_AUDIT";
+      showPayQRcode.value = false;
+      paymentMsgDialog.value = true;
+      cdInterval.value = setInterval(() => {
+        --pendingDown.value;
+        if (pendingDown.value === 0) {
+          handleResetDialog(true);
+        }
+      }, 1000);
+    } else if (
+      data === "AUDIT_PASS" &&
+      paymentMsgStatus.value !== "AUDIT_PASS"
+    ) {
+      paymentMsgStatus.value = "AUDIT_PASS";
+      paymentMsgDialog.value = true;
       handleCloseQRcode();
-      await search();
-      ElMessage.success("充值成功！");
+    } else if (
+      data === "AUDIT_REJECT" &&
+      paymentMsgStatus.value !== "AUDIT_REJECT"
+    ) {
+      paymentMsgStatus.value = "AUDIT_REJECT";
+      paymentMsgDialog.value = true;
+      handleCloseQRcode();
     }
-  }, 5000);
+  }, 3000);
 };
-/**
- * 关闭二维码显示处理函数
- *
- */
 const handleCloseQRcode = () => {
+  handleResetDialog(true);
+  showPayQRcode.value = false;
+};
+
+const handleResetDialog = (onlyClear?: boolean) => {
   if (interval.value) {
     clearInterval(interval.value);
     interval.value = null;
   }
-  showPayQRcode.value = false;
+  if (cdInterval.value) {
+    clearInterval(cdInterval.value);
+    cdInterval.value = null;
+  }
+
+  if (onlyClear) return;
+
+  paymentMsgDialog.value = false;
+  paymentMsgStatus.value = "";
+  pendingDown.value = 10;
+
+  search();
+  getShopBalance();
 };
 
 const checkRechargeAmount = (e: Event) => {
-  console.log(rechargeAmount.value, typeof rechargeAmount.value);
   if (rechargeAmount.value && !/^[1-9]\d*$/.test(rechargeAmount.value)) {
     toast.warning("请输入正整数");
     rechargeAmount.value = parseInt(rechargeAmount.value) + "";
   }
 };
+
+const paymentMsgTitleMap = {
+  WAITING_AUDIT: "等待预付结果",
+  AUDIT_PASS: "预付成功",
+  AUDIT_REJECT: "预付失败",
+  "": "未知状态",
+};
+
+// 支付回调弹窗
+const paymentMsgDialog = ref(false);
+const paymentMsgStatus = ref<
+  "WAITING_AUDIT" | "AUDIT_PASS" | "AUDIT_REJECT" | ""
+>("");
+const pendingDown = ref(10);
 </script>
 
 <style scoped>

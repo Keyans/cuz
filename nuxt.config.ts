@@ -121,7 +121,7 @@ export default defineNuxtConfig({
             "@context": "https://schema.org",
             "@type": "WebSite",
             name: "cuzcuz",
-            url: "https://your-domain.com",
+            url: "https://cuzcuz.cn",
             potentialAction: {
               "@type": "SearchAction",
               target: "https://your-domain.com/search?q={search_term_string}",

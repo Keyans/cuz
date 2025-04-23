@@ -30,3 +30,12 @@ export const doGetPayOrderStatus = (params:PayOrderStatusParam) => {
   });
 };
 
+/**
+ * 查询商户商铺充值余额信息
+ */
+export const doGetRechargeStatus = (params:PayOrderStatusParam) => {
+  return get({
+    url: "saas-aimall-payment/merchant/pay/order/recharge-status",
+    params,
+  });
+};
