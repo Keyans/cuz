@@ -3,7 +3,7 @@
     <!-- 标签页 -->
     <div class="mb-6 flex">
       <div class="flex items-center space-x-2">
-        <div class="text-lg font-medium">实名认证</div>
+        <div class="text-2xl font-bold">实名认证</div>
         <div v-if="authStatus === 'pending'" class="px-2 py-1 bg-orange-100 text-orange-600 text-sm rounded">审核中</div>
         <div v-if="authStatus === 'approved'" class="px-2 py-1 bg-green-100 text-green-600 text-sm rounded">已认证</div>
         <div v-if="authStatus === 'none'" class="px-2 py-1 bg-gray-100 text-gray-600 text-sm rounded">未认证</div>
