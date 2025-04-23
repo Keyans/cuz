@@ -214,23 +214,43 @@ const detailPageConfig = ref({
   current: 1,
   total: 0,
 });
-const detailTitle = ref("");
+
+watch(
+  detailPageConfig,
+  () => {
+    tableData.value = [];
+    getDetailData();
+  },
+  { deep: true }
+);
+
+const detailRow = ref();
+const detailTitle = computed(
+  () => detailRow.value?.reconciliationStartDate + "明细"
+);
+
+const getDetailData = async () => {
+  const { data } = await doListShopTransaction({
+    size: detailPageConfig.value.size,
+    current: detailPageConfig.value.current,
+    startTime: dayjs(detailRow.value.reconciliationStartDate)
+      .startOf("month")
+      .format(format),
+    endTime: dayjs(detailRow.value.reconciliationStartDate)
+      .endOf("month")
+      .format(format),
+  });
+
+  detailTableData.value = data.records;
+  detailDialog.value = true;
+  detailPageConfig.value.total = data.total;
+};
+
 const getDetail = async (row: TableDataProp) => {
-  detailTitle.value = row.reconciliationStartDate + "明细";
+  detailRow.value = row;
   try {
     detailTableData.value = [];
-    const { data } = await doListShopTransaction({
-      size: 20,
-      current: 1,
-      startTime: dayjs(row.reconciliationStartDate)
-        .startOf("month")
-        .format(format),
-      endTime: dayjs(row.reconciliationStartDate).endOf("month").format(format),
-    });
-
-    detailTableData.value = data.records;
-    detailDialog.value = true;
-    detailPageConfig.value.total = data.total;
+    getDetailData();
   } catch (error) {}
 };
 
