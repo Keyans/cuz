@@ -116,3 +116,41 @@ export const doUpload = (data: any) => {
     data,
   });
 };
+
+/**
+ * 分页查询刊登商品列表
+ */
+export const doGetTaskPage = (params: any) => {
+  return get({
+    url: "saas-plugin-third-party-adapter/thirdParty/posting/product/page",
+    params,
+  });
+};
+
+/**
+ * 批量删除刊登商品
+ */
+export const doTaskBatchDelete = (data: any) => {
+  return post({
+    url: "saas-plugin-third-party-adapter/thirdParty/posting/product/batch/delete",
+    data,
+  });
+};
+
+/**
+ * 发布刊登商品
+ */
+export const doTaskCreate = (data: any) => {
+  return post({
+    url: 'saas-plugin-third-party-adapter/thirdParty/posting/product/public',
+    data,
+  });
+};
+/**
+ * 删除刊登商品
+ */
+export const doTaskDelete = (id: string) => {
+  return post({
+    url: `saas-plugin-third-party-adapter/thirdParty/posting/product/delete/${id}`,
+  });
+};

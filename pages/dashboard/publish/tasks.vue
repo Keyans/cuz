@@ -8,15 +8,15 @@
     <div class="bg-white rounded-lg shadow p-4 mb-6">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="flex flex-col">
-          <label class="text-sm text-gray-600 mb-1">搜索</label>
+          <label class="text-sm text-gray-600 mb-1">商品标题</label>
           <div class="relative">
             <input
-              v-model="searchQuery"
+              v-model="keyword"
               type="text"
               class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="请输入商品标题"
             />
-            <button v-if="searchQuery" @click="clearSearch" class="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+            <button v-if="keyword" @click="clearSearch" class="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
               </svg>
@@ -26,13 +26,14 @@
         <div class="flex flex-col">
           <label class="text-sm text-gray-600 mb-1">所属店铺</label>
           <el-select
-            v-model="selectedStores"
+            v-model="appShopId"
             multiple
             collapse-tags
             collapse-tags-tooltip
             placeholder="请选择"
             clearable
             class="w-full"
+            size="large"
           >
             <el-option
               v-for="item in storeOptions"
@@ -50,7 +51,7 @@
               </svg>
               清除筛选
             </button>
-            <button @click="applyFilters" class="btn-primary flex-1 py-2 flex items-center justify-center">
+            <button @click="search" class="btn-primary flex-1 py-2 flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
@@ -70,7 +71,7 @@
           'cursor-pointer px-4 py-2 text-center min-w-[100px] rounded-md mr-2',
           activeStatusTab === index ? 'bg-blue-50 text-blue-600 font-medium' : 'bg-white text-gray-600'
         ]"
-        @click="activeStatusTab = index"
+        @click="activeStatusTabChange(index)"
       >
         {{ tab.label }} ({{ tab.count }})
       </div>
@@ -78,17 +79,19 @@
 
     <!-- 批量操作按钮 -->
     <div class="flex space-x-4 mb-4">
-      <button 
+      <!-- <button 
         class="btn-primary px-4 py-2" 
         :disabled="!selectedRows.length" 
         :class="{'opacity-50 cursor-not-allowed': !selectedRows.length}"
       >
         批量发布
-      </button>
+      </button> -->
       <button 
+        v-if="activeStatusTab === 0 || activeStatusTab === 3"
         class="btn-danger px-4 py-2" 
         :disabled="!selectedRows.length" 
         :class="{'opacity-50 cursor-not-allowed': !selectedRows.length}"
+        @click="deleteSelectedTasks"
       >
         批量删除
       </button>
@@ -110,15 +113,15 @@
                 商品信息
               </th>
               <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                所属店铺
-              </th>
-              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                sku货号
+                价格
               </th>
               <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 时间
               </th>
-              <th scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th v-if="activeStatusTab === 2 || activeStatusTab === 3" scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                结果
+              </th>
+              <th v-if="activeStatusTab === 0 || activeStatusTab === 3" scope="col" class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 操作
               </th>
             </tr>
@@ -133,34 +136,41 @@
               </td>
               <td class="px-3 py-4">
                 <div class="flex items-start">
-                  <img :src="task.image" alt="product" class="h-16 w-16 rounded object-cover mr-3" />
+                  <img 
+                     v-if="task.mainImages && task.mainImages.length > 0"
+                     :src="task.mainImages[0].imagePath" 
+                     alt="product" 
+                     class="h-16 w-16 rounded object-cover mr-3" 
+                  />
                   <div class="flex flex-col">
-                    <div class="text-sm font-medium text-gray-900 mb-1 line-clamp-2">{{ task.title }}</div>
+                    <div class="text-sm font-medium text-gray-900 mb-1 line-clamp-2">{{ task.productTitle }}</div>
                     <div class="text-sm text-gray-500">ID: {{ task.id }}</div>
+                    <div class="text-sm text-gray-500">{{ task.appShopName }}</div>
                   </div>
                 </div>
               </td>
-              <td class="px-3 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <span class="text-sm text-gray-900">{{ task.store }}</span>
-                </div>
-              </td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ task.sku }}
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500" v-if="task.specList && task.specList.length > 0">
+                <p> {{ task.specList[0].sellPrice/1000 }} ~ {{ task.specList[0].suggestedPrice/1000 }} CNY ￥</p>
+                <!-- <el-button link type="primary">修改价格</el-button> -->
               </td>
               <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                 <div class="flex flex-col">
-                  <span>创建时间: {{ task.createdAt }}</span>
-                  <span>更新时间: {{ task.updatedAt }}</span>
+                  <span>创建时间: {{ task.createTime }}</span>
+                  <span>更新时间: {{ task.updateTime }}</span>
                 </div>
               </td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm">
+              <td v-if="activeStatusTab === 2 || activeStatusTab === 3" class="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                <div class="flex flex-col">
+                  <span>{{activeStatusTab === 3?'失败原因：':''}}{{ task.appResult || '无' }}</span>
+                </div>
+              </td>
+              <td v-if="activeStatusTab === 0 || activeStatusTab === 3" class="px-3 py-4 whitespace-nowrap text-sm">
                 <div class="flex space-x-2">
-                  <button :class="{'text-blue-600 hover:text-blue-800': task.status === 'pending', 'text-gray-400 cursor-not-allowed': task.status !== 'pending'}">
-                    发布
+                  <button class="text-blue-600 hover:text-blue-800" @click="publishTask(task.id, task.appType)">
+                    {{activeStatusTab===3?'重新':''}}发布
                   </button>
                   <button class="text-blue-600 hover:text-blue-800">编辑</button>
-                  <button class="text-red-600 hover:text-red-800">删除</button>
+                  <button class="text-red-600 hover:text-red-800" @click="deleteTask(task.id)">删除</button>
                 </div>
               </td>
             </tr>
@@ -185,12 +195,13 @@
       <div class="text-sm text-gray-700 mb-2 md:mb-0">
         显示 {{ (currentPage - 1) * pageSize + 1 }} 到 {{ Math.min(currentPage * pageSize, totalItems) }} 条，共 {{ totalItems }} 条
       </div>
+      <!--@click="currentPage > 1 && (currentPage--)"-->
       <nav class="flex space-x-2">
         <button 
           class="px-3 py-1 rounded border hover:bg-gray-100" 
           :disabled="currentPage === 1"
           :class="{'opacity-50 cursor-not-allowed': currentPage === 1}"
-          @click="currentPage > 1 && (currentPage--)"
+          @click="currentPageChange(currentPage,'prev')"
         >
           &lt;
         </button>
@@ -199,15 +210,16 @@
           :key="page" 
           class="px-3 py-1 rounded border"
           :class="page === currentPage ? 'bg-primary text-white' : 'hover:bg-gray-100'"
-          @click="currentPage = page"
+          @click="currentPageChange(page,'')"
         >
           {{ page }}
         </button>
+        <!--currentPage < totalPages && (currentPage++)-->
         <button 
           class="px-3 py-1 rounded border hover:bg-gray-100"
           :disabled="currentPage === totalPages"
           :class="{'opacity-50 cursor-not-allowed': currentPage === totalPages}"
-          @click="currentPage < totalPages && (currentPage++)"
+          @click="currentPageChange(currentPage,'next')"
         >
           &gt;
         </button>
@@ -219,6 +231,8 @@
 <script setup lang="ts">
 // 组件逻辑
 import { ref, computed, onMounted } from 'vue';
+import { doGetTaskPage, doTaskBatchDelete, doTaskDelete, doTaskCreate  }  from "~/apis/finance/publish";
+import Search from '../wallet/components/search.vue';
 
 definePageMeta({
   layout: 'dashboard',
@@ -226,8 +240,8 @@ definePageMeta({
 });
 
 // 筛选状态
-const searchQuery = ref('');
-const selectedStores = ref([]);
+const keyword = ref('');
+const appShopId = ref([]);
 const storeOptions = ref([
   { value: 'amazon', label: '亚马逊' },
   { value: 'ebay', label: 'eBay' },
@@ -261,10 +275,10 @@ const toggleSelectRow = (id: string) => {
 
 // 状态标签
 const statusTabs = ref([
-  { label: '待发布', count: 3, status: 'pending' },
-  { label: '发布中', count: 1, status: 'publishing' },
-  { label: '发布失败', count: 1, status: 'failed' },
-  { label: '发布成功', count: 1, status: 'success' },
+  { label: '待发布', count: 3, status: 0 },
+  { label: '发布中', count: 1, status: 1 },
+  { label: '发布成功', count: 1, status: 2 },
+  { label: '发布失败', count: 1, status: 3 },
 ]);
 const activeStatusTab = ref(0);
 
@@ -304,84 +318,79 @@ const displayedPages = computed(() => {
 });
 
 // 模拟数据
-const taskData = ref([
-  {
-    id: 'TASK20241',
-    title: '短袖t恤男ins潮牌个性潮流百搭半截袖宽松五分袖印花内搭体恤衣服',
-    image: 'https://via.placeholder.com/100',
-    store: '亚马逊',
-    sku: 'outCode whiteM blackS',
-    status: 'pending',
-    createdAt: '2025-01-08 17:38',
-    updatedAt: '2025-01-08 17:38'
-  },
-  {
-    id: 'TASK20242',
-    title: '时尚短袖T恤女装春夏新款韩版宽松印花上衣',
-    image: 'https://via.placeholder.com/100',
-    store: 'eBay',
-    sku: 'TS2023001',
-    status: 'publishing',
-    createdAt: '2025-01-07 14:22',
-    updatedAt: '2025-01-08 09:15'
-  },
-  {
-    id: 'TASK20243',
-    title: '儿童连帽卫衣春秋装男童套头上衣',
-    image: 'https://via.placeholder.com/100',
-    store: 'Shopify',
-    sku: 'KD2023005',
-    status: 'failed',
-    createdAt: '2025-01-06 11:45',
-    updatedAt: '2025-01-06 16:30'
-  },
-  {
-    id: 'TASK20244',
-    title: '男士休闲裤直筒宽松工装裤',
-    image: 'https://via.placeholder.com/100',
-    store: 'TikTok',
-    sku: 'MP2023010',
-    status: 'success',
-    createdAt: '2025-01-05 09:20',
-    updatedAt: '2025-01-05 12:45'
-  },
-  {
-    id: 'TASK20245',
-    title: '女士牛仔外套春秋款宽松短款上衣',
-    image: 'https://via.placeholder.com/100',
-    store: 'Temu',
-    sku: 'WJ2023015',
-    status: 'pending',
-    createdAt: '2025-01-04 16:50',
-    updatedAt: '2025-01-04 16:50'
-  }
-]);
+const taskData = ref([]);
 
 // 清除搜索
 const clearSearch = () => {
-  searchQuery.value = '';
+  keyword.value = '';
 };
 
 // 清除所有筛选
 const clearFilters = () => {
-  searchQuery.value = '';
-  selectedStores.value = [];
+  keyword.value = '';
+  appShopId.value = [];
 };
+// 搜索
+const search = () => {
+  currentPage.value = 1;
+  applyFilters()
+};
+// 状态切换
+const activeStatusTabChange = (index:number) => {
+  activeStatusTab.value = index;
+  search()
+}
 
 // 应用筛选
-const applyFilters = () => {
-  // 在实际应用中，这里应该调用API获取筛选后的数据
-  console.log('应用筛选:', {
-    search: searchQuery.value,
-    stores: selectedStores.value
-  });
-  
-  // 重置页码
-  currentPage.value = 1;
+const applyFilters = async () => {
+  const pramas = {
+    keyword: keyword.value,
+    appShopId: appShopId.value,
+    status: activeStatusTab.value,
+    pageNum: currentPage.value,
+    pageSize: pageSize.value
+  }
+  const { data,success } = await doGetTaskPage(pramas)
+  if(!success) return
+  totalItems.value = data.total; 
+  currentPage.value = data.current;
+  pageSize.value = data.size; 
+  taskData.value = data.records||[];
 };
-
+// 批量删除
+const deleteSelectedTasks = async () => {
+  const { success, msg } = await doTaskBatchDelete(selectedRows.value)
+  if(!success) return ElMessage.error(msg)
+  ElMessage.success('批量删除成功')
+  search()
+};
+// 单个删除
+const deleteTask = async (id: string) => {
+  const { success, msg } = await doTaskDelete(id)
+  if(!success) return ElMessage.error(msg)
+  ElMessage.success('删除成功')
+  search()
+};
+// 发布
+const publishTask = async (id:string,appType:string) => {
+  const { success, msg } = await doTaskCreate({taskId:id,appType})
+  if(!success) return ElMessage.error(msg)
+  ElMessage.success('发布成功')
+  applyFilters()
+};
+// 改变当前页码
+const currentPageChange = (page:number,type:string) => {
+  if(type === 'next'){
+    currentPage.value++
+  }else if(type === 'prev'){
+    currentPage.value--
+  }else{
+    currentPage.value = page
+  }
+  applyFilters()
+}
 onMounted(() => {
-  // 初始化数据，可以在这里调用API获取任务列表
+  search()
 });
 </script>
 
