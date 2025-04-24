@@ -132,6 +132,14 @@ export const useAuthStore = defineStore("auth", {
             data?.refreshToken?.value,
             data?.refreshToken?.expiration
           );
+          // 来源信息
+          Cookies.set("refreshTokenSource", "SHOP_CONSOLE", {
+            expires: new Date(data?.refreshToken?.expiration), // 过期时间
+            domain: import.meta.env.DEV
+              ? window.location.hostname
+              : window.location.hostname.split(".").slice(-2).join("."),
+            path: "/", // 根路径
+          });
 
           // 仅在本地环境中测试代码
           if (import.meta.env.DEV) {
@@ -162,6 +170,8 @@ export const useAuthStore = defineStore("auth", {
       }
       // 清除refreshToken 到 cookie
       removeRefreshTokenFromCookie();
+      // 清除refreshTokenSource 到 cookie
+      Cookies.remove("refreshTokenSource");
 
       this.user = null;
       this.token = null;
@@ -199,10 +209,10 @@ export const useAuthStore = defineStore("auth", {
         email: "",
         name: "",
       };
-      
+
       this.token = data.value;
       this.refreshToken = data.refreshToken.value;
-      
+
       localStorage.setItem("token", this.token!);
       localStorage.setItem("refreshToken", this.refreshToken!);
       localStorage.setItem("user", JSON.stringify(this.user));
