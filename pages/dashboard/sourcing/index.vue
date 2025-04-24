@@ -12,7 +12,7 @@
       <div class="mb-6">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-bold">商品类目</h2>
-          <a href="/dashboard/sourcing/list" class="text-primary hover:text-primary-dark">查看更多</a>
+          <!-- <a href="/dashboard/sourcing/list" class="text-primary hover:text-primary-dark">查看更多</a> -->
         </div>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           <div v-for="category in categories" :key="category.id" class="flex flex-col items-center cursor-pointer transform hover:-translate-y-1 transition-all duration-300">
@@ -101,34 +101,65 @@
   const categories = [
     {
       id: 1,
-      name: '制帽',
-      image: 'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?w=500&h=500&fit=crop'
+      name: '童装',
+      image: '/assets/catalog/Children_Wear.png'
     },
     {
       id: 2,
-      name: 'T恤',
-      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop'
+      name: '男装',
+      image: '/assets/catalog/Men.png'
     },
     {
       id: 3,
-      name: '卫衣',
-      image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&h=500&fit=crop'
+      name: '女装',
+      image: '/assets/catalog/Women.png'
     },
     {
       id: 4,
-      name: '包包',
-      image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500&h=500&fit=crop'
+      name: '首饰',
+      image: '/assets/catalog/Jewelry.png'
     },
     {
       id: 5,
       name: '手机壳',
-      image: 'https://images.unsplash.com/photo-1603313011101-320f26a4f6f6?w=500&h=500&fit=crop'
+      image: '/assets/catalog/Phone_Cases.png'
     },
     {
       id: 6,
-      name: '保健品',
-      image: 'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=500&h=500&fit=crop'
-    }
+      name: '背包',
+      image: '/assets/catalog/Backpack.png'
+    },
+    {
+      id: 7,
+      name: '水杯',
+      image: '/assets/catalog/water_Cup.png',
+    },
+
+    {
+      id: 8,
+      name: '背心',
+      image: '/assets/catalog/Vest.png'
+    },
+    {
+      id: 9,
+      name: '卫衣',
+      image: '/assets/catalog/Hoodie.png'
+    },
+    {
+      id: 10,
+      name: '帽衫',
+      image: '/assets/catalog/Hoodies.png'
+    },
+    {
+      id: 11,
+      name: '帽子',
+      image: '/assets/catalog/Hat.png'
+    },
+    {
+      id: 12,
+      name: '鞋子',
+      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop'
+    },
   ]
   
   // 热门商品数据
