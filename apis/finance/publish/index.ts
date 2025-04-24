@@ -168,5 +168,35 @@ export const doGetTaskProductDetail = (id: string) => {
 export const doTaskUpdate = (data: any) => {
   return post({
     url: `saas-plugin-third-party-adapter/thirdParty/posting/product/update/${data.id}`,
+    data,
+  });
+};
+
+/**
+ * 获取尺码表列表接口
+ */
+export const doGetSizeTableList = (params: any) => {
+  return get({
+    url: "saas-plugin-third-party-adapter/thirdParty/goods/publicInformation/getSizeTableList",
+    params,
+  });
+};
+
+/**
+ * 获取模特列表接口
+ */
+export const doGetModelInfoList = (params: any) => {
+  return get({
+    url: "saas-plugin-third-party-adapter/thirdParty/goods/publicInformation/getModelInfoList",
+    params,
+  });
+};
+
+/**
+ * 统计不同状态的刊登任务数量
+ */
+export const doGetProductStatusCount = () => {
+  return get({
+    url: "saas-plugin-third-party-adapter/thirdParty/posting/product/status/count",
   });
 };

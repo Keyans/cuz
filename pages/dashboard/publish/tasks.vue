@@ -229,7 +229,7 @@
 <script setup lang="ts">
 // 组件逻辑
 import { ref, computed, onMounted } from 'vue';
-import { doGetTaskPage, doTaskBatchDelete, doTaskDelete, doTaskCreate  }  from "~/apis/finance/publish";
+import { doGetTaskPage, doTaskBatchDelete, doTaskDelete, doTaskCreate, doGetProductStatusCount  }  from "~/apis/finance/publish";
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -275,12 +275,20 @@ const toggleSelectRow = (id: string) => {
 
 // 状态标签
 const statusTabs = ref([
-  { label: '待发布', count: 3, status: 0 },
-  { label: '发布中', count: 1, status: 1 },
-  { label: '发布成功', count: 1, status: 2 },
-  { label: '发布失败', count: 1, status: 3 },
+  { label: '待发布', count: 0, status: 0 },
+  { label: '发布中', count: 0, status: 1 },
+  { label: '发布成功', count: 0, status: 2 },
+  { label: '发布失败', count: 0, status: 3 },
 ]);
 const activeStatusTab = ref(0);
+
+const getStatusCount = async () => {
+  const { data } = await doGetProductStatusCount();
+  statusTabs.value[0].count = data.pendingCount;
+  statusTabs.value[1].count = data.publishingCount;
+  statusTabs.value[2].count = data.successCount;
+  statusTabs.value[3].count = data.failedCount;
+}
 
 // 分页数据
 const currentPage = ref(1);
@@ -397,6 +405,7 @@ const currentPageChange = (page:number,type:string) => {
   applyFilters()
 }
 onMounted(() => {
+  getStatusCount()
   search()
 });
 </script>
