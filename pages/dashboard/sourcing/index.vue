@@ -132,7 +132,7 @@
     {
       id: 7,
       name: '水杯',
-      image: '/assets/catalog/water_Cup.png',
+      image: '/assets/catalog/Water_Cup.png',
     },
 
     {
