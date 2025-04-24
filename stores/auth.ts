@@ -1,5 +1,11 @@
 import { defineStore } from "pinia";
+import Cookies from "js-cookie";
 import { signByUser } from "~/apis/sign";
+import {
+  getRefreshTokenFromCookie,
+  removeRefreshTokenFromCookie,
+  setRefreshTokenToCookie,
+} from "senhang-ui/utils";
 
 interface User {
   id: string;
@@ -73,7 +79,6 @@ export const useAuthStore = defineStore("auth", {
         this.user = JSON.parse(user);
       }
     },
-
     // Login action
     async login(credentials: LoginCredentials) {
       this.loading = true;
@@ -121,6 +126,30 @@ export const useAuthStore = defineStore("auth", {
           };
           this.token = data.value;
           this.refreshToken = data.refreshToken.value;
+
+          // 生产环境中，设置refreshToken 到 cookie
+          setRefreshTokenToCookie(
+            data?.refreshToken?.value,
+            data?.refreshToken?.expiration
+          );
+          // 来源信息
+          Cookies.set("refreshTokenSource", "SHOP_CONSOLE", {
+            expires: new Date(data?.refreshToken?.expiration), // 过期时间
+            domain: import.meta.env.DEV
+              ? window.location.hostname
+              : window.location.hostname.split(".").slice(-2).join("."),
+            path: "/", // 根路径
+          });
+
+          // 仅在本地环境中测试代码
+          if (import.meta.env.DEV) {
+            const refresh_token_from_cookie = data.refreshToken.value;
+            Cookies.set("refreshToken", refresh_token_from_cookie, {
+              expires: 7, // 过期时间
+              domain: window.location.hostname, // 一级域名共享
+              path: "/", // 根路径
+            });
+          }
         }
         localStorage.setItem("token", this.token!);
         localStorage.setItem("refreshToken", this.refreshToken!);
@@ -136,6 +165,14 @@ export const useAuthStore = defineStore("auth", {
 
     // Logout action
     logout() {
+      if (import.meta.env.DEV) {
+        Cookies.remove("refreshToken");
+      }
+      // 清除refreshToken 到 cookie
+      removeRefreshTokenFromCookie();
+      // 清除refreshTokenSource 到 cookie
+      Cookies.remove("refreshTokenSource");
+
       this.user = null;
       this.token = null;
 
@@ -143,6 +180,42 @@ export const useAuthStore = defineStore("auth", {
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
+    },
+    async auto_login() {
+      // 判断是否开启cookie 一级域名共享
+      const cookieShare = import.meta.env.VITE_COOKIE_SHARE;
+      if (cookieShare !== "true") {
+        console.log("cookie 一级域名共享未开启");
+        return;
+      }
+      let refresh_token = getRefreshTokenFromCookie();
+      // 本地环境不能自动登录, 这个是因为本地环境的cookie是在本地环境的域名下的，而不是一级域名下的，所以不能自动登录
+      if (import.meta.env.DEV) {
+        refresh_token = Cookies.get("refreshToken");
+      }
+      if (!refresh_token) {
+        console.log("refreshToken 不存在");
+        return;
+      }
+      console.log("获取到自动登录的token");
+      const { data } = await signByUser({
+        grant_type: "refresh_token",
+        refresh_token,
+      });
+
+      this.user = {
+        id: data.additionalInformation?.userId,
+        shopId: data.additionalInformation?.shopId?.[0],
+        email: "",
+        name: "",
+      };
+
+      this.token = data.value;
+      this.refreshToken = data.refreshToken.value;
+
+      localStorage.setItem("token", this.token!);
+      localStorage.setItem("refreshToken", this.refreshToken!);
+      localStorage.setItem("user", JSON.stringify(this.user));
     },
   },
 });
