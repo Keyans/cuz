@@ -22,10 +22,10 @@ export const doGetTemplateLanguageList = () => {
 /**
  * 查询店铺列表
  */
-export const doGetauthorizeList = (data: any) => {
-  return post({
-    url: "saas-aimall-shop/shop/third/authorize/list",
-    data,
+export const doGetauthorizeList = (params: any) => {
+  return get({
+    url: "saas-aimall-shop/shop/third/authorization",
+    params,
   });
 };
 

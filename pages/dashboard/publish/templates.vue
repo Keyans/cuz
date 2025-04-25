@@ -76,7 +76,8 @@ const queryFields = [
     placeholder: '模板名称'
   },
   {
-    key: 'shopId',
+    key: 'appShopIds',
+    multiple: true as const,
     type: 'select' as const,
     options: []
   },
@@ -89,7 +90,7 @@ const queryFields = [
 
 const queryParams = reactive({
   templateName: '',
-  shopId: '',
+  appShopIds: [] as string[],
   templateLanguages: [] as string[]
 });
 
@@ -288,9 +289,9 @@ const getLanguageList = async () => {
 
 // 获取店铺列表
 const getShopList = async () => {
-  const { data } = await doGetauthorizeList()
-  shopOptions.value = data.map(item => ({ label: item.shopName, value: item.shopId  }))
-  const targetField = queryFields.find(item => item.key === 'shopId')
+  const { data } = await doGetauthorizeList({appType:'PUBLISH'})
+  shopOptions.value = data.records.map(item => ({ label: item.thirdPartyShopName, value: item.middleGroundShopId }))
+  const targetField = queryFields.find(item => item.key === 'appShopIds')
   if (targetField) {
     targetField.options = [...shopOptions.value]
   }
@@ -321,7 +322,7 @@ function handleSearch(values: any) {
 const handleReset = () => {
   // 重置查询参数
   queryParams.templateName = '';
-  queryParams.shopId = '';
+  queryParams.appShopIds = [];
   queryParams.templateLanguages = [];
   
   // 执行查询，获取所有数据

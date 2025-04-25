@@ -117,7 +117,7 @@ async function httpRequest(request: any, cuttingObject: File) {
     } = await axiosRequest
         .post(action, formData, {
             headers: {
-                contentType: 'multipart/form-data', // 需要指定上传的方式
+                'Content-Type': 'multipart/form-data', // 需要指定上传的方式
             },
             timeout: Number(import.meta.env.VITE_REQUEST_TIME_OUT), // 防止文件过大超时
         })

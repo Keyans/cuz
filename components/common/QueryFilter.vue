@@ -12,19 +12,15 @@
         </template>
         <template v-else-if="field.type === 'select'">
           <div class="relative">
-            <select 
-              class="w-full border border-gray-300 rounded px-3 py-2 appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500"
+            <el-select 
+              size="large"
+              :multiple="field.multiple"
+              collapse-tags
+              collapse-tags-tooltip
               v-model="queryParams[field.key]"
             >
-              <option v-for="option in field.options" :key="option.value" :value="option.value">
-                {{ option.label }}
-              </option>
-            </select>
-            <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </div>
+              <el-option v-for="option in field.options" :key="option.value" :value="option.value" :label="option.label" />
+            </el-select>
           </div>
         </template>
         <template v-else-if="field.type === 'tag-select'">

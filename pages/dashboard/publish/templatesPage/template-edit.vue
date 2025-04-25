@@ -29,7 +29,7 @@
                 class="w-full"
                 @change="storesChange"
               >
-                <el-option v-for="item in storeOptions" :value="item.shopId" :label="item.shopName" />
+                <el-option v-for="item in storeOptions" :key="item.id" :value="item.middleGroundShopId" :label="item.thirdPartyShopName" />
               </el-select>
           </el-form-item>
           <el-form-item label="模板语言：" prop="templateLanguage">
@@ -158,16 +158,9 @@
               </template>
             </el-table-column>
             <el-table-column prop="specImage" label="SKU图" width="150px" align="center">
-              <template #header>
-                <div>
-                  <span style="color: red; margin-right: 5px">*</span>
-                  <span>SKU图</span>
-                </div>
-              </template>
               <template #default="{ row }">
                 <div class="tableCheckBox">
-                  <ProductImage v-model="row.specImage" :limit="1" :draggable="false" :uploadMethod="['gallery']" galleryText="插入效果图" />
-                  <div v-if="!tableCheck && !row.specImage.length" class="checkText">必填</div>
+                  <el-img :src="row.specImage" style="width: 80px;height: 80px;"/>
                 </div>
               </template>
             </el-table-column>
@@ -484,8 +477,8 @@ const getLanguageList = async () => {
 const storeOptions = ref([])
 // 获取店铺列表
 const getStoreList = async () => {
-  const { data } = await doGetauthorizeList()
-  storeOptions.value = data || []
+  const { data } = await doGetauthorizeList({appType:'PUBLISH'})
+  storeOptions.value = data.records || []
 }
 const variableList = ref([])
 // 获取刊登模版变量列表
@@ -495,17 +488,18 @@ const getVariableList = async () => {
 }
 const categoryList = ref([])
 // 获取商品类目
-const getCategoryList = async (appType:number)=>{
-  const { data } = await doGetCategoryList({appType})
+const getCategoryList = async ()=>{
+  const { data } = await doGetCategoryList({appType:formData.appType})
   categoryList.value = data.categoryList || []
 }
-// TODO 店铺选择获取对应的appType
+// 店铺选择获取对应的appType
 const storesChange = (val:string)=>{
-  // const index = storeOptions.findIndex(item=>item.shopId===val)
-  // if(!index) return
-  formData.appType = 35;
-  // getCategoryList(storeOptions[index].appType)
-  getCategoryList(35)
+  const index = storeOptions.value.findIndex(item=>item.middleGroundShopId===val)
+  if(index===-1) return
+  formData.appType = storeOptions.value[index].platformTypeVal;
+  nextTick(()=>{
+    getCategoryList()
+  })
 }
 // 获取商品属性参数
 const handleAttrFormat = (params:any)=>{
