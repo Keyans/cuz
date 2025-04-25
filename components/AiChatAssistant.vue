@@ -69,7 +69,7 @@
              :class="['message', message.type === 'user' ? 'user-message' : 'assistant-message']">
           <div class="message-content">
             <div v-if="message.type === 'assistant'" class="message-avatar">
-              <img src="//assets/favicon.png" alt="AI助手" class="w-6 h-6" />
+              <img src="/assets/favicon.png" alt="AI助手" class="w-6 h-6" />
             </div>
             <div class="message-text">{{ message.text }}</div>
           </div>
@@ -80,7 +80,7 @@
         <div v-if="isTyping" class="message assistant-message">
           <div class="message-content">
             <div class="message-avatar">
-              <img src="//assets/favicon.png" alt="AI助手" class="w-6 h-6" />
+              <img src="/assets/favicon.png" alt="AI助手" class="w-6 h-6" />
             </div>
             <div class="message-text typing-indicator">
               <span></span>
