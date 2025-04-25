@@ -19,8 +19,6 @@
     <HomePlatform />
     <!-- 地图轮播图 -->
     <HomeMap />
-    <!-- 数据统计 -->
-    <HomeStaticData />
     <!-- 联系我们 -->
     <HomeContact />
   </div>

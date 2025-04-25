@@ -6,6 +6,7 @@
     </NuxtLayout>
     <ClientOnly>
       <Toast />
+      <AiChatAssistant />
     </ClientOnly>
   </div>
 </template>
@@ -13,6 +14,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import Toast from '~/components/Toast.vue'
+import AiChatAssistant from '~/components/AiChatAssistant.vue'
 import { useAuthStore } from '~/stores/auth'
 
 const authStore = useAuthStore()
