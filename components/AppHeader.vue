@@ -69,15 +69,25 @@
           <div class="flex items-center space-x-4">
             <!-- Search box -->
             <div class="hidden sm:flex items-center relative">
-              <div class="relative">
+              <div class="relative search-container">
                 <input
                   type="text"
-                  placeholder="搜索..."
+                  ref="searchInput"
+                  placeholder=""
                   class="pl-8 pr-4 py-1 w-48 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
                   @focus="searchFocused = true"
                   @blur="searchFocused = false"
                   v-model="searchQuery"
+                  @keyup.enter="handleSearch"
                 />
+                <div class="search-placeholder-container" v-if="!searchQuery">
+                  <div 
+                    class="search-placeholder-text"
+                    :class="{ 'exit': isExiting, 'enter': isEntering }"
+                  >
+                    {{ currentPlaceholder }}
+                  </div>
+                </div>
                 <svg
                   class="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
                   xmlns="http://www.w3.org/2000/svg"
@@ -191,13 +201,24 @@
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <!-- Mobile search box -->
           <div class="mb-3">
-            <div class="relative">
+            <div class="relative search-container mobile-search">
               <input
                 type="text"
-                placeholder="搜索..."
+                placeholder=""
                 class="w-full pl-8 pr-4 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
                 v-model="searchQuery"
+                @focus="searchFocused = true"
+                @blur="searchFocused = false"
+                @keyup.enter="handleSearch"
               />
+              <div class="search-placeholder-container" v-if="!searchQuery">
+                <div 
+                  class="search-placeholder-text"
+                  :class="{ 'exit': isExiting, 'enter': isEntering }"
+                >
+                  {{ currentPlaceholder }}
+                </div>
+              </div>
               <svg
                 class="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
                 xmlns="http://www.w3.org/2000/svg"
@@ -316,13 +337,13 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref, computed, watchEffect, onMounted, onUnmounted } from 'vue'
   import { useRoute } from 'vue-router'
   import { useAuthStore } from '~/stores/auth'
-  
+
   // Mobile menu state
   const mobileMenuOpen = ref(false)
-  
+
   // Toggle mobile menu
   const toggleMobileMenu = () => {
     mobileMenuOpen.value = !mobileMenuOpen.value
@@ -398,6 +419,113 @@
     currentLanguage.value = langCode
     showLanguageDropdown.value = false
   }
+
+  // Search state
+  const searchQuery = ref('')
+  const searchFocused = ref(false)
+  const currentPlaceholder = ref('搜索童装')
+  const isExiting = ref(false)
+  const isEntering = ref(true)
+
+  // Search placeholder rotation
+  const placeholders = [
+    '搜索童装',
+    '搜索男装',
+    '搜索女装',
+    '搜索首饰',
+    '搜索手机壳',
+    '搜索背包',
+    '搜索水杯',
+    '搜索背心',
+    '搜索卫衣',
+    '搜索帽衫',
+    '搜索帽子'
+  ]
+  const placeholderIndex = ref(0)
+
+  const searchInput = ref(null)
+  let placeholderInterval: any = null
+
+  // 实现平滑过渡的文本切换
+  const changePlaceholder = () => {
+    // 先设置退出动画
+    isExiting.value = true
+    
+    // 匹配slideUp动画的3秒时长
+    setTimeout(() => {
+      placeholderIndex.value = (placeholderIndex.value + 1) % placeholders.length
+      currentPlaceholder.value = placeholders[placeholderIndex.value]
+      isExiting.value = false
+      isEntering.value = true
+      
+      // 匹配slideDown动画的2秒时长
+      setTimeout(() => {
+        isEntering.value = false
+      }, 2000)
+    }, 3000)
+  }
+
+  // Start placeholder rotation
+  const startPlaceholderRotation = () => {
+    // 初始启动时，取消进入动画状态
+    setTimeout(() => {
+      isEntering.value = false
+    }, 2000)
+    
+    placeholderInterval = setInterval(() => {
+      changePlaceholder()
+    }, 5000) // 增加间隔时间，让用户有足够时间阅读每个词
+  }
+
+  onMounted(() => {
+    startPlaceholderRotation()
+  })
+
+  onUnmounted(() => {
+    if (placeholderInterval) clearInterval(placeholderInterval)
+  })
+
+  // Handle search focus
+  watch(searchFocused, (newValue) => {
+    if (newValue) {
+      // 用户聚焦时暂停轮播
+      if (placeholderInterval) clearInterval(placeholderInterval)
+    } else {
+      // 用户失焦且输入框为空时继续轮播
+      if (!searchQuery.value) {
+        startPlaceholderRotation()
+      }
+    }
+  })
+
+  // Watch search query
+  watch(searchQuery, (newValue) => {
+    if (newValue) {
+      // 有输入内容时停止轮播
+      if (placeholderInterval) clearInterval(placeholderInterval)
+    } else if (!searchFocused.value) {
+      // 输入框为空且未聚焦时恢复轮播
+      startPlaceholderRotation()
+    }
+  })
+
+  // 处理搜索事件
+  const handleSearch = () => {
+    let searchKeyword = searchQuery.value;
+    
+    // 如果没有输入，使用当前的placeholder值
+    if (!searchKeyword || searchKeyword.trim() === '') {
+      searchKeyword = currentPlaceholder.value;
+    }
+    
+    // 跳转到指定页面
+    navigateTo(`/dashboard/sourcing/list?q=${encodeURIComponent(searchKeyword)}`);
+    
+    // 如果是在移动端菜单中，搜索后关闭菜单
+    if (mobileMenuOpen.value) {
+      mobileMenuOpen.value = false;
+    }
+  }
   </script>
   
   <style scoped>
@@ -435,5 +563,93 @@
   /* Header background transition */
   header {
     transition: background-color 0.3s ease;
+  }
+
+  /* Placeholder fade animation */
+  @keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(100%); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-100%); }
+  }
+
+  /* 自定义更平滑的动画 */
+  @keyframes slideUp {
+    0% { transform: translateY(0); opacity: 1; }
+    60% { transform: translateY(0); opacity: 1; } /* 保持显示状态更长时间 */
+    65% { transform: translateY(-2px); opacity: 0.95; } /* 开始非常缓慢地移动 */
+    70% { transform: translateY(-5px); opacity: 0.9; }
+    75% { transform: translateY(-8px); opacity: 0.85; }
+    80% { transform: translateY(-12px); opacity: 0.7; }
+    85% { transform: translateY(-16px); opacity: 0.5; }
+    90% { transform: translateY(-20px); opacity: 0.3; }
+    95% { transform: translateY(-25px); opacity: 0.15; }
+    100% { transform: translateY(-30px); opacity: 0; }
+  }
+
+  @keyframes slideDown {
+    0% { transform: translateY(30px); opacity: 0; }
+    5% { transform: translateY(25px); opacity: 0.15; }
+    10% { transform: translateY(20px); opacity: 0.3; }
+    15% { transform: translateY(16px); opacity: 0.5; }
+    20% { transform: translateY(12px); opacity: 0.7; }
+    25% { transform: translateY(8px); opacity: 0.85; }
+    30% { transform: translateY(5px); opacity: 0.9; }
+    35% { transform: translateY(2px); opacity: 0.95; }
+    40% { transform: translateY(0); opacity: 1; } /* 到达显示位置 */
+    100% { transform: translateY(0); opacity: 1; } /* 保持显示状态 */
+  }
+
+  .search-placeholder-text.exit {
+    animation: slideUp 3s ease-in forwards; /* 使用ease-in使动画开始慢结束快 */
+  }
+
+  .search-placeholder-text.enter {
+    animation: slideDown 2s ease-out forwards; /* 使用ease-out使动画开始快结束慢 */
+  }
+
+  /* 搜索框容器 */
+  .search-container {
+    position: relative;
+  }
+
+  /* 搜索框文字滚动效果 */
+  .search-placeholder-container {
+    position: absolute;
+    left: 30px;
+    top: 0;
+    height: 100%;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #9ca3af;
+    overflow: hidden; /* 限制文字在容器内 */
+    width: 70%; /* 防止文字超出搜索框 */
+  }
+
+  .search-placeholder-text {
+    position: absolute;
+    white-space: nowrap;
+    transform: translateY(0);
+    opacity: 1;
+    will-change: transform, opacity; /* 提高动画性能，减少抖动 */
+    transform-style: preserve-3d; /* 启用3D变换，减少抖动 */
+    backface-visibility: hidden; /* 避免闪烁 */
+  }
+
+  input::placeholder {
+    color: transparent;
+  }
+
+  /* 防止鼠标悬停在搜索框时出现的抖动 */
+  .search-container:hover .search-placeholder-text {
+    animation-play-state: paused; /* 悬停时暂停动画，防止抖动 */
+  }
+
+  /* 移动端搜索框文字位置调整 */
+  .mobile-search .search-placeholder-container {
+    left: 36px; /* 稍微调整以适应移动端布局 */
+    width: 70%; /* 确保移动端也有足够的宽度 */
   }
   </style>
