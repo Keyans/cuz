@@ -108,6 +108,7 @@ const router = useRouter()
 
 // 获取URL参数
 const category = computed(() => route.query.category as string || '')
+const searchQuery = ref(route.query.q as string || '')
 
 // 页面标题
 const pageTitle = computed(() => {
@@ -143,7 +144,6 @@ definePageMeta({
 })
 
 // 筛选条件
-const searchQuery = ref('')
 const priceRange = ref('')
 const shippingTime = ref('')
 const stockStatus = ref('')
