@@ -22,10 +22,10 @@ export const doGetTemplateLanguageList = () => {
 /**
  * 查询店铺列表
  */
-export const doGetauthorizeList = (data: any) => {
-  return post({
-    url: "saas-aimall-shop/shop/third/authorize/list",
-    data,
+export const doGetauthorizeList = (params: any) => {
+  return get({
+    url: "saas-aimall-shop/shop/third/authorization",
+    params,
   });
 };
 
@@ -114,5 +114,89 @@ export const doUpload = (data: any) => {
   return post({
     url: "saas-aimall-message-pigeon/oss/upload",
     data,
+  });
+};
+
+/**
+ * 分页查询刊登商品列表
+ */
+export const doGetTaskPage = (params: any) => {
+  return get({
+    url: "saas-plugin-third-party-adapter/thirdParty/posting/product/page",
+    params,
+  });
+};
+
+/**
+ * 批量删除刊登商品
+ */
+export const doTaskBatchDelete = (data: any) => {
+  return post({
+    url: "saas-plugin-third-party-adapter/thirdParty/posting/product/batch/delete",
+    data,
+  });
+};
+
+/**
+ * 发布刊登商品
+ */
+export const doTaskCreate = (data: any) => {
+  return post({
+    url: 'saas-plugin-third-party-adapter/thirdParty/posting/product/public',
+    data,
+  });
+};
+/**
+ * 删除刊登商品
+ */
+export const doTaskDelete = (id: string) => {
+  return post({
+    url: `saas-plugin-third-party-adapter/thirdParty/posting/product/delete/${id}`,
+  });
+};
+/**
+ * 根据ID查询刊登商品详情
+ */
+export const doGetTaskProductDetail = (id: string) => {
+  return get({
+    url: `saas-plugin-third-party-adapter/thirdParty/posting/product/${id}`,
+  });
+};
+/**
+ * 更新刊登商品信息
+ */
+export const doTaskUpdate = (data: any) => {
+  return post({
+    url: `saas-plugin-third-party-adapter/thirdParty/posting/product/update/${data.id}`,
+    data,
+  });
+};
+
+/**
+ * 获取尺码表列表接口
+ */
+export const doGetSizeTableList = (params: any) => {
+  return get({
+    url: "saas-plugin-third-party-adapter/thirdParty/goods/publicInformation/getSizeTableList",
+    params,
+  });
+};
+
+/**
+ * 获取模特列表接口
+ */
+export const doGetModelInfoList = (params: any) => {
+  return get({
+    url: "saas-plugin-third-party-adapter/thirdParty/goods/publicInformation/getModelInfoList",
+    params,
+  });
+};
+
+/**
+ * 统计不同状态的刊登任务数量
+ */
+export const doGetProductStatusCount = () => {
+  return get({
+    url: "saas-plugin-third-party-adapter/thirdParty/posting/product/status/count",
   });
 };

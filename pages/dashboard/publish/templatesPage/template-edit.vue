@@ -10,62 +10,48 @@
     </div>
 
     <!-- 表单部分 -->
+  <el-form ref="formRef" :model="formData" :rules="rules" label-width="auto">
     <div class="bg-white rounded-lg shadow mb-6">
       <div class="p-4 lg:p-6">
         <h2 class="text-lg font-medium mb-4">基本信息</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-          <div class="flex flex-col">
-            <label class="text-sm text-gray-600 mb-1">模板名称：</label>
-            <input 
+          <el-form-item label="模板名称：" prop="templateName">
+              <el-input 
               v-model="formData.templateName" 
               type="text" 
               placeholder="请输入" 
-              class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
-          </div>
-          <div class="flex flex-col">
-            <label class="text-sm text-gray-600 mb-1">所属店铺：</label>
-            <div class="relative">
-              <el-select 
+          </el-form-item>
+          <el-form-item label="所属店铺：" prop="appShopId">
+            <el-select 
                 v-model="formData.appShopId" 
                 placeholder="请选择店铺"
                 class="w-full"
                 @change="storesChange"
               >
-                <el-option v-for="item in storeOptions" :value="item.shopId" :label="item.shopName" />
+                <el-option v-for="item in storeOptions" :key="item.id" :value="item.middleGroundShopId" :label="item.thirdPartyShopName" />
               </el-select>
-            </div>
-          </div>
-          <div class="flex flex-col">
-            <label class="text-sm text-gray-600 mb-1">模板语言：</label>
-            <div class="relative">
-              <el-select 
+          </el-form-item>
+          <el-form-item label="模板语言：" prop="templateLanguage">
+             <el-select 
                 v-model="formData.templateLanguage" 
                 placeholder="请选择语言"
                 class="w-full"
               >
               <el-option v-for="item in languageOptions" :value="item.language" :label="item.languageName" />
               </el-select>
-            </div>
-          </div>
-          <div class="flex flex-col">
-            <label class="text-sm text-gray-600 mb-1">模板排序：</label>
-            <input 
-              v-model="formData.sort" 
-              type="number" 
-              placeholder="请输入" 
-              class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
-          </div>
-          <div class="flex flex-col">
-            <label class="text-sm text-gray-600 mb-1">商品标题：</label>
-            <div class="relative">
-              <el-input 
+          </el-form-item>
+          <el-form-item label="模板排序：" prop="sort">
+            <el-input-number style="width: 100%" v-model="formData.sort" :min="0" :max="9999" :precision="0"
+              controls-position="right" />
+          </el-form-item>
+          <el-form-item label="商品标题：" prop="productTitle">
+            <el-input 
                 v-model="formData.productTitle" 
                 placeholder="请输入商品标题" 
                 class="w-full pr-28"
               />
-              <el-button 
+               <el-button 
                 class="absolute right-0 top-0 h-full z-10 px-3" 
                 @click="openVariableDialog"
                 type="primary" 
@@ -73,8 +59,7 @@
               >
                 插入变量
               </el-button>
-            </div>
-          </div>
+          </el-form-item>
           <!-- <div class="flex flex-col md:col-span-2">
             <label class="text-sm text-gray-600 mb-1">商品描述：</label>
             <div class="relative">
@@ -104,23 +89,14 @@
       <div class="p-4 lg:p-6">
         <h2 class="text-lg font-medium mb-4">类目信息</h2>
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4 lg:gap-6">
-          <div class="flex flex-col">
-            <label class="text-sm text-gray-600 mb-1">商品类目：</label>
-            <div class="relative">
-              <select 
+          <el-form-item label="商品类目：" prop="categoryId">
+            <el-select 
                 v-model="formData.categoryId" 
-                class="w-full border border-gray-300 rounded px-3 py-2 appearance-none focus:outline-none focus:ring-1 focus:ring-blue-500"
                 @change="categoryChange"
               >
-                <option v-for="item in categoryList" :value="item.categoryId">{{ item.categoryName }}</option>
-              </select>
-              <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-              </div>
-            </div>
-          </div>
+                <el-option v-for="item in categoryList" :key="item.categoryId" :value="item.categoryId" :label="item.categoryName" />
+              </el-select>
+          </el-form-item>
           
           <div class="mt-4">
            <!--商品属性组件-->
@@ -182,16 +158,9 @@
               </template>
             </el-table-column>
             <el-table-column prop="specImage" label="SKU图" width="150px" align="center">
-              <template #header>
-                <div>
-                  <span style="color: red; margin-right: 5px">*</span>
-                  <span>SKU图</span>
-                </div>
-              </template>
               <template #default="{ row }">
                 <div class="tableCheckBox">
-                  <ProductImage v-model="row.specImage" :limit="1" :draggable="false" :uploadMethod="['gallery']" galleryText="插入效果图" />
-                  <div v-if="!tableCheck && !row.specImage.length" class="checkText">必填</div>
+                  <el-img :src="row.specImage" style="width: 80px;height: 80px;"/>
                 </div>
               </template>
             </el-table-column>
@@ -225,7 +194,8 @@
     <div class="bg-white rounded-lg shadow mb-6">
       <div class="p-4 lg:p-6">
         <h2 class="text-lg font-medium mb-4">平台公共信息</h2>
-        <PublicInfo ref="PublicInfoRef" 
+        <PublicInfo 
+           ref="publicInfoRef" 
           :category-id="formData.categoryId" 
           :app-shop-id="formData.appShopId" 
           :app-type="formData.appType" 
@@ -234,7 +204,7 @@
         />
       </div>
     </div>
-
+  </el-form>
     <!-- 操作按钮 -->
     <div class="flex justify-center space-x-4 my-6">
       <ActionButton type="outline" text="取消" @click="cancel" class="w-full md:w-auto px-8" />
@@ -262,6 +232,7 @@ import ProductAttrs from './ProductAttrs.vue'
 import ProductImage from './ProductImage.vue'
 import PublicInfo from './PublicInfo.vue'
 
+const formRef = ref();
 const productAttrsRef = ref();
 const publicInfoRef = ref();
 
@@ -333,6 +304,36 @@ const formData = reactive<FormDataType>({
   }]
 });
 
+const rules = reactive({
+  templateName: [
+    { required: true, message: '模板名称不能为空', trigger: "blur" }
+  ],
+  appShopId: [
+    { required: true, message: '所属店铺不能为空', trigger: "blur" }
+  ],
+  templateLanguage: [
+    { required: true, message: '模板语言不能为空', trigger: "blur" }
+  ],
+  sort: [
+    { required: true, message: '模板排序不能为空', trigger: "blur" }
+  ],
+  productTitle: [
+    { required: true, message: '商品标题不能为空', trigger: "blur" }
+  ],
+  categoryId: [
+    { required: true, message: '商品类目不能为空', trigger: "blur" }
+  ],
+  mainImageList: [
+    { required: true, message: '主图不能为空', trigger: "blur" }
+  ],
+  detailsImagesList: [
+    { required: true, message: '详情图不能为空', trigger: "blur" }
+  ],
+  materialImageList: [
+    { required: true, message: '素材图不能为空', trigger: "blur" }
+  ]
+});
+
 // 变量对话框相关
 const variableDialogVisible = ref(false);
 const currentEditingField = ref<'productTitle' | 'description'>('productTitle');
@@ -402,33 +403,57 @@ const getProductTitleNameOrCode = (text:string, list:any, fromNameToCode:boolean
 }
 // 保存模板
 async function save() {
+  const loading = ElLoading.service({
+    lock: true,
+    text: 'Loading',
+    background: 'rgba(0, 0, 0, 0.7)',
+  }) 
   try {
-    // 验证 ProductAttrs 组件的表单
-    const attrsValidation = await productAttrsRef.value?.validate();
-    if (!attrsValidation) return;
+    formRef.value.validate(async valid => {
+      if (!valid){
+        ElMessage.error('请先完善基本信息');
+        loading.close()
+        return;
+      } 
+      // 验证 ProductAttrs 组件的表单
+      const attrsValidation = await productAttrsRef.value?.validate();
+      if (!attrsValidation){
+        ElMessage.error('请先完善商品属性');
+        loading.close()
+        return 
+      } 
+      // 验证 PublicInfo 组件的表单
+      const publicInfoValidation = await publicInfoRef.value?.validateForm();
+      if (!publicInfoValidation){
+        ElMessage.error('请先完善公共信息');
+        loading.close()
+        return 
+      } 
 
-    // 验证 PublicInfo 组件的表单
-    const publicInfoValidation = await publicInfoRef.value?.validateForm();
-    if (!publicInfoValidation) return;
+      let productTitleCode = await getProductTitleNameOrCode(formData.productTitle, variableList.value.basicInformationList, true);
+      productTitleCode = await getProductTitleNameOrCode(productTitleCode, variableList.value.specList, true);
 
-    let productTitleCode = await getProductTitleNameOrCode(formData.productTitle, variableList.value.basicInformationList, true);
-    productTitleCode = await getProductTitleNameOrCode(productTitleCode, variableList.value.specList, true);
+      const specificationInfoList = formData.specificationInfoList.map(item => {
+        return {
+          ...item,
+          specImage: item.specImage && item.specImage.length > 0 ? item.specImage[0] : ''
+        };
+      });
+      if(!specificationInfoList) {
+        ElMessage.error('请先上传规格图')
+        loading.close()
+      } 
 
-    const specificationInfoList = formData.specificationInfoList.map(item => {
-      return {
-        ...item,
-        specImage: item.specImage && item.specImage.length > 0 ? item.specImage[0] : ''
-      };
+      const { success } = await doSaveTemplate({...formData, productTitle:productTitleCode, specificationInfoList});
+
+      if(success) ElMessage.success('保存成功');
+      loading.close()
+      // 保存成功后返回列表页
+      router.push('/dashboard/publish/templates');
     });
-    if(!specificationInfoList) return ElMessage.error('请先上传规格图')
-
-    const { success } = await doSaveTemplate({...formData, productTitle:productTitleCode, specificationInfoList});
-
-    ElMessage.success('保存成功');
-    // 保存成功后返回列表页
-    router.push('/dashboard/publish/templates');
   } catch (error) {
     ElMessage.error('保存失败')
+    loading.close()
   }
 }
 
@@ -475,8 +500,8 @@ const getLanguageList = async () => {
 const storeOptions = ref([])
 // 获取店铺列表
 const getStoreList = async () => {
-  const { data } = await doGetauthorizeList()
-  storeOptions.value = data || []
+  const { data } = await doGetauthorizeList({appType:'PUBLISH'})
+  storeOptions.value = data.records || []
 }
 const variableList = ref([])
 // 获取刊登模版变量列表
@@ -486,17 +511,18 @@ const getVariableList = async () => {
 }
 const categoryList = ref([])
 // 获取商品类目
-const getCategoryList = async (appType:number)=>{
-  const { data } = await doGetCategoryList({appType})
+const getCategoryList = async ()=>{
+  const { data } = await doGetCategoryList({appType:formData.appType})
   categoryList.value = data.categoryList || []
 }
-// TODO 店铺选择获取对应的appType
+// 店铺选择获取对应的appType
 const storesChange = (val:string)=>{
-  // const index = storeOptions.findIndex(item=>item.shopId===val)
-  // if(!index) return
-  formData.appType = 35;
-  // getCategoryList(storeOptions[index].appType)
-  getCategoryList(35)
+  const index = storeOptions.value.findIndex(item=>item.middleGroundShopId===val)
+  if(index===-1) return
+  formData.appType = storeOptions.value[index].platformTypeVal;
+  nextTick(()=>{
+    getCategoryList()
+  })
 }
 // 获取商品属性参数
 const handleAttrFormat = (params:any)=>{
