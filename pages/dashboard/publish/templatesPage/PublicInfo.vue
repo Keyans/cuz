@@ -228,7 +228,7 @@ const props = defineProps<{
 
 const emit = defineEmits(["update:modelValue", "change", "formatData"]);
 
-const loading = ref(true);
+const loading = ref(false);
 const formRef = ref();
 const formCategories = ref([]);
 const formData = reactive({
@@ -326,6 +326,7 @@ const initializeFormData = (categories: any[]) => {
 
 const loadFormConfig = async () => {
   try {
+    loading.value = true;
     const { data } = await doGetPublicInformationList({
       appShopId: props.appShopId,
       appType:props.appType,
