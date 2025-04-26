@@ -154,8 +154,8 @@
   
   // Handle logout
   const handleLogout = () => {
-    authStore.logout()
     navigateTo('/')
+    authStore.logout()
   }
   
   // Dashboard sidebar items with icons

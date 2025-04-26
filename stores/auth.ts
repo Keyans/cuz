@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import Cookies from "js-cookie";
 import { signByUser } from "~/apis/sign";
 
 interface User {
@@ -73,7 +74,26 @@ export const useAuthStore = defineStore("auth", {
         this.user = JSON.parse(user);
       }
     },
-
+    setCookiesInfo(data: any) {
+      Cookies.set("SH_TOKEN_SHOP", data?.value, {
+        expires: new Date(data?.refreshToken?.expiration), // 过期时间
+        domain: window.location.hostname.split(".").slice(-2).join("."),
+        path: "/", // 根路径
+      });
+      // 设置时间戳到cookie， 用于处理url没有传参，同时两个端都登录的情况
+      const time = new Date().getTime().toString();
+      Cookies.set("SH_TOKEN_SHOP_TIME", time, {
+        expires: new Date(data?.refreshToken?.expiration), // 过期时间
+        domain: window.location.hostname.split(".").slice(-2).join("."),
+        path: "/", // 根路径
+      });
+      const shopId = data.additionalInformation.shopId[0] || "";
+      Cookies.set("SH_SHOP_SHOPID", shopId, {
+        expires: new Date(data?.refreshToken?.expiration), // 过期时间
+        domain: window.location.hostname.split(".").slice(-2).join("."),
+        path: "/", // 根路径
+      });
+    },
     // Login action
     async login(credentials: LoginCredentials) {
       this.loading = true;
@@ -121,6 +141,8 @@ export const useAuthStore = defineStore("auth", {
           };
           this.token = data.value;
           this.refreshToken = data.refreshToken.value;
+
+          this.setCookiesInfo(data);
         }
         localStorage.setItem("token", this.token!);
         localStorage.setItem("refreshToken", this.refreshToken!);
@@ -136,6 +158,20 @@ export const useAuthStore = defineStore("auth", {
 
     // Logout action
     logout() {
+      // 清除refreshTokenSource 到 cookie
+      Cookies.remove("SH_TOKEN_SHOP", {
+        domain: window.location.hostname.split(".").slice(-2).join("."),
+        path: "/", // 根路径
+      });
+      Cookies.remove("SH_TOKEN_SHOP_TIME", {
+        domain: window.location.hostname.split(".").slice(-2).join("."),
+        path: "/", // 根路径
+      });
+      Cookies.remove("SH_SHOP_SHOPID", {
+        domain: window.location.hostname.split(".").slice(-2).join("."),
+        path: "/", // 根路径
+      });
+
       this.user = null;
       this.token = null;
 
@@ -143,6 +179,41 @@ export const useAuthStore = defineStore("auth", {
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
+    },
+    async auto_login() {
+      // 判断是否开启cookie 一级域名共享
+      const cookieShare = import.meta.env.VITE_COOKIE_SHARE;
+      if (cookieShare !== "true") {
+        console.log("cookie 一级域名共享未开启");
+        return;
+      }
+      const refresh_token = Cookies.get("SH_TOKEN_SHOP");
+      if (!refresh_token) {
+        console.log("refreshToken 不存在");
+        return;
+      }
+      console.log("获取到自动登录的token");
+
+      const { data } = await signByUser({
+        grant_type: "refresh_token",
+        refresh_token,
+      });
+
+      this.setCookiesInfo(data);
+
+      this.user = {
+        id: data.additionalInformation?.userId,
+        shopId: data.additionalInformation?.shopId?.[0],
+        email: "",
+        name: "",
+      };
+
+      this.token = data.value;
+      this.refreshToken = data.refreshToken.value;
+
+      localStorage.setItem("token", this.token!);
+      localStorage.setItem("refreshToken", this.refreshToken!);
+      localStorage.setItem("user", JSON.stringify(this.user));
     },
   },
 });

@@ -1,12 +1,5 @@
 <template>
   <div class="p-6 max-w-full">
-    <!-- 面包屑导航 -->
-    <div class="flex items-center text-gray-500 text-sm mb-4">
-      <span>账号</span>
-      <span class="mx-2">/</span>
-      <span class="text-gray-800">发票管理</span>
-    </div>
-
     <!-- 标题 -->
     <div class="text-2xl font-bold mb-4 border-b pb-4">发票管理</div>
     

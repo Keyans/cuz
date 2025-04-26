@@ -152,7 +152,6 @@ export default defineNuxtConfig({
     "/": { ssr: true, swr: process.dev ? false : 600 }, // 使用SSR并缓存10分钟
     // 静态页面使用 SSG（静态站点生成）
     "/login": { ssr: true },
-    "/register": { ssr: true },
     // 产品页面使用 SSR（服务器端渲染）带缓存
     "/products/**": { swr: 300 }, // 5分钟缓存
     // 选品列表页面不需要登录验证

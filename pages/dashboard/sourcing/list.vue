@@ -49,7 +49,7 @@
 
     <!-- 商品列表 -->
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      <div v-for="product in filteredProducts" :key="product.id" class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+      <div v-for="product in filteredProducts" :key="product.id" class="bg-white border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
         <div class="relative">
           <img :src="product.image" :alt="product.name" class="w-full aspect-square object-cover" />
           <button class="absolute top-2 right-2 p-1.5 bg-white/70 backdrop-blur-sm rounded-full text-gray-600 hover:text-red-500 transition-colors">
@@ -108,6 +108,7 @@ const router = useRouter()
 
 // 获取URL参数
 const category = computed(() => route.query.category as string || '')
+const searchQuery = ref(route.query.q as string || '')
 
 // 页面标题
 const pageTitle = computed(() => {
@@ -143,7 +144,6 @@ definePageMeta({
 })
 
 // 筛选条件
-const searchQuery = ref('')
 const priceRange = ref('')
 const shippingTime = ref('')
 const stockStatus = ref('')

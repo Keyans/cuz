@@ -2,7 +2,7 @@
   <div class="container mx-auto px-4 py-6">
     <!-- 标题和操作按钮 -->
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-xl font-medium">产品库</h1>
+      <h1 class="text-2xl font-bold">产品库</h1>
     </div>
 
     <!-- 搜索区域 -->

@@ -26,7 +26,9 @@
       v-model:show="showBatchPushDialog"
       @stop="handleStopPush"
     />
-
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">订单中心</h1>
+    </div>
     <!-- 标签页 -->
     <div class="flex border-b border-gray-200 mb-6">
       <button 

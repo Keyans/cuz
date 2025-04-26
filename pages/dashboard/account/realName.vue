@@ -1,11 +1,9 @@
 <template>
   <div class="container mx-auto py-6 px-4">
-    <!-- 使用面包屑组件 -->
-    <Breadcrumb :items="breadcrumbItems" />
     <!-- 标签页 -->
     <div class="mb-6 flex">
       <div class="flex items-center space-x-2">
-        <div class="text-lg font-medium">实名认证</div>
+        <div class="text-2xl font-bold">实名认证</div>
         <div v-if="authStatus === 'pending'" class="px-2 py-1 bg-orange-100 text-orange-600 text-sm rounded">审核中</div>
         <div v-if="authStatus === 'approved'" class="px-2 py-1 bg-green-100 text-green-600 text-sm rounded">已认证</div>
         <div v-if="authStatus === 'none'" class="px-2 py-1 bg-gray-100 text-gray-600 text-sm rounded">未认证</div>
@@ -146,12 +144,6 @@ const enterpriseData = reactive({
   idCardFrontUrl: '',
   idCardBackUrl: ''
 });
-
-// 面包屑数据
-const breadcrumbItems = [
-  { title: '账号', path: '/dashboard/account' },
-  { title: '实名认证' }
-];
 
 // 导航到认证表单页面
 const navigateToAuthForm = () => {

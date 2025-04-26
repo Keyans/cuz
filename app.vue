@@ -6,21 +6,21 @@
     </NuxtLayout>
     <ClientOnly>
       <Toast />
+      <AiChatAssistant />
     </ClientOnly>
   </div>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script setup>
+import { onMounted } from 'vue'
 import Toast from '~/components/Toast.vue'
+import AiChatAssistant from '~/components/AiChatAssistant.vue'
+import { useAuthStore } from '~/stores/auth'
 
-export default defineComponent({
-  components: {
-    Toast
-  },
-  setup() {
-    // SEO优化相关信息已在nuxt.config.ts中配置
-  }
+const authStore = useAuthStore()
+
+onMounted(() => {
+  authStore.auto_login()
 })
 </script>
 
