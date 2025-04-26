@@ -94,7 +94,7 @@
                 v-model="formData.categoryId" 
                 @change="categoryChange"
               >
-                <el-option v-for="item in categoryList" :value="item.categoryId">{{ item.categoryName }}</el-option>
+                <el-option v-for="item in categoryList" :key="item.categoryId" :value="item.categoryId" :label="item.categoryName" />
               </el-select>
           </el-form-item>
           
@@ -194,7 +194,8 @@
     <div class="bg-white rounded-lg shadow mb-6">
       <div class="p-4 lg:p-6">
         <h2 class="text-lg font-medium mb-4">平台公共信息</h2>
-        <PublicInfo ref="PublicInfoRef" 
+        <PublicInfo 
+           ref="publicInfoRef" 
           :category-id="formData.categoryId" 
           :app-shop-id="formData.appShopId" 
           :app-type="formData.appType" 
@@ -402,15 +403,32 @@ const getProductTitleNameOrCode = (text:string, list:any, fromNameToCode:boolean
 }
 // 保存模板
 async function save() {
+  const loading = ElLoading.service({
+    lock: true,
+    text: 'Loading',
+    background: 'rgba(0, 0, 0, 0.7)',
+  }) 
   try {
     formRef.value.validate(async valid => {
-      if (!valid) return;
+      if (!valid){
+        ElMessage.error('请先完善基本信息');
+        loading.close()
+        return;
+      } 
       // 验证 ProductAttrs 组件的表单
       const attrsValidation = await productAttrsRef.value?.validate();
-      if (!attrsValidation) return;
+      if (!attrsValidation){
+        ElMessage.error('请先完善商品属性');
+        loading.close()
+        return 
+      } 
       // 验证 PublicInfo 组件的表单
       const publicInfoValidation = await publicInfoRef.value?.validateForm();
-      if (!publicInfoValidation) return;
+      if (!publicInfoValidation){
+        ElMessage.error('请先完善公共信息');
+        loading.close()
+        return 
+      } 
 
       let productTitleCode = await getProductTitleNameOrCode(formData.productTitle, variableList.value.basicInformationList, true);
       productTitleCode = await getProductTitleNameOrCode(productTitleCode, variableList.value.specList, true);
@@ -421,16 +439,21 @@ async function save() {
           specImage: item.specImage && item.specImage.length > 0 ? item.specImage[0] : ''
         };
       });
-      if(!specificationInfoList) return ElMessage.error('请先上传规格图')
+      if(!specificationInfoList) {
+        ElMessage.error('请先上传规格图')
+        loading.close()
+      } 
 
       const { success } = await doSaveTemplate({...formData, productTitle:productTitleCode, specificationInfoList});
 
       if(success) ElMessage.success('保存成功');
+      loading.close()
       // 保存成功后返回列表页
       router.push('/dashboard/publish/templates');
     });
   } catch (error) {
     ElMessage.error('保存失败')
+    loading.close()
   }
 }
 

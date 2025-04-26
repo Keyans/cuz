@@ -79,7 +79,8 @@ const queryFields = [
     key: 'appShopIds',
     multiple: true as const,
     type: 'select' as const,
-    options: []
+    options: [],
+    placeholder: '所属店铺'
   },
   {
     key: 'templateLanguages',

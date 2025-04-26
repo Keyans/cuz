@@ -831,7 +831,11 @@ async function save() {
   })  
   try {
     formRef.value.validate(async (valid) => {
-      if (!valid) return;
+      if (!valid){
+        ElMessage.warning("表单信息不完整");
+        loading.close();
+        return;
+      } 
       // 规格信息校验
       tableCheck.value = !formData.specList.some(
         (item) =>
@@ -850,28 +854,54 @@ async function save() {
           (!item.suggestedPrice && item.suggestedPrice !== 0) ||
           !item.suggestPriceCurrency
       );
-      if (!tableCheck.value) return ElMessage.warning("规格信息不完整");
+      if (!tableCheck.value){
+        ElMessage.warning("规格信息不完整");
+        loading.close();
+        return;
+      } 
       // 验证 ProductAttrs 组件的表单
       const attrsValidation = await productAttrsRef.value?.validate();
-      if (!attrsValidation) return;
+      if (!attrsValidation){
+        ElMessage.warning("属性信息不完整");
+        loading.close();
+        return;
+      } 
 
       // 验证颜色关联
-      if (formData.mapperAttribute.colorMapper.some((v) => !v.plateId))
-        return ElMessage.warning("颜色关联不能为空");
+      if (formData.mapperAttribute.colorMapper.some((v) => !v.plateId)){
+        ElMessage.warning("颜色关联不能为空");
+        loading.close();
+        return;
+      }
 
       // 验证尺码关联
-      if (formData.mapperAttribute.sizeMapper.some((v) => !v.plateId))
-        return ElMessage.warning("尺码关联不能为空");
+      if (formData.mapperAttribute.sizeMapper.some((v) => !v.plateId)){
+        ElMessage.warning("尺码关联不能为空");
+        loading.close();
+        return;
+      }
 
       // 验证尺码表
-      if (!formData.sizeTableId) return ElMessage.warning("尺码表不能为空");
+      if (!formData.sizeTableId){
+        ElMessage.warning("尺码表不能为空");
+        loading.close();
+        return;
+      }
 
       // 验证模特信息
-      if (!formData.modelInfo.id) return ElMessage.warning("模特信息不能为空");
+      if (!formData.modelInfo.id){
+        ElMessage.warning("模特信息不能为空");
+        loading.close();
+        return;
+      } 
 
       // 验证 PublicInfo 组件的表单
       const publicInfoValidation = await publicInfoRef.value?.validateForm();
-      if (!publicInfoValidation) return;
+      if (!publicInfoValidation){
+        ElMessage.warning("公共信息不完整");
+        loading.close();
+        return;
+      }
 
       const newFormData = {}
       Object.assign(newFormData, formData);

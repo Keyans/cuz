@@ -18,6 +18,7 @@
               collapse-tags
               collapse-tags-tooltip
               v-model="queryParams[field.key]"
+              :placeholder="field.placeholder" 
             >
               <el-option v-for="option in field.options" :key="option.value" :value="option.value" :label="option.label" />
             </el-select>
