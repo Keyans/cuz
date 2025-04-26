@@ -222,6 +222,16 @@
               >《隐私权政策》</NuxtLink
             >、
             <NuxtLink
+              to="/legal"
+              class="text-primary hover:opacity-80 transition-opacity"
+              >《法律声明》</NuxtLink
+            >、
+            <NuxtLink
+              to="/agency"
+              class="text-primary hover:opacity-80 transition-opacity"
+              >《委托代理协议》</NuxtLink
+            >、
+            <NuxtLink
               to="/ip-policy"
               class="text-primary hover:opacity-80 transition-opacity"
               >《知识产权政策》</NuxtLink
