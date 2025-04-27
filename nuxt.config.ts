@@ -157,7 +157,7 @@ export default defineNuxtConfig({
     // 选品列表页面不需要登录验证
     "/dashboard/sourcing/list": { ssr: true, middleware: false },
     // 仪表板页面使用 SSR 但不缓存（动态内容）
-    "/dashboard/**": { ssr: true, swr: 600 },
+    "/dashboard/**": { ssr: false },
   },
 
   // Tailwind CSS 配置
