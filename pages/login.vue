@@ -323,7 +323,7 @@ import SliderCaptcha from "~/components/ui/slide-captcha/SliderCaptcha.vue";
 definePageMeta({
   layout: "auth",
 });
-const leftImg = `/assets/login_bg.png`;
+const leftImg = `/assets/login_bg.jpg`;
 
 // Form state
 const phone = ref("");
