@@ -4,8 +4,8 @@ export default defineEventHandler(async (event) => {
   const url = getRequestURL(event);
   const query = getQuery<URLSearchParams>(event);
 
-  const pathPrefix = "/saas-aimall-";
-  if (url.pathname.startsWith(pathPrefix)) {
+  const pathPrefixes = ["/saas-aimall-", "/saas-plugin-"];
+  if (pathPrefixes.some(prefix => url.pathname.startsWith(prefix))) {
     const target =
       useRuntimeConfig().public.BACKEND_API || "http://10.233.90.164:9999";
     let targetUrl = `${target}${url.pathname}`;
