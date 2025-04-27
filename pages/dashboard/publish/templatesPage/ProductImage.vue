@@ -2,29 +2,7 @@
   <div class="image-uploader">
     <div class="uploader-content">
       <!-- 左侧图片列表区域 -->
-      <div class="image-item" v-for="element in imageList">
-            <el-image
-              v-if="element.imagePath"
-              :src="element.imagePath"
-              fit="cover"
-            />
-            <div v-else style="text-align: center; line-height: 120px">
-              效果图 {{ element.position }}
-            </div>
-            <div class="image-actions">
-              <el-button
-                type="danger"
-                link
-                @click.stop="handleRemove(element, index)"
-              >
-                <el-icon>
-                  <Delete />
-                </el-icon>
-              </el-button>
-            </div>
-        </div>
-      <!--TODO 拖拽排序有问题-->
-      <!-- <VueDraggable
+      <VueDraggable
         v-if="imageList.length"
         v-model="imageList"
         class="image-list-container"
@@ -55,7 +33,7 @@
             </div>
           </div>
         </template>
-      </VueDraggable> -->
+      </VueDraggable>
 
       <!-- 右侧操作按钮区域 -->
       <div
@@ -63,20 +41,7 @@
         v-if="modelValue.length < props.limit"
         v-loading="loading"
       >
-        <!-- <input
-          ref="fileInput"
-          type="file"
-          multiple
-          accept="image/*"
-          style="display: none"
-          @change="handleLocalFileSelect"
-        />
-        <el-button
-          v-if="props.uploadMethod.includes('local')"
-          @click="triggerFileInput"
-          >{{ props.localText }}</el-button
-        > -->
-        <q-upload v-if="props.uploadMethod.includes('local')" @change="handleLocalFileSelect">
+        <q-upload v-if="props.uploadMethod.includes('local')" @change="(imagePath:string)=>addSeat(null,imagePath)">
           <el-button style="width: 94.5px">{{ props.localText }}</el-button>
         </q-upload>
         <el-popover
@@ -87,7 +52,7 @@
         >
           <template #default>
             <div v-for="item in 20" style="margin-bottom: 5px">
-              <el-button style="width: 200px" @click="addSeat(item)"
+              <el-button style="width: 200px" @click="addSeat(item,null)"
                 >效果图 {{ item }}</el-button
               >
             </div>
@@ -109,10 +74,7 @@
 <script setup lang="ts">
 import { ref, defineProps, defineEmits, computed } from "vue";
 import { Delete } from "@element-plus/icons-vue";
-import { ElMessage } from "element-plus";
 import type { UploadFile } from "element-plus";
-// import ImageSelect from "@/views/components/image/ImageSelect.vue";
-// import { imageCosUpload } from "@/api/shop/listingsTemplate";
 import VueDraggable from "vuedraggable";
 import QUpload from '@/components/q-upload/q-upload.vue'
 
@@ -143,98 +105,14 @@ const emit = defineEmits<{
   "update:modelValue": [value: ImageFile[]];
 }>();
 
-const drag = ref(false);
-
 const imageList = computed({
   get: () => props.modelValue,
   set: value => {
     emit("update:modelValue", value);
   }
 });
-const fileInput = ref<HTMLInputElement | null>(null);
-
-// 文件验证
-const beforeUpload = (file: File) => {
-  return new Promise<boolean>(resolve => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = new Image();
-      img.onload = () => {
-        if (file.size > 2 * 1024 * 1024) {
-          ElMessage.error("图片大小不能超过2M");
-          resolve(false);
-          return;
-        }
-        // 保存图片的宽高信息
-        const width = img.width;
-        const height = img.height;
-        file.width = width;
-        file.height = height;
-        resolve(true);
-      };
-      img.src = e.target!.result as string;
-    };
-    reader.readAsDataURL(file);
-  });
-};
-
-// 触发文件选择
-const triggerFileInput = () => {
-  fileInput.value?.click();
-};
-const handleUploadRequest = async (file: File) => {}
-// 处理本地文件选择
-const handleLocalFileSelect = async (event: Event) => {
-  const input = event.target as HTMLInputElement;
-  if (!input.files?.length) return;
-
-  const files = Array.from(input.files);
-
-  for (const file of files) {
-    const isValid = await beforeUpload(file);
-    if (isValid) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        const newFile = {
-          uid: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-          name: file.name,
-          url: e.target?.result as string,
-          raw: file
-        };
-        // const newFileList = [...props.modelValue, newFile];
-        // emit('update:modelValue', newFileList);
-        // getLocalImageUrl(file);
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-  // 重置 input，以便能够重复选择同一文件
-  input.value = "";
-};
 
 const loading = ref(false);
-// 上传本地图片获取URL
-// const getLocalImageUrl = file => {
-//   // imageCosUpload
-//   const formData = new FormData();
-//   formData.append("fileList", file);
-//   loading.value = true;
-//   doUpload(formData)
-//     .then((res: any) => {
-//       const uploadFile = {
-//         imagePath: res[0].imageUrl,
-//         fileId: null,
-//         position: null,
-//         width: file.width,
-//         height: file.height
-//       };
-//       const newFileList = [...props.modelValue, uploadFile];
-//       emit("update:modelValue", newFileList);
-//     })
-//     .finally(() => {
-//       loading.value = false;
-//     });
-// };
 
 const imageSelectRef = ref();
 // TODO: 实现图库选择功能
@@ -243,41 +121,21 @@ const openGallery = () => {
   imageSelectRef.value.show();
 };
 
-// 添加效果图占位
+// 添加效果图占位&&本地图
 const popoverRef = ref();
-async function addSeat(index) {
+async function addSeat(index:number|null = null,imagePath:string|null = null) {
   const file = {
-    imagePath: "",
+    index:imageList.value.length + 1,
+    imagePath,
     fileId: null,
     position: index,
     width: null,
-    height: null
+    height: null 
   };
   const newFileList = [...props.modelValue, file];
-  console.log(newFileList);
   await emit("update:modelValue", newFileList);
   popoverRef.value.hide();
 }
-
-const handleConfirm = selectedImages => {
-  const file = {
-    imagePath: selectedImages[0].imageSourceUrl,
-    fileId: selectedImages[0].id
-    // uid: `${Date.now()}-${Math.random().toString(36).slice(2)}` // 确保uid唯一
-  };
-  const newFileList = [...props.modelValue, file];
-  emit("update:modelValue", newFileList);
-};
-
-// 处理文件变化
-const handleFileChange = (uploadFile: UploadFile) => {
-  const file = {
-    ...uploadFile
-    // uid: `${Date.now()}-${Math.random().toString(36).slice(2)}` // 确保uid唯一
-  };
-  const newFileList = [...props.modelValue, file];
-  emit("update:modelValue", newFileList);
-};
 
 // 删除图片
 const handleRemove = (file: UploadFile, index) => {

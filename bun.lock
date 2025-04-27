@@ -41,6 +41,7 @@
         "sass-embedded": "^1.86.3",
         "tailwind-merge": "^3.0.2",
         "tailwindcss-animate": "^1.0.7",
+        "vue-cropperjs": "^5.0.0",
         "vue-tsc": "^2.2.8",
       },
     },
@@ -645,6 +646,8 @@
     "crc32-stream": ["crc32-stream@6.0.0", "https://registry.npmmirror.com/crc32-stream/-/crc32-stream-6.0.0.tgz", { "dependencies": { "crc-32": "^1.2.0", "readable-stream": "^4.0.0" } }, "sha512-piICUB6ei4IlTv1+653yq5+KoqfBYmj9bw6LqXoOneTMDXk5nM1qt12mFW1caG3LlJXEKW1Bp0WggEmIfQB34g=="],
 
     "croner": ["croner@9.0.0", "https://registry.npmmirror.com/croner/-/croner-9.0.0.tgz", {}, "sha512-onMB0OkDjkXunhdW9htFjEhqrD54+M94i6ackoUkjHKbRnXdyEyKRelp4nJ1kAz32+s27jP1FsebpJCVl0BsvA=="],
+
+    "cropperjs": ["cropperjs@1.6.2", "https://registry.npmmirror.com/cropperjs/-/cropperjs-1.6.2.tgz", {}, "sha512-nhymn9GdnV3CqiEHJVai54TULFAE3VshJTXSqSJKa8yXAKyBKDWdhHarnlIPrshJ0WMFTGuFvG02YjLXfPiuOA=="],
 
     "cross-spawn": ["cross-spawn@7.0.6", "https://registry.npmmirror.com/cross-spawn/-/cross-spawn-7.0.6.tgz", { "dependencies": { "path-key": "^3.1.0", "shebang-command": "^2.0.0", "which": "^2.0.1" } }, "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA=="],
 
@@ -1631,6 +1634,8 @@
     "vue-bundle-renderer": ["vue-bundle-renderer@2.1.1", "https://registry.npmmirror.com/vue-bundle-renderer/-/vue-bundle-renderer-2.1.1.tgz", { "dependencies": { "ufo": "^1.5.4" } }, "sha512-+qALLI5cQncuetYOXp4yScwYvqh8c6SMXee3B+M7oTZxOgtESP0l4j/fXdEJoZ+EdMxkGWIj+aSEyjXkOdmd7g=="],
 
     "vue-composable": ["vue-composable@1.0.0-dev.37", "https://registry.npmmirror.com/vue-composable/-/vue-composable-1.0.0-dev.37.tgz", { "peerDependencies": { "@vue/composition-api": "^1.0.0-beta.2", "vue": "^2.6.10" } }, "sha512-JxCr1FNXbQgQdwqL+yi8cPOP8aN4L19D6UohDAQzKhqo9XQS/Aqn8e59wW+pdKBK5lHJLgN3wtjU1NI5N5SgUw=="],
+
+    "vue-cropperjs": ["vue-cropperjs@5.0.0", "https://registry.npmmirror.com/vue-cropperjs/-/vue-cropperjs-5.0.0.tgz", { "dependencies": { "cropperjs": "^1.5.6" }, "peerDependencies": { "vue": ">=3.0.0" } }, "sha512-RhnC8O33uRZNkn74aiHZwNHnBJOXWlS4P6gsRI0lw4cZlWjKSCywZI9oSI9POlIPI6OYv30jvnHMXGch85tw7w=="],
 
     "vue-demi": ["vue-demi@0.14.10", "https://registry.npmmirror.com/vue-demi/-/vue-demi-0.14.10.tgz", { "peerDependencies": { "@vue/composition-api": "^1.0.0-rc.1", "vue": "^3.0.0-0 || ^2.6.0" }, "optionalPeers": ["@vue/composition-api"], "bin": { "vue-demi-fix": "bin/vue-demi-fix.js", "vue-demi-switch": "bin/vue-demi-switch.js" } }, "sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg=="],
 
