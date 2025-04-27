@@ -282,6 +282,6 @@ onMounted(async () => {
 }
 
 .btn-primary {
-  @apply bg-primary text-white rounded hover:bg-primary-dark transition-colors;
+  @apply bg-primary text-white rounded hover:bg-primary hover:opacity-90 transition-colors;
 }
 </style>
