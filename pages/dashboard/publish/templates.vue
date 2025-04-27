@@ -80,8 +80,10 @@ const queryFields = [
   },
   {
     key: 'templateLanguages',
-    type: 'tag-select' as const,
-    options: [], // 动态获取赋值languageOptions不生效?
+    multiple: true as const,
+    type: 'select' as const,
+    options: [], 
+    placeholder: '模板语言'
   },
 ];
 
