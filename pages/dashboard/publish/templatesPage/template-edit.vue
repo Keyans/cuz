@@ -170,7 +170,7 @@
                   <el-option :value="1" label="百分比" />
                   <el-option :value="2" label="固定数值" />
                 </el-select>
-                <el-input-number v-model="row.sellPrice" :min="0" :max="1000"  class="inline-block">
+                <el-input-number v-model="row.sellPrice" :min="0" :max="row.priceType===1?1000:10000" :precision="row.priceType===1?0:2" class="inline-block">
                   <template v-if="row.priceType===1" #suffix>
                     <span>%</span>
                   </template>
@@ -179,7 +179,7 @@
             </el-table-column>
             <el-table-column prop="suggestPrice" label="建议零售价" align="center">
               <template #default="{ row }">
-                <el-input-number v-model="row.suggestPrice" :min="1" :max="10">
+                <el-input-number v-model="row.suggestPrice" :precision="row.priceType===1?0:2" @change="(suggestPrice:Number)=>suggestPriceChange(row,suggestPrice)">
                   <template v-if="row.priceType===1" #suffix>
                     <span>%</span>
                   </template>
@@ -530,6 +530,12 @@ const handleAttrFormat = (params:any)=>{
 }
 const handlePublicInfoFormat = (params:any)=>{
   formData.publicInformation = params;
+}
+// 建议零售价校验
+const suggestPriceChange = (row:any, value:Number)=>{
+  if(value >= row.sellPrice) return
+  ElMessage.warning('建议零售价不得低于利润')
+  row.suggestPrice = row.sellPrice
 }
 </script>
 
