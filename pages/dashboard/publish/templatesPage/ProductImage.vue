@@ -20,7 +20,7 @@
             <div v-else style="text-align: center; line-height: 120px">
               效果图 {{ element.position }}
             </div>
-            <div class="image-actions">
+            <div v-if="!props.disabled" class="image-actions">
               <el-button
                 type="danger"
                 link
@@ -38,7 +38,7 @@
       <!-- 右侧操作按钮区域 -->
       <div
         class="action-buttons"
-        v-if="modelValue.length < props.limit"
+        v-if="modelValue.length < props.limit && !props.disabled"
         v-loading="loading"
       >
         <q-upload v-if="props.uploadMethod.includes('local')" @change="(imagePath:string)=>addSeat(null,imagePath)">
@@ -91,6 +91,7 @@ const props = withDefaults(
     localText: string; // 本地按钮文本
     galleryText: string; // 图库按钮文本
     draggable: boolean; // 是否允许拖拽
+    disabled: boolean; // 禁止更改图片
   }>(),
   {
     limit: 10,
