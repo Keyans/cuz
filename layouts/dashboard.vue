@@ -160,48 +160,31 @@
         id="dashboard-main"
         @scroll="handleScroll"
       >
-        <NuxtPage keep-alive transition="fade" />
+        <NuxtPage keep-alive />
 
         <button
           @click="goTop"
           :class="[
-            'transition-all rounded-full bg-black/5 fixed h-[32px] w-[32px] flex justify-center items-center',
-            showClickToTop ? 'right-4 bottom-4' : '-right-[32px] bottom-10',
+            'transition-all rounded-full shadow-lg fixed flex items-center justify-center',
+            showClickToTop ? 'right-[20px] bottom-24 w-[60px] h-[60px] bg-primary text-white' : '-right-[60px] bottom-24 w-[60px] h-[60px]',
           ]"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="26"
-            height="26"
-            viewBox="0 0 1024 1024"
+            class="h-7 w-7"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-            <path fill="currentColor" d="M512 320 192 704h639.936z"></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 15l7-7 7 7"
+            />
           </svg>
         </button>
       </main>
-    </div>
-
-    <!-- Mobile action button - quick access to workspace -->
-    <div v-if="!hideSidebar" class="fixed bottom-4 right-4 md:hidden z-30">
-      <button
-        @click="navigateToWorkspace"
-        class="w-14 h-14 rounded-full bg-secondary shadow-lg flex items-center justify-center text-primary hover:bg-opacity-90 transition-colors"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-          />
-        </svg>
-      </button>
     </div>
   </div>
 </template>

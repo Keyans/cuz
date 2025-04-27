@@ -60,7 +60,7 @@
         <div class="flex items-start mb-6 text-sm">
           <div class="w-32 text-gray-500">企业证件</div>
           <div class="flex-1">
-            <div class="w-48 h-48 bg-gray-100 rounded flex items-center justify-center">
+            <div class="w-48 h-48 max-w-full bg-gray-100 rounded flex items-center justify-center">
               <img v-if="enterpriseData.companyLicenseUrl" :src="enterpriseData.companyLicenseUrl" alt="企业证件" class="max-w-full max-h-full object-contain" />
               <div v-else class="text-blue-300">
                 <svg class="w-12 h-12 mx-auto" fill="currentColor" viewBox="0 0 24 24">
@@ -93,8 +93,8 @@
         
         <div class="flex items-start mb-2 text-sm">
           <div class="w-32 text-gray-500">身份证件</div>
-          <div class="flex-1 grid grid-cols-2 gap-4">
-            <div class="w-40 h-40 bg-gray-100 rounded flex items-center justify-center">
+          <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="w-40 h-40 max-w-full bg-gray-100 rounded flex items-center justify-center">
               <img v-if="enterpriseData.idCardFrontUrl" :src="enterpriseData.idCardFrontUrl" alt="身份证正面" class="max-w-full max-h-full object-contain" />
               <div v-else class="text-blue-300">
                 <svg class="w-12 h-12 mx-auto" fill="currentColor" viewBox="0 0 24 24">
@@ -102,7 +102,7 @@
                 </svg>
               </div>
             </div>
-            <div class="w-40 h-40 bg-gray-100 rounded flex items-center justify-center">
+            <div class="w-40 h-40 max-w-full bg-gray-100 rounded flex items-center justify-center">
               <img v-if="enterpriseData.idCardBackUrl" :src="enterpriseData.idCardBackUrl" alt="身份证反面" class="max-w-full max-h-full object-contain" />
               <div v-else class="text-blue-300">
                 <svg class="w-12 h-12 mx-auto" fill="currentColor" viewBox="0 0 24 24">
@@ -204,6 +204,36 @@ fetchAuthStatus();
   .container {
     padding-left: 12px;
     padding-right: 12px;
+  }
+  
+  .flex {
+    flex-wrap: wrap;
+  }
+  
+  .w-32 {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+  
+  .grid-cols-1 {
+    grid-template-columns: 1fr;
+  }
+  
+  /* 调整图片容器在移动端的尺寸 */
+  .w-48, .w-40 {
+    width: 100%;
+    height: auto;
+    min-height: 180px;
+  }
+  
+  /* 确保内容对齐 */
+  .flex-1 {
+    width: 100%;
+  }
+  
+  /* 增加间距 */
+  .mb-2 {
+    margin-bottom: 1rem;
   }
 }
 </style>

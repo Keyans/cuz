@@ -168,8 +168,9 @@
               </td>
               <td class="px-4 py-4 whitespace-nowrap text-sm text-blue-600">
                 <div class="flex space-x-3">
-                  <a href="#" class="hover:text-blue-800">查看售后</a>
-                  <a href="#" class="hover:text-blue-800">订单详情</a>
+                  <a @click="openAfterSaleDetail('SH394399484')" class="hover:text-blue-800 cursor-pointer">查看售后</a>
+                  <a @click="viewOrderDetail('XS33234355')" class="hover:text-blue-800 cursor-pointer">订单详情</a>
+                  <a @click="openConfirmReceiptDialog('SH394399484')" class="hover:text-blue-800 cursor-pointer">确认收货</a>
                 </div>
               </td>
             </tr>
@@ -202,8 +203,8 @@
               </td>
               <td class="px-4 py-4 whitespace-nowrap text-sm text-blue-600">
                 <div class="flex space-x-3">
-                  <a href="#" class="hover:text-blue-800">查看售后</a>
-                  <a href="#" class="hover:text-blue-800">订单详情</a>
+                  <a @click="openAfterSaleDetail('SH394399484')" class="hover:text-blue-800 cursor-pointer">查看售后</a>
+                  <a @click="viewOrderDetail('XS33234355')" class="hover:text-blue-800 cursor-pointer">订单详情</a>
                 </div>
               </td>
             </tr>
@@ -236,8 +237,8 @@
               </td>
               <td class="px-4 py-4 whitespace-nowrap text-sm text-blue-600">
                 <div class="flex space-x-3">
-                  <a href="#" class="hover:text-blue-800">查看售后</a>
-                  <a href="#" class="hover:text-blue-800">订单详情</a>
+                  <a @click="openAfterSaleDetail('SH394399484')" class="hover:text-blue-800 cursor-pointer">查看售后</a>
+                  <a @click="viewOrderDetail('XS33234355')" class="hover:text-blue-800 cursor-pointer">订单详情</a>
                 </div>
               </td>
             </tr>
@@ -270,9 +271,9 @@
               </td>
               <td class="px-4 py-4 whitespace-nowrap text-sm text-blue-600">
                 <div class="flex space-x-3">
-                  <a href="#" class="hover:text-blue-800">查看售后</a>
-                  <a href="#" class="hover:text-blue-800">订单详情</a>
-                  <a href="#" class="hover:text-blue-800">确认收货</a>
+                  <a @click="openAfterSaleDetail('SH394399484')" class="hover:text-blue-800 cursor-pointer">查看售后</a>
+                  <a @click="viewOrderDetail('XS33234355')" class="hover:text-blue-800 cursor-pointer">订单详情</a>
+                  <a @click="openConfirmReceiptDialog('SH394399484')" class="hover:text-blue-800 cursor-pointer">确认收货</a>
                 </div>
               </td>
             </tr>
@@ -305,8 +306,8 @@
               </td>
               <td class="px-4 py-4 whitespace-nowrap text-sm text-blue-600">
                 <div class="flex space-x-3">
-                  <a href="#" class="hover:text-blue-800">查看售后</a>
-                  <a href="#" class="hover:text-blue-800">订单详情</a>
+                  <a @click="openAfterSaleDetail('SH394399484')" class="hover:text-blue-800 cursor-pointer">查看售后</a>
+                  <a @click="viewOrderDetail('XS33234355')" class="hover:text-blue-800 cursor-pointer">订单详情</a>
                 </div>
               </td>
             </tr>
@@ -322,7 +323,7 @@
             <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-md" :class="{
               'bg-green-100 text-green-800': i === 1,
               'bg-pink-100 text-pink-800': i === 2,
-              'bg-pink-100 text-pink-800': i === 3,
+              'bg-blue-100 text-blue-800': i === 3,
               'bg-yellow-100 text-yellow-800': i === 4,
               'bg-gray-100 text-gray-800': i === 5
             }">
@@ -343,9 +344,9 @@
             <div>2025-01-23 23:21:02</div>
           </div>
           <div class="mt-3 pt-3 border-t border-gray-100 flex space-x-3 text-sm text-blue-600">
-            <a href="#" class="hover:text-blue-800">查看售后</a>
-            <a href="#" class="hover:text-blue-800">订单详情</a>
-            <a href="#" v-if="i === 4" class="hover:text-blue-800">确认收货</a>
+            <a @click="openAfterSaleDetail('SH394399484')" class="hover:text-blue-800 cursor-pointer">查看售后</a>
+            <a @click="viewOrderDetail('XS33234355')" class="hover:text-blue-800 cursor-pointer">订单详情</a>
+            <a @click="openConfirmReceiptDialog('SH394399484')" v-if="i === 4" class="hover:text-blue-800 cursor-pointer">确认收货</a>
           </div>
         </div>
       </div>
@@ -380,16 +381,36 @@
         </button>
       </nav>
     </div>
+
+    <!-- 售后详情弹窗 -->
+    <AfterSaleDetailDialog 
+      :is-open="isAfterSaleDialogOpen" 
+      :after-sale-id="currentAfterSaleId"
+      @close="closeAfterSaleDialog"
+    />
+
+    <!-- 确认收货弹窗 -->
+    <ConfirmReceiptDialog
+      :is-open="isConfirmReceiptDialogOpen"
+      :after-sale-id="currentAfterSaleId"
+      @close="closeConfirmReceiptDialog"
+      @confirm="confirmReceipt"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import AfterSaleDetailDialog from '~/components/common/AfterSaleDetailDialog.vue';
+import ConfirmReceiptDialog from '~/components/common/ConfirmReceiptDialog.vue';
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['auth']
 })
+
+const router = useRouter();
 
 // 组件逻辑
 const activeTab = ref(0);
@@ -397,6 +418,63 @@ const searchQuery = ref('');
 const selectedType = ref('');
 const selectedStatus = ref('');
 const selectedDate = ref('');
+
+// 售后详情弹窗状态
+const isAfterSaleDialogOpen = ref(false);
+const currentAfterSaleId = ref('');
+
+// 确认收货弹窗状态
+const isConfirmReceiptDialogOpen = ref(false);
+
+// 打开售后详情弹窗
+const openAfterSaleDetail = (afterSaleId: string) => {
+  currentAfterSaleId.value = afterSaleId;
+  isAfterSaleDialogOpen.value = true;
+};
+
+// 关闭售后详情弹窗
+const closeAfterSaleDialog = () => {
+  isAfterSaleDialogOpen.value = false;
+};
+
+// 查看订单详情方法
+const viewOrderDetail = (orderId: string) => {
+  router.push({
+    path: `/dashboard/order/${orderId}`,
+    query: { source: 'afterSales' }
+  });
+};
+
+// 打开确认收货弹窗
+const openConfirmReceiptDialog = (afterSaleId: string) => {
+  currentAfterSaleId.value = afterSaleId;
+  isConfirmReceiptDialogOpen.value = true;
+};
+
+// 关闭确认收货弹窗
+const closeConfirmReceiptDialog = () => {
+  isConfirmReceiptDialogOpen.value = false;
+};
+
+// 确认收货
+const confirmReceipt = async (afterSaleId: string) => {
+  try {
+    console.log(`确认收货：${afterSaleId}`);
+    // 实际应用中应该调用API
+    // await fetch(`/api/after-sales/${afterSaleId}/confirm-receipt`, {
+    //   method: 'POST'
+    // });
+    
+    // 提示用户确认成功
+    alert('确认收货成功');
+    
+    // 刷新列表数据
+    // fetchAfterSalesList();
+  } catch (error) {
+    console.error('确认收货失败', error);
+    alert('确认收货失败，请重试');
+  }
+};
 
 // 状态标签数据
 const statusTabs = ref([
@@ -414,7 +492,7 @@ const totalPages = ref(5);
 const totalItems = ref(25);
 const itemsPerPage = ref(5);
 
-const changeTab = (index) => {
+const changeTab = (index: number) => {
   activeTab.value = index;
 };
 

@@ -22,12 +22,20 @@
               :delay="0.2"
               :duration="0.75"
             >
-              一件起订 货通全球
+              <div class="flex flex-col md:flex-row md:space-x-2">
+                <span class="block mb-3 md:mb-0">一件起订</span>
+                <span class="block">货通全球</span>
+              </div>
             </BlurReveal>
       </div>
-        <div class="flex h-64 text-4xl items-center justify-center max-lg:w-full min-md:flex-1">
+        <div class="flex flex-col md:flex-row h-64 text-3xl md:text-4xl items-center justify-center max-lg:w-full min-md:flex-1 gap-4 md:gap-1">
           <TextGenerateEffect
-            words="零 库 存 风 险 ，轻 松 开 启 电 商 事 业 ！"
+            words="零 库 存 风 险 ，"
+            class="block"
+          />
+          <TextGenerateEffect
+            words="轻 松 开 启 电 商 事 业 ！"
+            class="block"
           />
         </div>
       <div class="flex items-center">

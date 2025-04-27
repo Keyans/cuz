@@ -47,13 +47,7 @@
     <!-- 订单详情内容 -->
     <template v-else>
       <!-- 面包屑导航 -->
-      <div class="flex text-sm text-gray-500 mb-6">
-        <nuxt-link to="/dashboard/order" class="hover:text-blue-500">订单</nuxt-link>
-        <span class="mx-2">/</span>
-        <nuxt-link to="/dashboard/order/center" class="hover:text-blue-500">订单中心</nuxt-link>
-        <span class="mx-2">/</span>
-        <span class="text-gray-700">订单详情</span>
-      </div>
+      <Breadcrumb :items="breadcrumbItems" />
 
       <!-- 订单编号和状态 -->
       <div class="flex justify-between mb-6">
@@ -304,7 +298,7 @@
                 </div>
               </div>
               <div class="flex justify-end space-x-3">
-                <button class="px-4 py-1.5 bg-white text-blue-500 border border-blue-500 rounded-md hover:bg-blue-50 transition-colors text-sm">
+                <button @click="openAfterSaleDetail(afterSale.afterSaleNumber)" class="px-4 py-1.5 bg-white text-blue-500 border border-blue-500 rounded-md hover:bg-blue-50 transition-colors text-sm">
                   查看售后
                 </button>
               </div>
@@ -350,6 +344,13 @@
           申请退款
         </button>
       </div>
+
+      <!-- 售后详情弹窗 -->
+      <AfterSaleDetailDialog 
+        :is-open="isAfterSaleDialogOpen" 
+        :after-sale-id="currentAfterSaleId"
+        @close="closeAfterSaleDialog"
+      />
     </template>
   </div>
 </template>
@@ -358,6 +359,8 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCustomToast } from '~/components/Toast.vue'
+import Breadcrumb from '~/components/common/Breadcrumb.vue'
+import AfterSaleDetailDialog from '~/components/common/AfterSaleDetailDialog.vue'
 
 // 页面元数据
 definePageMeta({
@@ -369,7 +372,29 @@ definePageMeta({
 const route = useRoute()
 const router = useRouter()
 const orderId = route.params.id
+const source = ref(route.query.source || '') // 获取来源参数
 const { toast } = useCustomToast()
+
+// 面包屑导航数据
+const breadcrumbItems = computed(() => {
+  const baseItems = [
+    { title: '我的订单', path: '/dashboard/order' }
+  ]
+  
+  if (source.value === 'afterSales') {
+    return [
+      ...baseItems,
+      { title: '售后管理', path: '/dashboard/order/afterSales' },
+      { title: '订单详情' }
+    ]
+  } else {
+    return [
+      ...baseItems,
+      { title: '订单中心', path: '/dashboard/order/center' },
+      { title: '订单详情' }
+    ]
+  }
+})
 
 // 状态管理变量
 const pending = ref(false)
@@ -447,6 +472,21 @@ const hasAfterSales = computed(() => {
 const afterSalesCount = computed(() => {
   return orderDetail.value.afterSales ? orderDetail.value.afterSales.length : 0
 })
+
+// 售后详情弹窗状态
+const isAfterSaleDialogOpen = ref(false)
+const currentAfterSaleId = ref('')
+
+// 打开售后详情弹窗
+const openAfterSaleDetail = (afterSaleId) => {
+  currentAfterSaleId.value = afterSaleId
+  isAfterSaleDialogOpen.value = true
+}
+
+// 关闭售后详情弹窗
+const closeAfterSaleDialog = () => {
+  isAfterSaleDialogOpen.value = false
+}
 
 // API调用函数
 const fetchOrderDetail = async () => {
