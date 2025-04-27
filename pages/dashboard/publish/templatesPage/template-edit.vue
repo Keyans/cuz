@@ -147,20 +147,20 @@
         <div class="mb-6">
           <label class="block text-sm text-gray-700 mb-4">规格信息：</label>
           <el-table :data="formData.specificationInfoList" style="width: 100%" border :header-cell-style="{background: 'var(--el-fill-color-light)',color: '#606266'}">
-            <el-table-column prop="color" label="颜色" align="center">
+            <el-table-column prop="specName" label="颜色" align="center">
               <template #default="{ row }">
-                <el-input disabled placeholder="商品颜色规格" />
+                <el-input v-model="row.specName" disabled placeholder="商品颜色规格" />
               </template>
             </el-table-column>
-            <el-table-column prop="size" label="尺码" align="center">
+            <el-table-column prop="specAttribute" label="尺码" align="center">
               <template #default="{ row }">
-                <el-input disabled placeholder="商品尺码规格" />
+                <el-input v-model="row.specAttribute" disabled placeholder="商品尺码规格" />
               </template>
             </el-table-column>
             <el-table-column prop="specImage" label="SKU图" width="150px" align="center">
               <template #default="{ row }">
                 <div class="tableCheckBox">
-                  <el-img :src="row.specImage" style="width: 80px;height: 80px;"/>
+                  <ProductImage v-model="row.specImage" :disabled="true" :draggable="false"/>
                 </div>
               </template>
             </el-table-column>
@@ -170,7 +170,7 @@
                   <el-option :value="1" label="百分比" />
                   <el-option :value="2" label="固定数值" />
                 </el-select>
-                <el-input-number v-model="row.sellPrice" :min="0" :max="1000"  class="inline-block">
+                <el-input-number v-model="row.sellPrice" :min="0" :max="row.priceType===1?1000:10000" :precision="row.priceType===1?0:2" class="inline-block">
                   <template v-if="row.priceType===1" #suffix>
                     <span>%</span>
                   </template>
@@ -179,7 +179,7 @@
             </el-table-column>
             <el-table-column prop="suggestPrice" label="建议零售价" align="center">
               <template #default="{ row }">
-                <el-input-number v-model="row.suggestPrice" :min="1" :max="10">
+                <el-input-number v-model="row.suggestPrice" :precision="row.priceType===1?0:2" @change="(suggestPrice:Number)=>suggestPriceChange(row,suggestPrice)">
                   <template v-if="row.priceType===1" #suffix>
                     <span>%</span>
                   </template>
@@ -295,8 +295,8 @@ const formData = reactive<FormDataType>({
   detailsImagesList:[], // 详情图
   materialImageList:[], // 素材图
   specificationInfoList:[{
-    color: "", //颜色
-    size: "", //尺码
+    specName: "", //颜色
+    specAttribute: "", //尺码
     specImage: [], //sku图
     sellPrice: "", //利润
     priceType: 1,// 售价类型 1:百分比 2:固定值
@@ -365,7 +365,7 @@ async function fetchTemplateData(id: string) {
     formData.specificationInfoList = data.specificationInfo.map(item => {
       return {
         ...item,
-        specImage: [JSON.parse(item.specImage)]
+        specImage: [item.specImage]
       }})
     formData.mainImageList = data.mainImages;
     formData.detailsImagesList = data.detailsImages;
@@ -436,7 +436,7 @@ async function save() {
       const specificationInfoList = formData.specificationInfoList.map(item => {
         return {
           ...item,
-          specImage: item.specImage && item.specImage.length > 0 ? item.specImage[0] : ''
+          specImage: item.specImage && item.specImage.length > 0 ? item.specImage[0] : {}
         };
       });
       if(!specificationInfoList) {
@@ -530,6 +530,12 @@ const handleAttrFormat = (params:any)=>{
 }
 const handlePublicInfoFormat = (params:any)=>{
   formData.publicInformation = params;
+}
+// 建议零售价校验
+const suggestPriceChange = (row:any, value:Number)=>{
+  if(value >= row.sellPrice) return
+  ElMessage.warning('建议零售价不得低于利润')
+  row.suggestPrice = row.sellPrice
 }
 </script>
 
