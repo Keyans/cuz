@@ -47,7 +47,7 @@
           </ShimmerButton>
         </NuxtLink>
         <a :href="config.public.MICRO_POD_URL">
-          <InteractiveHoverButton class="ml-10" text="免费设计"/>
+          <InteractiveHoverButton @click="openDesigner" class="ml-10" text="免费设计"/>
         </a>
       </div>
       </Motion>
@@ -64,7 +64,9 @@ import { InteractiveHoverButton } from '~/components/ui/interactive-hover-button
 import { ShimmerButton } from '~/components/ui/shimmer-button';
 
 const config = useRuntimeConfig();
-
+// const openDesigner = () => {
+//   window.open(config.public.MICRO_POD_URL, '_blank');
+// }
 </script>
 <style scoped>
 .index-bg{
