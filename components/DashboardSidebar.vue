@@ -295,8 +295,23 @@
     if (href === '/dashboard' && route.path === '/dashboard') {
       return true
     }
-    return route.path === href && href !== '/dashboard'
+    // 为了处理子路由，检查当前路径是否以href开头
+    if (href !== '/dashboard') {
+      return route.path === href || route.path.startsWith(`${href}/`)
+    }
+    return false
   }
+  
+  // 初始化时自动展开当前路由所在的菜单
+  sidebarItems.forEach((item: any) => {
+    if (item.children) {
+      // 如果当前路径匹配菜单项或其子菜单项，展开该菜单
+      const shouldOpen = item.children.some((child: any) => isActive(child.href)) || isActive(item.href)
+      if (shouldOpen) {
+        item.isOpen = true
+      }
+    }
+  })
   
   // Define simple icon components
   const IconHome = defineComponent({
