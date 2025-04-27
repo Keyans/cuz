@@ -122,7 +122,7 @@
           <div class="flex items-center text-xs text-gray-500 mb-2">
             <span>按住拖拽可调整顺序，宽高比例 3:4 且宽>=1340px，高>=1785px，图片大小 2M 内，最多上传10张</span>
           </div>
-          <ProductImage v-model="formData.mainImageList" :draggable="false" :limit="10" galleryText="效果图" localText="本地图" />
+          <ProductImage v-model="formData.mainImageList" :draggable="true" :limit="10" galleryText="效果图" localText="本地图" />
         </div>
         
         <!-- 详情图上传 -->
@@ -131,7 +131,7 @@
           <div class="flex items-center text-xs text-gray-500 mb-2">
             <span>按住拖拽可调整顺序，图片宽高比例 1/2 ≤ x ≤ 2，图片大小 2M 内，最多上传20张</span>
           </div>
-          <ProductImage v-model="formData.detailsImagesList" :draggable="false" :limit="20" galleryText="效果图" localText="本地图" />
+          <ProductImage v-model="formData.detailsImagesList" :draggable="true" :limit="20" galleryText="效果图" localText="本地图" />
         </div>
         
         <!-- 素材图上传 -->
@@ -140,7 +140,7 @@
           <div class="flex items-center text-xs text-gray-500 mb-2">
             <span>素材图宽高比例 1:1 且宽高均大于800px，图片大小 2M 内，最多上传1张</span>
           </div>
-          <ProductImage v-model="formData.materialImageList" :draggable="false" galleryText="效果图" localText="本地图" />
+          <ProductImage v-model="formData.materialImageList" :draggable="true" galleryText="效果图" localText="本地图" />
         </div>
         
         <!-- 规格信息 -->

@@ -6,14 +6,15 @@
  * @LastEditTime: 2024-02-10 11:38:51
 -->
 <script lang="ts" setup>
-// import { ref, PropType, computed } from 'vue'
-import { Plus } from '@element-plus/icons-vue'
-// import cropper from './cropper.vue'
+import { ref, type PropType } from 'vue'
+// import { Plus } from '@element-plus/icons-vue'
+import cropper from './cropper.vue'
 import { ElMessage } from 'element-plus'
 import { useVModel } from '@vueuse/core'
 import { verifyFormat, httpRequest } from './upload'
-import type { UploadConfig, CusUploadRawFile } from './upload'
+import type { UploadConfig, CusUploadRawFile } from '@/components/q-upload/upload'
 import type { UploadFile, UploadRawFile } from 'element-plus'
+import uuid from '@/public/js/uuid'
 /*
  *variable
  */
@@ -35,7 +36,7 @@ const $props = defineProps({
                 width: 10000,
                 height: 10000,
                 types: ['image/png', 'image/jpg', 'image/gif', 'image/jpeg', 'image/avif'],
-                size: 2,
+                size: 2, // 2MB
             }
         },
     },
@@ -70,8 +71,7 @@ const handleChangeUpload = async (file: CusUploadRawFile) => {
     const { src, success } = await verifyFormat(file, $props.format)
     if (success && src) {
         cropperSrc.value = src
-        // isShowCropper.value = true
-        handleCropperLoad(src)
+        isShowCropper.value = true
     } else {
         uploadRef.value.handleRemove(file)
     }
@@ -117,14 +117,14 @@ const handleClose = () => {
                 <el-icon v-else :style="{ width: `${$props.width}px`, height: `${$props.height}px` }"><i-ep-plus /></el-icon>
             </slot>
         </el-upload>
-        <!-- <cropper
+        <cropper
             v-if="isShowCropper"
             v-model:cropper-show="isShowCropper"
             :append-to-body="appendToBody"
             :cropper-src="cropperSrc"
             @close="handleClose"
             @upload-img="handleCropperLoad"
-        /> -->
+        />
     </div>
 </template>
 
@@ -139,4 +139,21 @@ const handleClose = () => {
 // .avatar-uploader {
 //     @include flex();
 // }
+.qupload {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.avatar-uploader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed #ccc;
+    border-radius: 6px;
+    & img {
+        border-radius: 6px;
+    }
+}
 </style>

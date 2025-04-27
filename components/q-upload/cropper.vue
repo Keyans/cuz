@@ -6,15 +6,15 @@
  * @LastEditTime: 2024-02-10 14:05:07
 -->
 <script setup lang="ts">
-import { ref, reactive, defineProps, defineEmits } from 'vue'
+import { ref } from 'vue'
 import { Sort, Switch, ZoomIn, RefreshRight, ZoomOut, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, RefreshLeft } from '@element-plus/icons-vue'
-// import VueCropper from 'vue-cropperjs'
+import VueCropper from 'vue-cropperjs'
 import { useVModel } from '@vueuse/core'
 import uuid from '@/public/js/uuid'
 /*
  *variable
  */
-const $props = defineProps({
+ const $props = defineProps({
     cropperSrc: { type: String, default: '' },
     cropperShow: {
         type: Boolean,
@@ -198,37 +198,37 @@ const handleCloseDialog = () => {
 @import 'cropperjs/dist/cropper.css';
 </style>
 <style scoped lang="scss">
-@include b(cropper-container) {
-    width: 100%;
-    @include e(content) {
-        display: flex;
-        justify-content: space-around;
-    }
-    @include e(btnGroup) {
-        width: 400px;
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-    }
-}
-@include b(preview-area) {
-    width: 30%;
-    & p {
-        font-size: 1.25rem;
-        color: #000;
-        font-weight: 700;
-        margin: 0;
-        margin-bottom: 1rem;
-    }
-    & p:last-of-type {
-        margin-top: 1rem;
-    }
-}
-@include b(preview) {
-    width: 100%;
-    height: calc(372px * (9 / 16));
-    overflow: hidden;
-}
+// @include b(cropper-container) {
+//     width: 100%;
+//     @include e(content) {
+//         display: flex;
+//         justify-content: space-around;
+//     }
+//     @include e(btnGroup) {
+//         width: 400px;
+//         display: flex;
+//         justify-content: center;
+//         margin-top: 20px;
+//     }
+// }
+// @include b(preview-area) {
+//     width: 30%;
+//     & p {
+//         font-size: 1.25rem;
+//         color: #000;
+//         font-weight: 700;
+//         margin: 0;
+//         margin-bottom: 1rem;
+//     }
+//     & p:last-of-type {
+//         margin-top: 1rem;
+//     }
+// }
+// @include b(preview) {
+//     width: 100%;
+//     height: calc(372px * (9 / 16));
+//     overflow: hidden;
+// }
 // :deep(.cropper-bg) {
 //     width: 400px !important;
 //     background: pink;

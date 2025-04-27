@@ -51,6 +51,7 @@
     "sass-embedded": "^1.86.3",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
-    "vue-tsc": "^2.2.8"
+    "vue-tsc": "^2.2.8",
+    "vue-cropperjs": "^5.0.0"
   }
 }
