@@ -84,155 +84,117 @@
   
   <script setup lang="ts">
   import { useRouter } from 'vue-router'
+  import { ref, watch, onMounted } from 'vue'
+  import { doGetCategoryList } from '@/apis/sourcing'
+
+// onMounted(async () => {
+//   try {
+//     const params = {
+//       level: 'LEVEL_3',
+//       current: 1,
+//       size: 20,
+//       queryenable:true 
+//     }
+//     const response = await doGetCategoryList(params)
+//     console.log('类目数据已加载, 共', response.data.length, '项')
+//   } catch (error) {
+//     console.error('获取类目数据失败:', error)
+//   }
+// })
   
   const router = useRouter()
   
   definePageMeta({
-    layout: 'dashboard',
-    middleware: ['auth']
+    layout: 'dashboard'
   })
   
   // 点击商品跳转到详情页
-  const navigateTo = (path) => {
+  const navigateTo = (path: string) => {
     router.push(path)
   }
 
-  // 商品类目数据
-  const categories = [
-    {
-      id: 1,
-      name: '童装',
-      image: '/assets/catalog/Children_Wear.png'
-    },
-    {
-      id: 2,
-      name: '男装',
-      image: '/assets/catalog/Men.png'
-    },
-    {
-      id: 3,
-      name: '女装',
-      image: '/assets/catalog/Women.png'
-    },
-    {
-      id: 4,
-      name: '首饰',
-      image: '/assets/catalog/Jewelry.png'
-    },
-    {
-      id: 5,
-      name: '手机壳',
-      image: '/assets/catalog/Phone_Cases.png'
-    },
-    {
-      id: 6,
-      name: '背包',
-      image: '/assets/catalog/Backpack.png'
-    },
-    {
-      id: 7,
-      name: '水杯',
-      image: '/assets/catalog/Water_Cup.png',
-    },
+  // 定义商品和类目接口
+  interface Product {
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+    image: string;
+    tag: string;
+  }
 
-    {
-      id: 8,
-      name: '背心',
-      image: '/assets/catalog/Vest.png'
+  interface Category {
+    id: number | string;
+    name: string;
+    image: string;
+    level?: number;
+    parentId?: string;
+  }
+
+  interface ApiResponse<T> {
+    code: number;
+    data: T;
+    message: string;
+  }
+
+  interface CategoryResponse {
+    records: Category[];
+    total: number;
+    size: number;
+    current: number;
+  }
+
+  // 商品类目数据
+  const categories = ref<Category[]>([])
+
+  // 从服务端获取分类数据，使用key选项确保请求不重复
+  const { data: categoryResponse, pending, error } = await useFetch<ApiResponse<CategoryResponse>>('/api/categories/listLevel', {
+    params: {
+      level: 'LEVEL_3',
+      current: 1,
+      size: 20,
+      queryenable: true 
     },
-    {
-      id: 9,
-      name: '卫衣',
-      image: '/assets/catalog/Hoodie.png'
-    },
-    {
-      id: 10,
-      name: '帽衫',
-      image: '/assets/catalog/Hoodies.png'
-    },
-    {
-      id: 11,
-      name: '帽子',
-      image: '/assets/catalog/Hat.png'
-    },
-    {
-      id: 12,
-      name: '鞋子',
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop'
-    },
-  ]
-  
+    key: 'categories-list'
+  })
+
+  // 仅初始化时设置类目数据，避免重复更新
+  if (categoryResponse.value) {
+    if (categoryResponse.value.code === 200 && categoryResponse.value.data?.records) {
+      categories.value = categoryResponse.value.data.records
+      console.log('分类数据加载成功，共', categories.value.length, '项')
+    }
+  }
+
+  // 获取热门商品数据
+  const { data: hotProductsResponse, pending: hotPending } = await useFetch<ApiResponse<Product[]>>('/api/products/hot', {
+    key: 'hot-products'
+  })
+
+  // 获取新品推荐数据
+  const { data: newProductsResponse, pending: newPending } = await useFetch<ApiResponse<Product[]>>('/api/products/new', {
+    key: 'new-products'
+  })
+
   // 热门商品数据
-  const hotProducts = [
-    {
-      id: 1,
-      name: '时尚棒球帽',
-      description: '采用优质棉质面料，透气舒适，可调节帽围，适合各种场合佩戴，经典设计永不过时。',
-      price: 89.00,
-      image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&h=300&fit=crop',
-      tag: '热销'
-    },
-    {
-      id: 2,
-      name: '运动休闲T恤',
-      description: '采用优质面料，柔软亲肤，修身剪裁，多色可选，适合日常休闲和运动穿着。',
-      price: 129.00,
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop',
-      tag: '热销'
-    },
-    {
-      id: 3,
-      name: '防晒渔夫帽',
-      description: '大帽檐设计，有效防晒，可折叠便携，适合户外活动和度假旅行使用。',
-      price: 69.00,
-      image: 'https://images.unsplash.com/photo-1534215754734-18e55d13e346?w=400&h=300&fit=crop',
-      tag: '热销'
-    },
-    {
-      id: 4,
-      name: '简约双肩包',
-      description: '大容量设计，防水面料，多个收纳隔层，舒适背带，适合通勤和旅行使用。',
-      price: 199.00,
-      image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=300&fit=crop',
-      tag: '热销'
-    }
-  ]
-  
+  const hotProducts = ref<Product[]>([])
+  if (hotProductsResponse.value?.code === 200 && hotProductsResponse.value.data) {
+    hotProducts.value = hotProductsResponse.value.data
+  }
+
   // 新品推荐数据
-  const newProducts = [
-    {
-      id: 1,
-      name: '潮流连帽卫衣',
-      description: '采用高品质面料，保暖舒适，时尚版型，多色可选，适合秋冬季节穿着。',
-      price: 199.00,
-      image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=300&fit=crop',
-      tag: '新品'
-    },
-    {
-      id: 2,
-      name: '复古鸭舌帽',
-      description: '经典复古设计，优质棉质面料，精致刺绣，可调节帽围，百搭时尚。',
-      price: 79.00,
-      image: 'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?w=400&h=300&fit=crop',
-      tag: '新品'
-    },
-    {
-      id: 3,
-      name: '印花短袖T恤',
-      description: '独特印花设计，优质棉料，舒适透气，修身版型，适合日常休闲穿着。',
-      price: 99.00,
-      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=300&fit=crop',
-      tag: '新品'
-    },
-    {
-      id: 4,
-      name: '创意手机壳',
-      description: '采用环保材质，防摔防刮，完美贴合，多款图案可选，突显个性。',
-      price: 49.00,
-      image: 'https://images.unsplash.com/photo-1603313011101-320f26a4f6f6?w=400&h=300&fit=crop',
-      tag: '新品'
+  const newProducts = ref<Product[]>([])
+  if (newProductsResponse.value?.code === 200 && newProductsResponse.value.data) {
+    newProducts.value = newProductsResponse.value.data
+  }
+  
+  // 监听数据变化（可选）
+  watch(categoryResponse, (newVal) => {
+    if (newVal?.code === 200 && newVal.data?.records) {
+      categories.value = newVal.data.records
+      console.log('分类数据更新，共', categories.value.length, '项')
     }
-  ]
+  })
   </script>
   
   <style scoped>

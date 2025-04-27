@@ -39,7 +39,7 @@
           />
         </div>
       <div class="flex items-center">
-        <NuxtLink to="/dashboard/sourcing/list">
+        <NuxtLink to="/dashboard/sourcing">
           <ShimmerButton>
             <span>
               开始选品

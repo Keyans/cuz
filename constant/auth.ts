@@ -1,6 +1,8 @@
 // 定义不需要登录验证的路由列表
 export const publicRoutes = [
+  '/dashboard/sourcing',
   '/dashboard/sourcing/list',
+  '/dashboard/sourcing/[id]',
   '/login',
   '/register',
   '/',
@@ -9,7 +11,9 @@ export const publicRoutes = [
 
 // 定义需要隐藏侧边栏的路由列表
 export const hideSidebarRoutes = [
-  '/dashboard/sourcing/list'
+  '/dashboard/sourcing',
+  '/dashboard/sourcing/list',
+  '/dashboard/sourcing/[id]'
 ] as const
 
 // 检查路由是否在公开路由列表中

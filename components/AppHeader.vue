@@ -374,7 +374,7 @@
   const navigationItems = [
     { 
       name: '选品中心', 
-      href: '/dashboard/sourcing/list', 
+      href: '/dashboard/sourcing', 
       icon: 'products',
       hasDropdown: false,
       dropdownItems: [

@@ -203,8 +203,7 @@ const breadcrumb = [
 ]
 
 definePageMeta({
-  layout: 'dashboard',
-  middleware: ['auth'],
+  layout: 'dashboard'
 })
 
 // 图片预览相关
@@ -255,6 +254,12 @@ const updateScrollButtons = () => {
   const container = thumbnailContainer.value
   isScrollLeftDisabled.value = container.scrollLeft <= 0
   isScrollRightDisabled.value = container.scrollLeft + container.clientWidth >= container.scrollWidth
+}
+
+// 处理地址保存
+const handleAddressSave = (address: any) => {
+  console.log('地址已保存:', address)
+  showAddressDialog.value = false
 }
 
 // 监听滚动事件

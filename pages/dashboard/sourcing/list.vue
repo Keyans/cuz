@@ -4,8 +4,18 @@
     <Breadcrumb v-if="isAuthenticated" :items="breadcrumb"/>
     <!-- 页面标题 -->
     <div class="mb-6">
-      <h1 class="text-2xl font-bold">{{ pageTitle }}</h1>
-      <p class="text-gray-600 mt-3">查找优质商品，一键刊登，快速开店</p>
+      <h1 class="text-2xl font-bold">产品列表</h1>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <button 
+          v-for="category in categories" 
+          :key="category.id"
+          class="px-4 py-2 rounded-full border hover:bg-primary hover:text-white transition-colors"
+          :class="selectedCategory === category.id ? 'bg-primary text-white' : 'bg-white'"
+          @click="selectCategory(category.id)"
+        >
+          {{ category.name }}
+        </button>
+      </div>
     </div>
 
     <!-- 搜索框 -->
@@ -48,21 +58,31 @@
     </div>
 
     <!-- 商品列表 -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      <div v-for="product in filteredProducts" :key="product.id" class="bg-white border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- 商品列表 -->
+      <div v-if="loading" class="col-span-full text-center py-12">
+        <p class="text-lg text-gray-500">加载中...</p>
+      </div>
+      <div v-else-if="products.length === 0" class="col-span-full text-center py-12">
+        <p class="text-lg text-gray-500">暂无商品</p>
+      </div>
+      <div 
+        v-else
+        v-for="product in products" 
+        :key="product.id" 
+        class="bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer"
+      >
         <div class="relative">
-          <img :src="product.image" :alt="product.name" class="w-full aspect-square object-cover" />
-          <button class="absolute top-2 right-2 p-1.5 bg-white/70 backdrop-blur-sm rounded-full text-gray-600 hover:text-red-500 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
+          <img :src="product.image" :alt="product.name" class="w-full h-full aspect-square object-cover" />
+          <span v-if="product.tag" class="absolute top-2 left-2 bg-primary text-white text-xs px-2 py-1 rounded">{{ product.tag }}</span>
         </div>
-        <div class="p-3">
-          <h3 class="text-sm font-semibold mb-1 line-clamp-1">{{ product.name }}</h3>
-          <div class="text-primary font-bold">¥ {{ product.price }}</div>
-          <div class="text-xs text-gray-500 my-1.5">{{ product.shippingDisplay }}</div>
-          <button @click="navigateToDetail(product.id)" class="text-xs text-primary border border-primary rounded px-2 py-1 w-full hover:bg-primary hover:text-white transition-colors">查看更多</button>
+        <div class="p-4">
+          <h3 class="text-lg font-semibold mb-2 line-clamp-1">{{ product.name }}</h3>
+          <p class="text-gray-500 text-sm mb-3 line-clamp-2">{{ product.description }}</p>
+          <div class="flex justify-between items-center">
+            <div class="text-primary font-bold text-xl">¥ {{ product.price }}</div>
+            <button class="btn-primary px-4 py-2 text-sm">选品</button>
+          </div>
         </div>
       </div>
     </div>
@@ -139,8 +159,7 @@ const breadcrumb = computed(() => {
 })
 
 definePageMeta({
-  layout: 'dashboard',
-  middleware: ['auth'],
+  layout: 'dashboard'
 })
 
 // 筛选条件
@@ -153,173 +172,96 @@ const currentPage = ref(1)
 const pageSize = 15
 const totalPages = 5
 
-// 模拟不同类目的商品数据
-const allProducts = {
-  clothing: [
-    {
-      id: 1,
-      name: '成人仿棉圆领短袖',
-      price: 27.80,
-      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop',
-      shipping: '1-3',
-      shippingDisplay: '1~3天发货',
-      stock: 'in-stock'
-    },
-    {
-      id: 2,
-      name: '运动休闲T恤',
-      price: 129.00,
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop',
-      shipping: '1-3',
-      shippingDisplay: '1~3天发货',
-      stock: 'in-stock'
-    },
-    // 更多服装类商品...
-  ],
-  accessories: [
-    {
-      id: 1,
-      name: '时尚棒球帽',
-      price: 89.00,
-      image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500&h=500&fit=crop',
-      shipping: '1-3',
-      shippingDisplay: '1~3天发货',
-      stock: 'in-stock'
-    },
-    {
-      id: 2,
-      name: '复古鸭舌帽',
-      price: 79.00,
-      image: 'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab?w=500&h=500&fit=crop',
-      shipping: '1-3',
-      shippingDisplay: '1~3天发货',
-      stock: 'in-stock'
-    },
-    // 更多配饰类商品...
-  ],
-  home: [
-    {
-      id: 1,
-      name: '北欧风抱枕',
-      price: 59.00,
-      image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&h=500&fit=crop',
-      shipping: '3-5',
-      shippingDisplay: '3~5天发货',
-      stock: 'in-stock'
-    },
-    {
-      id: 2,
-      name: '简约装饰画',
-      price: 199.00,
-      image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop',
-      shipping: '3-5',
-      shippingDisplay: '3~5天发货',
-      stock: 'in-stock'
-    },
-    // 更多家居类商品...
-  ],
-  hot: [
-    {
-      id: 1,
-      name: '时尚棒球帽',
-      price: 89.00,
-      image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500&h=500&fit=crop',
-      shipping: '1-3',
-      shippingDisplay: '1~3天发货',
-      stock: 'in-stock'
-    },
-    {
-      id: 2,
-      name: '运动休闲T恤',
-      price: 129.00,
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop',
-      shipping: '1-3',
-      shippingDisplay: '1~3天发货',
-      stock: 'in-stock'
-    },
-  ],
-  new: [
-    {
-      id: 1,
-      name: '潮流连帽卫衣',
-      price: 199.00,
-      image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&h=500&fit=crop',
-      shipping: '1-3',
-      shippingDisplay: '1~3天发货',
-      stock: 'in-stock'
-    },
-    {
-      id: 2,
-      name: '复古鸭舌帽',
-      price: 79.00,
-      image: 'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab?w=500&h=500&fit=crop',
-      shipping: '1-3',
-      shippingDisplay: '1~3天发货',
-      stock: 'in-stock'
-    },
-  ]
+// 定义商品和类目接口
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  tag?: string;
 }
 
-// 为每个类目添加更多商品数据
-Object.keys(allProducts).forEach(category => {
-  if (category !== 'hot' && category !== 'new') {
-    allProducts[category] = allProducts[category].concat(
-      Array.from({ length: 13 }, (_, i) => ({
-        id: i + 3,
-        name: `${category}商品 ${i + 3}`,
-        price: Math.floor(Math.random() * 150) + 50,
-        image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop',
-        shipping: '3-5',
-        shippingDisplay: '3~5天发货',
-        stock: 'in-stock'
-      }))
-    )
+interface Category {
+  id: number | string;
+  name: string;
+  level?: number;
+  image?: string;
+}
+
+const categories = ref<Category[]>([])
+const products = ref<Product[]>([])
+const loading = ref(true)
+const selectedCategory = ref<number | string | null>(null)
+
+// 选择类目
+const selectCategory = (categoryId: number | string) => {
+  selectedCategory.value = categoryId
+  // 根据选中的类目加载商品
+  // 这里可以根据实际情况调用后端API
+}
+
+// 页面加载时获取分类数据
+onMounted(async () => {
+  try {
+    // 从服务端获取类目数据
+    const { data } = await useFetch<{ code: number, data: Category[], message: string }>('/api/categories/listLevel', {
+      params: {
+        level: 1, // 获取一级类目
+        parentId: 0, // 可选：顶级类目的父ID
+        pageSize: 20, // 可选：每页数量
+        sortBy: 'order', // 可选：排序字段
+        sortOrder: 'asc' // 可选：排序方向
+      }
+    })
+    
+    if (data.value && data.value.code === 200 && data.value.data) {
+      categories.value = data.value.data
+      
+      // 如果有类目数据，默认选中第一个
+      if (categories.value.length > 0) {
+        selectedCategory.value = categories.value[0].id
+      }
+    }
+    
+    // 模拟商品数据
+    products.value = [
+      {
+        id: 1,
+        name: '时尚棒球帽',
+        description: '采用优质棉质面料，透气舒适，可调节帽围，适合各种场合佩戴，经典设计永不过时。',
+        price: 89.00,
+        image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&h=300&fit=crop',
+        tag: '热销'
+      },
+      {
+        id: 2,
+        name: '运动休闲T恤',
+        description: '采用优质面料，柔软亲肤，修身剪裁，多色可选，适合日常休闲和运动穿着。',
+        price: 129.00,
+        image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop'
+      },
+      {
+        id: 3,
+        name: '防晒渔夫帽',
+        description: '大帽檐设计，有效防晒，可折叠便携，适合户外活动和度假旅行使用。',
+        price: 69.00,
+        image: 'https://images.unsplash.com/photo-1534215754734-18e55d13e346?w=400&h=300&fit=crop'
+      },
+      {
+        id: 4,
+        name: '简约双肩包',
+        description: '大容量设计，防水面料，多个收纳隔层，舒适背带，适合通勤和旅行使用。',
+        price: 199.00,
+        image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=300&fit=crop'
+      }
+    ]
+  } catch (error) {
+    console.error('获取数据失败', error)
+  } finally {
+    loading.value = false
   }
 })
-
-// 根据类别获取商品数据
-const productList = computed(() => {
-  const categoryKey = category.value || 'clothing'
-  return allProducts[categoryKey] || []
-})
-
-// 过滤后的商品列表
-const filteredProducts = computed(() => {
-  return productList.value.filter(product => {
-    // 搜索过滤
-    if (searchQuery.value && !product.name.toLowerCase().includes(searchQuery.value.toLowerCase())) {
-      return false
-    }
-    
-    // 价格过滤
-    if (priceRange.value) {
-      const [min, max] = priceRange.value.split('-')
-      if (max && (product.price < Number(min) || product.price > Number(max))) {
-        return false
-      }
-      if (!max && product.price < Number(min)) {
-        return false
-      }
-    }
-    
-    // 发货时间过滤
-    if (shippingTime.value && product.shipping !== shippingTime.value) {
-      return false
-    }
-    
-    // 库存状态过滤
-    if (stockStatus.value && product.stock !== stockStatus.value) {
-      return false
-    }
-    
-    return true
-  })
-})
-
-// 跳转到详情页
-const navigateToDetail = (id: number) => {
-  router.push(`/dashboard/sourcing/${id}`)
-}
 </script>
 
 <style scoped>
@@ -337,5 +279,9 @@ const navigateToDetail = (id: number) => {
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.btn-primary {
+  @apply bg-primary text-white rounded hover:bg-primary-dark transition-colors;
 }
 </style>
