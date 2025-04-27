@@ -87,7 +87,7 @@
             </div>
             <ProductImage
               v-model="formData.mainImage"
-              :draggable="false"
+              :draggable="true"
               :limit="10"
               galleryText="效果图"
               localText="本地图"
@@ -105,7 +105,7 @@
             </div>
             <ProductImage
               v-model="formData.descImage"
-              :draggable="false"
+              :draggable="true"
               :limit="20"
               galleryText="效果图"
               localText="本地图"
@@ -123,7 +123,7 @@
             </div>
             <ProductImage
               v-model="formData.materialImage"
-              :draggable="false"
+              :draggable="true"
               galleryText="效果图"
               localText="本地图"
             />

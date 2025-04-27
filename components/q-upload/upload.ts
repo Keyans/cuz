@@ -6,6 +6,7 @@
  * @LastEditTime: 2024-02-10 13:46:57
  */
 import { ElMessage } from 'element-plus'
+// import axiosRequest from '@apis/request'
 import axiosRequest from '@/apis/axiosConfig'
 // import axios from 'axios'
 import { UploadAjaxError } from 'element-plus/es/components/upload/src/ajax'
@@ -60,8 +61,8 @@ const defaultUploadConfig: UploadConfig = {
 async function verifyFormat(rawFile: CusUploadRawFile, uploadConfig: Partial<UploadConfig>) {
     const mergeConfig = Object.assign(defaultUploadConfig, uploadConfig)
     const imageObject = new Image()
-    const isInclude = mergeConfig.types.includes(rawFile.raw.type)
-    const isBeyondSize = rawFile.size / 1024 / 1024 < mergeConfig.size
+    const isInclude = mergeConfig.types.includes(rawFile.raw?.type as keyof typeof IMAGETYPE)
+    const isBeyondSize = rawFile.size ?? 0 / 1024 / 1024 < mergeConfig.size
     const isBeyondLimit = await new Promise<boolean>(function (resolve) {
         let _URL = window.URL || window.webkitURL
         imageObject.src = _URL.createObjectURL(rawFile.raw)
@@ -104,20 +105,19 @@ function toastError(isInclude: boolean, isBeyondSize: boolean, isBeyondLimit: bo
  */
 async function httpRequest(request: any, cuttingObject: File) {
     const { action, file, filename, onError, onSuccess } = request
-    // let formData = new FormData()
-    // formData.append(filename, cuttingObject, file.name)
-    const formData = {
-        filename,
-        cuttingObject,
-        name:file.name,
-    }
+    let formData = new FormData()
+    formData.append(filename, cuttingObject, file.name)
     // 上传中的loading
+    // 检查FormData内容
+    for (let [key, value] of formData.entries()) {
+        console.log(`FormData包含: ${key} = ${value instanceof File ? value.name : value}`);
+    }
     const {
         data: { data, code, msg },
     } = await axiosRequest
         .post(action, formData, {
             headers: {
-                'Content-Type': 'multipart/form-data', // 需要指定上传的方式
+               'Content-Type': 'multipart/form-data',  // 需要指定上传的方式
             },
             timeout: Number(import.meta.env.VITE_REQUEST_TIME_OUT), // 防止文件过大超时
         })
