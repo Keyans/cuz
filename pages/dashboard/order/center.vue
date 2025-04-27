@@ -37,7 +37,6 @@
         @click="switchTab('other')"
       >
         其他订单
-        <span class="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">2114</span>
         </button>
       <button 
         class="px-6 py-3" 

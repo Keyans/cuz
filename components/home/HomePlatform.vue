@@ -18,7 +18,7 @@ const carousel = reactive({
   list: [
     {
       image:
-        'https://nimg5.hicustom.com/static/frontendService/ESIJSA-sSOOxSXZyZOMRtkkkekeqWV-1000-6a59466b8fda84018a000283cc629.png',
+        '/assets/platform/shopee.png',
       showButtons: false, // 默认不显示按钮
       buttons: [
         {
@@ -37,7 +37,52 @@ const carousel = reactive({
     },
     {
       image:
-        'https://nimg5.hicustom.com/static/frontendService/BYDKLG-sSOOxxOMXXXZOykkkekeqVg-1000-e7e157dd144caf5093fb5a6fe2656.png',
+        '/assets/platform/amazon.png',
+      showButtons: false, // 默认不显示按钮
+      buttons: [
+        { name: '联系店铺', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
+        { name: '了解更多', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
+      ],      
+    },
+    {
+      image:
+        '/assets/platform/shopify.png',
+      showButtons: false, // 默认不显示按钮
+      buttons: [
+        { name: '联系店铺', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
+        { name: '了解更多', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
+      ],
+    },
+    {
+      image:
+        '/assets/platform/shein.jpg',
+      showButtons: false, // 默认不显示按钮
+      buttons: [
+        { name: '联系店铺', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
+        { name: '了解更多', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
+      ],
+    },
+    {
+      image:
+        '/assets/platform/lazada.jpg',
+      showButtons: false, // 默认不显示按钮
+      buttons: [
+        { name: '联系店铺', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
+        { name: '了解更多', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
+      ],
+    },
+    {
+      image:
+        '/assets/platform/lazza.png',
+      showButtons: false, // 默认不显示按钮
+      buttons: [
+        { name: '联系店铺', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
+        { name: '了解更多', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
+      ],
+    },
+    {
+      image:
+        '/assets/platform/wish.png',
       showButtons: false, // 默认不显示按钮
       buttons: [
         {
@@ -53,50 +98,7 @@ const carousel = reactive({
           redirectionMethod: 'WINDOW_OPEN',
         },
       ],
-    },
-    {
-      image:
-        'https://nimg5.hicustom.com/static/frontendService/2RS8TI-sMRtxZStyMyMXMkWePjgWka-1000-50410c11292c844e141aae9ed72e7.png',
-      showButtons: false, // 默认不显示按钮
-      buttons: [
-        { name: '联系店铺', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
-        { name: '了解更多', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
-      ],
-    },
-    {
-      image:
-        'https://nimg5.hicustom.com/static/frontendService/K9C8GG-sytxMXRSOxSZSOVkgVgWgkq-1000-d3a9ac63a56d3ecf0ecc586e7715a.jpg',
-      showButtons: false, // 默认不显示按钮
-      buttons: [
-        { name: '联系店铺', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
-        { name: '了解更多', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
-      ],
-    },
-    {
-      image:
-        'https://nimg5.hicustom.com/static/frontendService/DJYUXZ-stSRXtySyQOyZykkWUPqWUW-1000-1ee5bf21a6f2d68d9cb1b7ace8186.jpg',
-      showButtons: false, // 默认不显示按钮
-      buttons: [
-        { name: '联系店铺', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
-        { name: '了解更多', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
-      ],
-    },
-    {
-      image:
-        'https://nimg5.hicustom.com/static/frontendService/76UK9M-sSOOxxORytxyQkkkekeqke-1000-b451646418268d1f8c03f6a75ccfd.png',
-      showButtons: false, // 默认不显示按钮
-      buttons: [
-        { name: '联系店铺', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
-        { name: '了解更多', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
-        { name: '了解更多', path: '/contact', redirectionMethod: 'WINDOW_OPEN' },
-      ],
-    },
-    {
-      image:
-        'https://nimg5.hicustom.com/static/frontendService/B6NXN5-sSOOxxSMXZXyXxkkkekeVPU-1000-446b5214170df2baf8b9a7dc36eed.png',
-      showButtons: false, // 默认不显示按钮
-      buttons: [{ name: '联系店铺', path: '/contact', redirectionMethod: 'WINDOW_OPEN' }],
-    },
+    }
   ],
 })
 /*
