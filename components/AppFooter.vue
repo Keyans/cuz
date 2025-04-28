@@ -68,7 +68,8 @@
   
         <div class="mt-8 md:mt-12 border-t border-gray-700 pt-6 md:pt-8 text-center">
           <p class="text-xs md:text-sm text-gray-300">
-            &copy;2024-{{ new Date().getFullYear() }} 深圳市森航科技有限公司 版权所有 粤ICP备2025395412号
+            &copy;2024-{{ new Date().getFullYear() }} 深圳市森航科技有限公司 版权所有 
+            <a href="https://beian.miit.gov.cn" target="_blank" class="hover:text-secondary">粤ICP备2025395412号</a>
           </p>
         </div>
       </div>
