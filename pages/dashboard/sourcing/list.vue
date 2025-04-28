@@ -186,7 +186,7 @@ interface Category {
   id: number | string;
   name: string;
   level?: number;
-  image?: string;
+  categoryImg?: string;
 }
 
 const categories = ref<Category[]>([])

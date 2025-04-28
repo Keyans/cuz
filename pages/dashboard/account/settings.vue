@@ -200,6 +200,7 @@ import AddressDialog from '../../../components/common/AddressDialog.vue'
 import InvoiceDialog from '../../../components/common/InvoiceDialog.vue'
 import DeleteConfirmDialog from '../../../components/common/DeleteConfirmDialog.vue'
 import { useUserStore } from '@/stores/user'
+import { doGetAddressList, doGetAddress ,doPutAddress, doPostAddress, doDelAddress } from '@/apis/accountManage'
 
 const toast = useToast()
 const userStore = useUserStore()
@@ -207,10 +208,10 @@ const loading = ref(false)
 
 interface Address {
   id: number
-  name: string
-  phone: string
+  contactName: string
+  contactPhone: string
   address: string
-  isDefault: boolean
+  defReceive: string
 }
 
 interface InvoiceInfo {
@@ -284,24 +285,31 @@ const addressList = ref<Address[]>(initialAddresses)
 const isSubmitting = ref(false)
 
 // 从本地存储加载地址列表
-const loadAddressList = () => {
+const loadAddressList = async () => {
   try {
-    const savedAddresses = localStorage.getItem('addressList')
-    if (savedAddresses) {
-      addressList.value = JSON.parse(savedAddresses)
-    } else {
-      addressList.value = initialAddresses
-      localStorage.setItem('addressList', JSON.stringify(initialAddresses))
+    const req = {
+      current: 1,
+      size: 10
     }
+    const res = await doGetAddressList(req)
+    // if(res.code === 200 && res.data) {
+    //   addressList.value = res.data.records
+    // }
   } catch (error) {
     toast.error('加载地址列表失败')
   }
 }
 
 // 保存地址列表到本地存储
-const saveAddressList = () => {
+const saveAddressList = async () => {
   try {
-    localStorage.setItem('addressList', JSON.stringify(addressList.value))
+    const req = {
+      name: '张三',
+      phone: '13800138000',
+      address: '广东省深圳市南山区科技园南区 1号楼 A座 1001室',
+      isDefault: true
+    }
+    const res = await doPostAddress(req)
   } catch (error) {
     toast.error('保存地址失败')
     throw error
@@ -337,35 +345,10 @@ const invoiceInfo = reactive({
 // 处理保存地址
 const handleSaveAddress = async (address: Address) => {
   try {
-    if (address.id) {
-      // 更新现有地址
-      // TODO: 替换为实际的 API 调用
-      await fetch(`/api/addresses/${address.id}`, {
-        method: 'PUT',
-        body: JSON.stringify(address)
-      })
-      
-      // 更新列表中的地址
-      addressList.value = addressList.value.map(addr => 
-        addr.id === address.id ? address : addr
-      )
-    } else {
-      // 新增地址
-      // TODO: 替换为实际的 API 调用
-      const response = await fetch('/api/addresses', {
-        method: 'POST',
-        body: JSON.stringify(address)
-      })
-      const newAddress = await response.json()
-      
-      // 添加到地址列表
-      addressList.value.push(newAddress)
-    }
-    
+    const res = await doPostAddress(address)
+    console.log(res)
     showAddressDialog.value = false
-    toast.success(address.id ? '地址更新成功' : '地址添加成功')
   } catch (error) {
-    console.error('保存地址失败:', error)
     toast.error('保存地址失败')
   }
 }
@@ -390,16 +373,13 @@ const handleDeleteConfirm = async () => {
   try {
     isSubmitting.value = true
     
-    // 从列表中移除被删除的地址
-    addressList.value = addressList.value.filter(
-      addr => addr.id !== addressToDelete.value?.id
-    )
-    
-    // 保存更新后的列表
-    saveAddressList()
-    
-    toast.success('地址删除成功')
-    showDeleteConfirmDialog.value = false
+    const res = await doDelAddress(addressToDelete.value.id)
+    if(res.code === 200) {
+      toast.success('地址删除成功')
+      // 保存更新后的列表
+      loadAddressList()
+      showDeleteConfirmDialog.value = false
+    }
   } catch (error) {
     toast.error('删除地址失败')
   } finally {
@@ -432,6 +412,7 @@ const setDefaultAddress = async (address: Address) => {
 
 // 打开编辑地址弹窗
 const openEditAddressDialog = (address: Address) => {
+  console.log(address)
   editingAddress.value = { ...address } // 创建地址对象的副本
   showAddressDialog.value = true
 }

@@ -21,7 +21,7 @@
             <div class="flex items-center">
               <label class="block w-20 text-gray-700">收件人</label>
               <input 
-                v-model="form.name" 
+                v-model="form.contactName" 
                 type="text" 
                 class="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="请输入收件人"
@@ -32,7 +32,7 @@
             <div class="flex items-center">
               <label class="block w-20 text-gray-700">手机号</label>
               <input 
-                v-model="form.phone" 
+                v-model="form.contactPhone" 
                 type="tel" 
                 class="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="请输入手机号"
@@ -78,7 +78,7 @@
 
             <div class="flex items-center ml-20">
               <input 
-                v-model="form.isDefault" 
+                v-model="form.defReceive" 
                 id="default-address"
                 type="checkbox" 
                 class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
@@ -126,13 +126,13 @@ const enableScroll = () => {
 
 interface Address {
   id?: number
-  name: string
-  phone: string
-  province: string
-  city: string
-  district: string
+  contactName: string
+  contactPhone: string
+  provinceCode: string
+  cityCode: string
+  regionCode: string
   address: string
-  isDefault: boolean
+  defReceive: Boolean | string
 }
 
 const props = withDefaults(defineProps<{
@@ -162,122 +162,19 @@ onBeforeUnmount(() => {
 
 const emit = defineEmits(['update:show', 'save'])
 
-const addresses = ref<Address[]>([
-  // 国内地址
-  {
-    id: 1,
-    name: '张三',
-    phone: '13800138000',
-    province: '浙江省',
-    city: '杭州市',
-    district: '西湖区',
-    address: '文三路 123 号',
-    isDefault: true
-  },
-  {
-    id: 2,
-    name: '李四',
-    phone: '13900139000',
-    province: '北京市',
-    city: '北京市',
-    district: '朝阳区',
-    address: '建国路 456 号',
-    isDefault: false
-  },
-  // 海外地址
-  {
-    id: 3,
-    name: 'Tom',
-    phone: '13700137000',
-    province: 'United States',
-    city: 'New York',
-    district: 'Manhattan',
-    address: '123 Main Street',
-    isDefault: false
-  },
-  {
-    id: 4,
-    name: 'John',
-    phone: '13600136000',
-    province: 'United Kingdom',
-    city: 'London',
-    district: 'Westminster',
-    address: '45 Oxford Street',
-    isDefault: false
-  },
-  {
-    id: 5,
-    name: 'Marie',
-    phone: '13500135000',
-    province: 'France',
-    city: 'Paris',
-    district: '8th arrondissement',
-    address: '15 Avenue des Champs-Élysées',
-    isDefault: false
-  },
-  {
-    id: 6,
-    name: 'Hans',
-    phone: '13400134000',
-    province: 'Germany',
-    city: 'Berlin',
-    district: 'Mitte',
-    address: 'Unter den Linden 10',
-    isDefault: false
-  },
-  {
-    id: 7,
-    name: 'Marco',
-    phone: '13300133000',
-    province: 'Italy',
-    city: 'Rome',
-    district: 'Historic Centre',
-    address: 'Via del Corso 20',
-    isDefault: false
-  },
-  {
-    id: 8,
-    name: 'Yuki',
-    phone: '13200132000',
-    province: 'Japan',
-    city: 'Tokyo',
-    district: 'Shibuya',
-    address: '1-2-3 Shibuya',
-    isDefault: false
-  },
-  {
-    id: 9,
-    name: 'James',
-    phone: '13100131000',
-    province: 'Australia',
-    city: 'Sydney',
-    district: 'CBD',
-    address: '100 George Street',
-    isDefault: false
-  },
-  {
-    id: 10,
-    name: 'Sophie',
-    phone: '13000130000',
-    province: 'Canada',
-    city: 'Toronto',
-    district: 'Downtown',
-    address: '200 Bay Street',
-    isDefault: false
-  }
-])
+const addresses = ref<Address[]>([])
 const isEditing = ref(false)
 const isAdding = ref(false)
 const editingId = ref('')
 
 const form = reactive<Address>({
-  name: '',
-  phone: '',
-  province: '',
-  city: '',
-  district: '',
+  contactName: '',
+  contactPhone: '',
+  provinceCode: '',
+  cityCode: '',
+  regionCode: '',
   address: '',
-  isDefault: false
+  defReceive: false
 })
 
 const showRegionError = ref(false)
@@ -285,9 +182,9 @@ const showRegionError = ref(false)
 const regionMode = ref('china')
 
 const handleRegionChange = (selectedRegion: { province: string; city: string; district: string }) => {
-  form.province = selectedRegion.province
-  form.city = selectedRegion.city
-  form.district = selectedRegion.district
+  form.provinceCode = selectedRegion.province
+  form.cityCode = selectedRegion.city
+  form.regionCode = selectedRegion.district
 }
 
 const close = () => {
@@ -296,13 +193,13 @@ const close = () => {
 }
 
 const resetForm = () => {
-  form.name = ''
-  form.phone = ''
-  form.province = ''
-  form.city = ''
-  form.district = ''
+  form.contactName = ''
+  form.contactPhone = ''
+  form.provinceCode = ''
+  form.cityCode = ''
+  form.regionCode = ''
   form.address = ''
-  form.isDefault = false
+  form.defReceive = false
   isEditing.value = false
   isAdding.value = false
   editingId.value = ''
@@ -330,7 +227,7 @@ const deleteAddress = (id: string) => {
 }
 
 const validateRegion = (): boolean => {
-  if (!form.province || !form.city || !form.district) {
+  if (!form.provinceCode || !form.cityCode || !form.regionCode) {
     showRegionError.value = true
     return false
   }
@@ -343,13 +240,15 @@ const handleSave = () => {
     return
   }
 
+  // 复制表单数据并转换defReceive为字符串格式
   const addressData: Address = {
     ...form,
-    id: props.editingAddress?.id
+    id: props.editingAddress?.id || 0,
+    defReceive: form.defReceive === true ? "yes" : "no"
   }
 
-  if (form.isDefault) {
-    addresses.value.forEach(addr => addr.isDefault = false)
+  if (form.defReceive) {
+    addresses.value.forEach(addr => addr.defReceive = false)
   }
 
   if (isEditing.value) {
@@ -371,9 +270,9 @@ const cancelEdit = () => {
 
 // 计算属性：地区值
 const regionValue = computed(() => ({
-  province: form.province,
-  city: form.city,
-  district: form.district
+  province: form.provinceCode,
+  city: form.cityCode,
+  district: form.regionCode
 }))
 
 // 判断是否为中国地址
@@ -386,16 +285,16 @@ const isChineseAddress = (province: string): boolean => {
 watch(editingAddress, (newAddress) => {
   if (newAddress) {
     // 如果是编辑模式，填充表单数据
-    form.name = newAddress.name
-    form.phone = newAddress.phone
-    form.province = newAddress.province || ''
-    form.city = newAddress.city || ''
-    form.district = newAddress.district || ''
+    form.contactName = newAddress.contactName
+    form.contactPhone = newAddress.contactPhone
+    form.provinceCode = newAddress.provinceCode || ''
+    form.cityCode = newAddress.cityCode || ''
+    form.regionCode = newAddress.regionCode || ''
     form.address = newAddress.address
-    form.isDefault = newAddress.isDefault
+    form.defReceive = newAddress.defReceive
     
     // 根据地址判断是国内还是海外地址
-    regionMode.value = isChineseAddress(newAddress.province) ? 'china' : 'world'
+    regionMode.value = isChineseAddress(newAddress.provinceCode) ? 'china' : 'world'
   } else {
     // 如果是新增模式，重置表单
     resetForm()
@@ -409,13 +308,13 @@ watch(show, (newVal) => {
     // 关闭弹窗时重置表单
     if (!editingAddress.value) {
       Object.assign(form, {
-        name: '',
-        phone: '',
-        province: '',
-        city: '',
-        district: '',
+        contactName: '',
+        contactPhone: '',
+        provinceCode: '',
+        cityCode: '',
+        regionCode: '',
         address: '',
-        isDefault: false
+        defReceive: false
       })
     }
   }
