@@ -1,4 +1,4 @@
-import { get, post, del } from "../../http";
+import { get, post, del } from "../http";
 import type { ShopAddData, ShopAddParams } from "./types";
 
 /**

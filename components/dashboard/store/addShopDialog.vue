@@ -39,7 +39,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { doAddShop, doGetPlatformList } from "~/apis/finance/publish/shop";
+import { doAddShop, doGetPlatformList } from "~/apis/store/shop";
 
 const props = defineProps({
     platformList: {

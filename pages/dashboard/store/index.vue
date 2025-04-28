@@ -117,7 +117,7 @@ import { InfoFilled } from "@element-plus/icons-vue";
 import dayjs from "dayjs";
 import { Loading } from "~/components/ui/loading";
 import { ScrollCallBackSymbol } from "~/constant";
-import { doDeleteShop, doGetPlatformList, doGetShopList } from "~/apis/finance/publish/shop";
+import { doDeleteShop, doGetPlatformList, doGetShopList } from "~/apis/store/shop";
 import AddShopDialog from "~/components/dashboard/store/addShopDialog.vue";
 import Selections from "~/components/dashboard/store/selections.vue";
 import SetWarehouse from "~/components/dashboard/store/setWarehouse.vue";
