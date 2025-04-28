@@ -273,7 +273,7 @@ export default defineNuxtConfig({
 
 function proxy() {
   let targetTest = "https://seller.riin.com";
-  let devTarget = "http://192.168.1.151:30984"; //dev 环境
+  let devTarget = "http://192.168.1.151:30782"; //dev 环境
 
   let uaaTargetLocal = "http://10.233.90.164:9999";
   let targetLocal = "http://10.120.22.174:9999"; //hzh本地
