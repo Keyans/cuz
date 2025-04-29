@@ -1,11 +1,18 @@
 <template>
-    <el-dialog v-model="showDialog" title="新增店铺" width="500">
+    <el-dialog v-model="showDialog" title="新增店铺" width="500" :z-index="1000">
         <div class="flex flex-col">
             <el-form>
                 <el-form-item label="电商平台" label-width="80">
                     <el-select v-model="newShop.platform" placeholder="请选择" @change="handlePlatformChange">
                         <el-option v-for="item in platformList" :key="item.thirdPartyPlatformType"
                             :value="item.thirdPartyPlatformType" :label="item.thirdPartyPlatformName" />
+                    </el-select>
+                </el-form-item>
+
+                <el-form-item label="地区" label-width="80">
+                    <el-select v-model="newShop.authRegion" placeholder="请选择">
+                        <el-option v-for="item in authRegionList" :key="item.id"
+                            :value="item.authRegion" :label="item.authRegion" />
                     </el-select>
                 </el-form-item>
 
@@ -44,7 +51,7 @@ import { doAddShop, doGetPlatformList } from "~/apis/store/shop";
 const props = defineProps({
     platformList: {
         type: Array<any>,
-        default: () => [] 
+        default: () => []
     }
 })
 const emits = defineEmits(['refresh'])
@@ -56,8 +63,14 @@ const newShop = ref({
     name: "",
     orderCode: '',
     showOrderCode: false,
+    authRegion: ''
 })
 const typeList = ref<Array<any>>([])
+const authRegionList = ref<Array<any>>([{
+    authRegion: 'US',
+    authRegionDesc: '美国',
+    id: 1
+}])
 
 function handlePlatformChange(value: string) {
     const item = props.platformList.find((item) => item.thirdPartyPlatformType === value)
@@ -87,6 +100,7 @@ function showAddShopDialog() {
         productCode: '',
         orderCode: '',
         showOrderCode: false,
+        authRegion: ''
     }
     typeList.value = []
     showDialog.value = true
@@ -101,17 +115,25 @@ function addShop() {
         ElMessage.warning('请选择电商平台')
         return
     }
+    if(!newShop.value.authRegion) {
+        ElMessage.warning('请选择地区')
+        return
+    }
+    if (!newShop.value.name) {
+        ElMessage.warning('请输入店铺名称')
+        return 
+    }
     if (!newShop.value.type) {
         ElMessage.warning('请选择接口类型')
         return
     }
     if (!newShop.value.productCode) {
         ElMessage.warning('请输入商品token')
-        return 
+        return
     }
     if (newShop.value.type === "ORDER" && !newShop.value.orderCode) {
         ElMessage.warning('请输入订单token')
-        return 
+        return
     }
 
     const params = {
@@ -123,17 +145,18 @@ function addShop() {
         productAuthCode: newShop.value.productCode,
         thirdPartyShopName: newShop.value.name,
     }
-    if(newShop.value.showOrderCode) {
+    if (newShop.value.showOrderCode) {
         // productAuthCode: 1ztxpbwun50frij2lrki9nnvtkf4gz53bjgplutf1kj0nggrxzosldc0
         // order upsli4prbemzi8okabhsabcbxj5nlygmnenwyctcnhiplahygxe2asaxrdw
         data = {
             ...data,
             orderAuthCode: newShop.value.orderCode,
+            authRegion: 'US'
         }
     }
 
     doAddShop(params, data).then((res) => {
-        if(res.code === 200) {
+        if (res.code === 200) {
             ElMessage.success('新增成功')
             showDialog.value = false
             emits('refresh')
