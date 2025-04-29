@@ -22,6 +22,7 @@ abstract class AbstractHttp {
     params = {},
     data = {},
     showLoading = true,
+    headers = {},
   }: RequestData): Promise<R> {
     return new Promise<R>((resolve, reject) => {
       this.doRequest(
