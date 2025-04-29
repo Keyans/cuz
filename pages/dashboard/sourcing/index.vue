@@ -82,9 +82,9 @@
         </div>
         <!-- 热门商品数据 -->
         <div v-else-if="hotProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          <div v-for="product in hotProducts" :key="product.id" class="bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer" @click="navigateTo(`/dashboard/sourcing/${product.id}`)">
+          <div v-for="product in hotProducts" :key="product.productId" class="bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer" @click="navigateTo(`/dashboard/sourcing/${product.productId}`)">
             <div class="relative">
-              <img :src="product.image" :alt="product.name" class="w-full h-full aspect-square object-cover" />
+              <img :src="product.picUrl" :alt="product.name" class="w-full h-full aspect-square object-cover" />
               <span class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">{{ product.tag }}</span>
               <button class="absolute top-2 right-2 p-2 bg-white/50 backdrop-blur-sm rounded-full text-gray-600 hover:text-red-500 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -96,7 +96,7 @@
               <h3 class="text-lg font-semibold mb-2 line-clamp-1">{{ product.name }}</h3>
               <p class="text-gray-500 text-sm mb-3 line-clamp-2">{{ product.description }}</p>
               <div class="flex justify-between items-center">
-                <div class="text-primary font-bold text-xl">¥ {{ product.price }}</div>
+                <div class="text-primary font-bold text-xl">¥ {{ product.salePrice }}</div>
                 <button class="btn-primary px-4 py-2 text-sm">选品</button>
               </div>
             </div>
@@ -134,9 +134,9 @@
         </div>
         <!-- 新品推荐数据 -->
         <div v-else-if="newProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          <div v-for="product in newProducts" :key="product.id" class="bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer" @click="navigateTo(`/dashboard/sourcing/${product.id}`)">
+          <div v-for="product in newProducts" :key="product.productId" class="bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer" @click="navigateTo(`/dashboard/sourcing/${product.productId}`)">
             <div class="relative">
-              <img :src="product.image" :alt="product.name" class="w-full h-full aspect-square object-cover" />
+              <img :src="product.picUrl" :alt="product.name" class="w-full h-full aspect-square object-cover" />
               <span class="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">{{ product.tag }}</span>
               <button class="absolute top-2 right-2 p-2 bg-white/50 backdrop-blur-sm rounded-full text-gray-600 hover:text-red-500 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -148,7 +148,7 @@
               <h3 class="text-lg font-semibold mb-2 line-clamp-1">{{ product.name }}</h3>
               <p class="text-gray-500 text-sm mb-3 line-clamp-2">{{ product.description }}</p>
               <div class="flex justify-between items-center">
-                <div class="text-primary font-bold text-xl">¥ {{ product.price }}</div>
+                <div class="text-primary font-bold text-xl">¥ {{ product.salePrice }}</div>
                 <button class="btn-primary px-4 py-2 text-sm">选品</button>
               </div>
             </div>
@@ -157,8 +157,8 @@
         <!-- 无数据状态 -->
         <div v-else class="text-center py-8 text-gray-500">
           暂无新品推荐数据
-          <button @click="refreshData" class="ml-2 text-primary hover:underline" :disabled="refreshing">
-            {{ refreshing ? '刷新中...' : '刷新' }}
+          <button @click="fetchNewProducts" class="ml-2 text-primary hover:underline" :disabled="loadingNewProducts">
+            {{ loadingNewProducts ? '加载中...' : '刷新' }}
           </button>
         </div>
       </div>
@@ -167,14 +167,19 @@
   
   <script setup lang="ts">
   import { useRouter } from 'vue-router'
-  import { computed, watchEffect, ref } from 'vue'
-
+  import { computed, watchEffect, ref, onMounted } from 'vue'
+  import { doPostProductList } from '@/apis/sourcing'
   const router = useRouter()
   
   definePageMeta({
     layout: 'dashboard'
   })
   
+
+onMounted(() => {
+  refreshData()
+})
+
   // 点击商品跳转到详情页
   const navigateTo = (path: string) => {
     router.push(path)
@@ -182,11 +187,11 @@
 
   // 定义商品和类目接口
   interface Product {
-    id: number;
+    productId: number;
     name: string;
     description: string;
-    price: number;
-    image: string;
+    salePrice: number;
+    picUrl: string;
     tag: string;
   }
 
@@ -225,7 +230,34 @@
     queryenable: true           // 启用查询
   })
   
-  // 使用useAsyncData获取所有首页数据 - 这将在服务端渲染时执行
+  // 新品推荐数据
+  const newProducts = ref<Product[]>([])
+  // 新品推荐加载状态
+  const loadingNewProducts = ref(false)
+  
+  // 获取新品推荐数据的函数
+  const fetchNewProducts = async () => {
+    loadingNewProducts.value = true
+    try {
+      const response = await doPostProductList({
+        queryStrategy: 'NEW_PRODUCT',
+        size: queryParams.value.productSize,
+        current: queryParams.value.current
+      })
+      
+      if (response && response.code === 200 && response.data) {
+        newProducts.value = response.data.records || []
+      } else {
+        console.error('获取新品推荐失败:', response?.code !== 200 ? response?.data : '未知错误')
+      }
+    } catch (err) {
+      console.error('获取新品推荐API调用失败:', err)
+    } finally {
+      loadingNewProducts.value = false
+    }
+  }
+  
+  // 使用useAsyncData获取类目和热门商品数据 - 这将在服务端渲染时执行
   const { data, pending, error, refresh } = useAsyncData<ApiResponse>(
     'home-data',
     async () => {
@@ -264,6 +296,8 @@
     
     try {
       await refresh()
+      // 刷新新品推荐数据
+      await fetchNewProducts()
       console.log('数据已刷新，参数:', queryParams.value)
     } catch (err) {
       console.error('刷新数据失败:', err)
@@ -291,28 +325,18 @@
       console.error('处理返回数据出错:', err)
     }
     
-    return { categories: [], hotProducts: [], newProducts: [] }
+    return { categories: [], hotProducts: [] }
   })
   
   // 从响应中提取各个部分
   const categories = computed(() => homeData.value.categories || [])
   const hotProducts = computed(() => homeData.value.hotProducts || [])
-  const newProducts = computed(() => homeData.value.newProducts || [])
   
   // 数据加载状态，考虑手动刷新状态
   const loading = computed(() => ({
     categories: pending.value || refreshing.value,
     hotProducts: pending.value || refreshing.value,
-    newProducts: pending.value || refreshing.value
   }))
-
-  // 错误处理
-  watchEffect(() => {
-    if (error.value) {
-      console.error('获取首页数据失败:', error.value)
-      errorMsg.value = '获取数据失败，请稍后重试'
-    }
-  })
 
   // 数据加载完成后的日志
   watchEffect(() => {
@@ -320,6 +344,9 @@
       console.log('首页数据加载完成:')
       console.log('- 类目数据:', categories.value.length, '项')
       console.log('- 热门商品:', hotProducts.value.length, '项')
+    }
+    
+    if (!loadingNewProducts.value && newProducts.value) {
       console.log('- 新品推荐:', newProducts.value.length, '项')
     }
   })

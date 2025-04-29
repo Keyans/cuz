@@ -3,37 +3,12 @@ import { H3Event, getQuery } from 'h3'
 import { createProductMockData } from '../products/mockData'
 import { createCategoryMockData } from '../categories/mockData'
 
-// 定义商品类型
-interface Product {
-  id: number
-  name: string
-  description: string
-  price: number
-  image: string
-  tag: string
-}
-
-// 定义类目类型
-interface Category {
-  id: number | string
-  name: string
-  categoryImg: string
-  level?: number
-  parentId?: string
-}
 
 // API响应类型
 interface ApiResponse {
   code: number
   data: any
   message: string
-}
-
-// 首页数据响应类型
-interface HomeDataResponse {
-  categories: Category[]
-  hotProducts: Product[]
-  newProducts: Product[]
 }
 
 // 服务端API处理函数 - 一次获取所有首页数据
@@ -60,20 +35,12 @@ export default defineEventHandler(async (event) => {
       size: productSize,
       current: parseInt(query.current as string) || 1
     })
-    
-    // 3. 获取新品推荐数据
-    const newProductsResponse = await getProductsData(event, 'NEW_PRODUCT', {
-      size: productSize,
-      current: parseInt(query.current as string) || 1
-    })
-    
     // 组合结果
     const result: ApiResponse = {
       code: 200,
       data: {
         categories: categoriesResponse.data?.records || [],
         hotProducts: hotProductsResponse.data?.records || [],
-        newProducts: newProductsResponse.data?.records || []
       },
       message: 'success'
     }

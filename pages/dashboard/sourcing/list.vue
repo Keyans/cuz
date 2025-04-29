@@ -69,11 +69,12 @@
       <div 
         v-else
         v-for="product in products" 
-        :key="product.id" 
+        :key="product.productId" 
         class="bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer"
+        @click="router.push(`/dashboard/sourcing/${product.productId}`)"
       >
         <div class="relative">
-          <img :src="product.image" :alt="product.name" class="w-full h-full aspect-square object-cover" />
+          <img :src="product.picUrl" :alt="product.name" class="w-full h-full aspect-square object-cover" />
           <span v-if="product.tag" class="absolute top-2 left-2 bg-primary text-white text-xs px-2 py-1 rounded">{{ product.tag }}</span>
         </div>
         <div class="p-4">
@@ -174,11 +175,12 @@ const totalPages = 5
 
 // 定义商品和类目接口
 interface Product {
-  id: number;
+  productId: number;
   name: string;
+  nameEn:string,
   description: string;
   price: number;
-  image: string;
+  picUrl: string;
   tag?: string;
 }
 
@@ -227,33 +229,37 @@ onMounted(async () => {
     // 模拟商品数据
     products.value = [
       {
-        id: 1,
+        productId: 1,
         name: '时尚棒球帽',
+        nameEn: 'Fashion Baseball Cap',
         description: '采用优质棉质面料，透气舒适，可调节帽围，适合各种场合佩戴，经典设计永不过时。',
         price: 89.00,
-        image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&h=300&fit=crop',
+        picUrl: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&h=300&fit=crop',
         tag: '热销'
       },
       {
-        id: 2,
+        productId: 2,
         name: '运动休闲T恤',
+        nameEn: 'Sports T-shirt',
         description: '采用优质面料，柔软亲肤，修身剪裁，多色可选，适合日常休闲和运动穿着。',
         price: 129.00,
-        image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop'
+        picUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop'
       },
       {
-        id: 3,
+        productId: 3,
         name: '防晒渔夫帽',
+        nameEn: 'Sun Protection Bucket Hat',
         description: '大帽檐设计，有效防晒，可折叠便携，适合户外活动和度假旅行使用。',
         price: 69.00,
-        image: 'https://images.unsplash.com/photo-1534215754734-18e55d13e346?w=400&h=300&fit=crop'
+        picUrl: 'https://images.unsplash.com/photo-1534215754734-18e55d13e346?w=400&h=300&fit=crop'
       },
       {
-        id: 4,
+        productId: 4,
         name: '简约双肩包',
+        nameEn: 'Simple Backpack',
         description: '大容量设计，防水面料，多个收纳隔层，舒适背带，适合通勤和旅行使用。',
         price: 199.00,
-        image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=300&fit=crop'
+        picUrl: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=300&fit=crop'
       }
     ]
   } catch (error) {

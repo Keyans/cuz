@@ -20,11 +20,11 @@
               </svg>
             </button>
             <div ref="thumbnailContainer" class="overflow-x-auto hide-scrollbar flex space-x-4 justify-center relative scroll-smooth mx-auto">
-              <div v-for="(image, index) in product.images" :key="index" 
+              <div v-for="(image, index) in product.imageInfos" :key="index" 
                    @click="selectImage(index)"
                    class="flex-shrink-0 w-20 h-20 cursor-pointer rounded-md overflow-hidden transition-all duration-300"
                    :class="{'border-4 border-primary shadow-lg scale-110': currentImageIndex === index}">
-                <img :src="image" :alt="`${product.name} - ${index + 1}`" class="w-full h-full object-cover" />
+                <img :src="image.imgUrl" :alt="`${product.name} - ${index + 1}`" class="w-full h-full object-cover" />
               </div>
             </div>
             <button @click="scrollThumbnails('right')" class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white shadow rounded-full p-2" :disabled="isScrollRightDisabled">
@@ -173,34 +173,78 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
 import Breadcrumb from '~/components/common/Breadcrumb.vue'
 import AddressDialog from '~/components/common/AddressDialog.vue'
-// 不需要显式导入definePageMeta，它是Nuxt内置的全局函数
 
-// 模拟商品数据，实际应该从API获取
-const product = {
-  id: '123456',
-  name: '时尚棒球帽',
-  description: '采用优质棉质面料，透气舒适，可调节帽围，适合各种场合佩戴，经典设计永不过时。',
-  detailDescription: '这款棒球帽采用100%优质棉质面料制作，具有良好的透气性和吸汗性。帽围可调节，适合头围54-60cm的成人佩戴。帽檐采用经典弧度设计，既能很好地遮阳，又不影响视线。帽子整体做工精细，车缝线迹均匀，经久耐用。',
-  price: 89.00,
-  images: [
-    'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500&h=500&fit=crop',
-    'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500&h=500&fit=crop',
-    'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500&h=500&fit=crop',
-    'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500&h=500&fit=crop',
-    'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=500&h=500&fit=crop'
-  ],
-  tag: '热销',
-  category: '制帽'
+// 获取路由参数
+const route = useRoute()
+const productId = computed(() => route.params.id)
+
+// 定义商品详情接口
+interface ProductDetail {
+  id: number | string
+  name: string
+  description: string
+  detailDescription: string
+  price: number
+  imageInfos: string[]
+  tag: string
+  category: string
+  attributes?: Record<string, string>
+  sizes?: Array<{
+    name: string
+    chest: number
+    length: number
+    shoulder: number
+  }>
 }
 
+// 使用useAsyncData在服务端获取商品详情数据
+const { data: productResponse, pending, error } = useAsyncData(
+  `product-${productId.value}`,
+  async () => {
+    try {
+      // 调用本地API获取数据，而不是直接调用外部API
+      const response = await $fetch(`/api/products/detail/${productId.value}`)
+      return response
+    } catch (err) {
+      console.error('获取商品详情失败:', err)
+      throw err
+    }
+  },
+  {
+    server: true, // 在服务端执行
+    lazy: false   // 立即执行
+  }
+)
 
-const breadcrumb = [
+// 商品数据计算属性
+const product = computed<ProductDetail>(() => {
+  const response = productResponse.value as any;
+  if (response && response.code === 200 && response.data) {
+    return response.data as ProductDetail;
+  }
+  
+  // 如果没有数据，返回默认值
+  return {
+    id: productId.value as string,
+    name: '商品加载失败',
+    description: '无法获取商品信息',
+    detailDescription: '无法获取商品详细信息',
+    price: 0,
+    images: ['/assets/products/placeholder.jpg'],
+    tag: '',
+    category: ''
+  }
+})
+
+// 面包屑导航
+const breadcrumb = computed(() => [
   { title: '首页', path: '/' },
   { title: '选品中心', path: '/dashboard/sourcing' },
-  { title: product.name }
-]
+  { title: product.value.name }
+])
 
 definePageMeta({
   layout: 'dashboard'
@@ -208,7 +252,12 @@ definePageMeta({
 
 // 图片预览相关
 const currentImageIndex = ref(0)
-const currentImage = computed(() => product.images[currentImageIndex.value])
+const currentImage = computed(() => {
+  if (product.value.images && product.value.images.length > 0) {
+    return product.value.images[currentImageIndex.value]
+  }
+  return '/assets/products/placeholder.jpg'
+})
 const thumbnailContainer = ref<HTMLElement | null>(null)
 const showAddressDialog = ref(false)
 
