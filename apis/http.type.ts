@@ -20,6 +20,7 @@ export type RequestData = {
    * 请求体参数
    */
   data?: any;
+  headers?: any;
 };
 
 /**
