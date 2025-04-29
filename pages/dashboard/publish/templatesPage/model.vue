@@ -117,23 +117,23 @@
                     <div>
                       <!-- 身高 -->
                       <span>身高：</span>
-                      <span>{{ Number(scope.row.clothesModel.height).toFixed(0) }} CM</span>
+                      <span>{{ Number(scope.row.info.height ).toFixed(0) }} CM</span>
                     </div>
                     <div>
                       <span>
                         <!-- 胸围 -->
                         <span>胸围：</span>
-                        <span>{{ Number(scope.row.clothesModel.bust).toFixed(0) }} CM</span>
+                        <span>{{ Number(scope.row.info.bust ).toFixed(0) }} CM</span>
                       </span>
                       <span style="margin: 0 10px;">
                         <!-- 腰围 -->
                         <span>腰围：</span>
-                        <span>{{ Number(scope.row.clothesModel.waist).toFixed(0) }} CM</span>
+                        <span>{{ Number(scope.row.info.waist ).toFixed(0) }} CM</span>
                       </span>
                       <span>
                         <!-- 臀围 -->
                         <span>臀围：</span>
-                        <span>{{ Number(scope.row.clothesModel.hipline).toFixed(0) }} CM</span>
+                        <span>{{ Number(scope.row.info.hipline ).toFixed(0) }} CM</span>
                       </span>
                     </div>
                   </div>
@@ -263,10 +263,10 @@ function submit() {
       avatarUrl: mannequin.headPortrait,
       name: mannequin.modelName,
       info: {
-        height: mannequin.clothesModel.height,
-        bust: mannequin.clothesModel.bust,
-        waist: mannequin.clothesModel.waist,
-        hipline: mannequin.clothesModel.hipline
+        height: mannequin.info.height,
+        bust: mannequin.info.bust,
+        waist: mannequin.info.waist,
+        hipline: mannequin.info.hipline
       }
     };
     emit('update:modelValue', { ...modelInfo });
