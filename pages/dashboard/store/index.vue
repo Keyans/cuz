@@ -98,7 +98,7 @@
         <Loading class="scale-50" height="50px" width="50px"></Loading>
       </div> -->
 
-      <div class="flex justify-between items-center mt-4" v-if="!loading">
+      <div class="flex justify-between items-center mt-4">
         <div class="text-sm text-gray-700">
           显示 {{ pagination.current * pagination.pageSize - pagination.pageSize + 1 }} 到
           {{ Math.min(pagination.current * pagination.pageSize, pagination.total) }} 条，
