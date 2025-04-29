@@ -510,7 +510,7 @@ const deleteTask = async (id: string) => {
 };
 // 发布
 const publishTask = async (id: string, appType: string) => {
-  const { success, msg } = await doTaskCreate({ taskId: id, appType });
+  const { success, msg } = await doTaskCreate({ taskList: [{taskId: id, appType}] });
   if (!success) return ElMessage.error(msg);
   ElMessage.success("发布成功");
   applyFilters();
