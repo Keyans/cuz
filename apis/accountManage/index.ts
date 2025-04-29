@@ -69,8 +69,9 @@ export const doGetCreativeList = (params: any) => {
   /**
  *  编辑创意选品平台用户
  */
-export const doPutCreative = (id: number) => {
+export const doPutCreative = (id: number,data: any) => {
     return put({
       url: `saas-aimall-uaa/uaa/shop/admin/creative/${id}`,
+      data,
     });
   };

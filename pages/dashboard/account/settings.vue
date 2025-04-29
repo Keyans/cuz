@@ -200,7 +200,7 @@ import AddressDialog from '../../../components/common/AddressDialog.vue'
 import InvoiceDialog from '../../../components/common/InvoiceDialog.vue'
 import DeleteConfirmDialog from '../../../components/common/DeleteConfirmDialog.vue'
 import { useUserStore } from '@/stores/user'
-import { doGetAddressList, doGetAddress ,doPutAddress, doPostAddress, doDelAddress } from '@/apis/accountManage'
+import { doGetAddressList, doGetAddress ,doPutAddress, doPostAddress, doDelAddress,doGetCreative , doPutCreative } from '@/apis/accountManage'
 
 const toast = useToast()
 const userStore = useUserStore()
@@ -292,9 +292,22 @@ const loadAddressList = async () => {
       size: 10
     }
     const res = await doGetAddressList(req)
-    // if(res.code === 200 && res.data) {
-    //   addressList.value = res.data.records
-    // }
+    if(res.code === 200 && res.data) {
+      addressList.value = res.data.records
+    }
+  } catch (error) {
+    toast.error('加载地址列表失败')
+  }
+}
+
+// 从本地存储加载地址列表
+const loadDoGetCreative = async () => {
+  try {
+    const userId = JSON.parse(localStorage.getItem('user') || '{}').id
+    const res = await doGetCreative(userId)
+    if(res.code === 200 && res.data) {
+      addressList.value = res.data.records
+    }
   } catch (error) {
     toast.error('加载地址列表失败')
   }
@@ -326,10 +339,26 @@ const startEditUserInfo = () => {
 }
 
 // 保存用户信息
-const saveUserInfo = () => {
-  console.log('保存用户信息:', userInfo)
-  // 这里可以添加保存用户信息的逻辑
-  isEditingUserInfo.value = false
+const saveUserInfo = async() => {
+  try{
+    const req = {
+    nickname: userInfo.nickname,
+    phone: userInfo.phone,
+    email: userInfo.email,
+    avatar: userInfo.avatar
+  }
+    const dataId = JSON.parse(localStorage.getItem('user') || '{}').id
+    const res = await doPutCreative( dataId,req)
+    if(res.code === 200) {
+      toast.success('保存用户信息成功')
+    } 
+  }catch(error){
+    toast.error('保存用户信息失败')
+    throw error
+  }finally{
+    isEditingUserInfo.value = false
+  }
+
 }
 
 // 开票资料数据
@@ -426,6 +455,7 @@ const openAddAddressDialog = () => {
 // 在组件挂载时加载数据
 onMounted(() => {
   loadAddressList()
+  loadDoGetCreative()
 })
 
 definePageMeta({
