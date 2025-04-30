@@ -85,7 +85,7 @@
           <div v-for="product in hotProducts" :key="product.productId" class="bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer" @click="navigateTo(`/dashboard/sourcing/${product.productId}`)">
             <div class="relative">
               <img :src="product.picUrl" :alt="product.name" class="w-full h-full aspect-square object-cover" />
-              <span class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">{{ product.tag }}</span>
+              <span class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">{{ product.tag || '热卖'}}</span>
               <button class="absolute top-2 right-2 p-2 bg-white/50 backdrop-blur-sm rounded-full text-gray-600 hover:text-red-500 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -137,7 +137,7 @@
           <div v-for="product in newProducts" :key="product.productId" class="bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer" @click="navigateTo(`/dashboard/sourcing/${product.productId}`)">
             <div class="relative">
               <img :src="product.picUrl" :alt="product.name" class="w-full h-full aspect-square object-cover" />
-              <span class="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">{{ product.tag }}</span>
+              <span class="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded">{{ product.tag || '新品'}}</span>
               <button class="absolute top-2 right-2 p-2 bg-white/50 backdrop-blur-sm rounded-full text-gray-600 hover:text-red-500 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
